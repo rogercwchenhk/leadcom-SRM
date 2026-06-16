@@ -241,8 +241,8 @@ export default function SupplierPage() {
                   {selectedOrder && (
                     <div className="grid gap-6 md:grid-cols-2">
                       <Card className="border-slate-200">
-                        <CardHeader>
-                          <CardTitle>订单信息</CardTitle>
+                        <CardHeader className="pb-1 pt-2">
+                          <CardTitle className="text-sm font-semibold">订单信息</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-2">
@@ -273,9 +273,9 @@ export default function SupplierPage() {
                       <div className="space-y-6">
                         {selectedOrder.status === 'signed' && (
                           <Card className="border-slate-200">
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2">
-                                <Truck className="h-5 w-5" />
+                            <CardHeader className="pb-1 pt-2">
+                              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                                <Truck className="h-4 w-4" />
                                 发货信息
                               </CardTitle>
                             </CardHeader>
@@ -301,9 +301,9 @@ export default function SupplierPage() {
 
                         {selectedOrder.status === 'shipped' && (
                           <Card className="border-slate-200">
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2">
-                                <FileCheck className="h-5 w-5" />
+                            <CardHeader className="pb-1 pt-2">
+                              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                                <FileCheck className="h-4 w-4" />
                                 提交发票
                               </CardTitle>
                             </CardHeader>
@@ -348,9 +348,9 @@ export default function SupplierPage() {
 
                         {selectedOrder.status === 'paid' && (
                           <Card className="border-emerald-200 bg-emerald-50">
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2 text-emerald-800">
-                                <CreditCard className="h-5 w-5" />
+                            <CardHeader className="pb-1 pt-2">
+                              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-emerald-800">
+                                <CreditCard className="h-4 w-4" />
                                 付款状态
                               </CardTitle>
                             </CardHeader>

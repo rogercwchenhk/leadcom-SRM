@@ -119,20 +119,20 @@ export default function NewRequestPage() {
             {/* Input Step */}
             {(step === 'input' || step === 'analyzing') && (
               <Card className="border-none shadow-sm">
-                <CardHeader className="px-8 pb-6 pt-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-orange-500" />
+                <CardHeader className="px-4 pb-1 pt-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-orange-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-slate-900">描述您的需求</CardTitle>
-                      <CardDescription className="text-slate-600 text-base">
+                      <CardTitle className="text-sm font-semibold text-slate-900">描述您的需求</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
                         用自然语言告诉我们您需要采购什么
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="px-8 pb-8">
+                <CardContent className="px-4 pb-4">
                   <div className="space-y-6">
                     <div className="space-y-3">
                       <Label className="text-slate-700 font-medium">采购需求描述</Label>
@@ -170,7 +170,7 @@ export default function NewRequestPage() {
                     )}
                   </div>
                 </CardContent>
-                <CardFooter className="px-8 pb-8 pt-0 flex justify-end">
+                <CardFooter className="px-4 pb-4 pt-0 flex justify-end">
                   <Button 
                     onClick={handleAnalyze} 
                     disabled={step === 'analyzing' || !naturalLanguageInput.trim()}
@@ -195,20 +195,20 @@ export default function NewRequestPage() {
             {/* Review Step */}
             {(step === 'review' || step === 'submitting') && aiAnalysis && (
               <Card className="border-none shadow-sm">
-                <CardHeader className="px-8 pb-6 pt-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center">
-                      <CheckCircle2 className="w-6 h-6 text-green-500" />
+                <CardHeader className="px-4 pb-1 pt-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-slate-900">AI 分析结果</CardTitle>
-                      <CardDescription className="text-slate-600 text-base">
+                      <CardTitle className="text-sm font-semibold text-slate-900">AI 分析结果</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
                         请确认 Hermes Agent 提取的信息是否正确
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="px-8 pb-8">
+                <CardContent className="px-4 pb-4">
                   <div className="space-y-8">
                     {/* Original Input */}
                     <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
@@ -278,7 +278,7 @@ export default function NewRequestPage() {
                     </Alert>
                   </div>
                 </CardContent>
-                <CardFooter className="px-8 pb-8 pt-0 flex justify-between">
+                <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
                   <Button 
                     variant="ghost" 
                     onClick={() => setStep('input')}

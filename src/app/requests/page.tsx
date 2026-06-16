@@ -151,7 +151,7 @@ export default function RequestsPage() {
 
             {/* Filters */}
             <Card className="border-none shadow-sm mb-8">
-              <CardContent className="p-8">
+              <CardContent className="p-4">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -192,13 +192,13 @@ export default function RequestsPage() {
 
             {/* Table */}
             <Card className="border-none shadow-sm">
-              <CardHeader className="px-8 pb-6 pt-8">
-                <CardTitle className="text-xl text-slate-900">需求列表</CardTitle>
-                <CardDescription className="text-slate-600">
+              <CardHeader className="px-4 pb-1 pt-2">
+                <CardTitle className="text-sm font-semibold text-slate-900">需求列表</CardTitle>
+                <CardDescription className="text-xs text-slate-500 mt-1">
                   共 {filteredRequests.length} 条采购需求
                 </CardDescription>
               </CardHeader>
-              <CardContent className="px-8 pt-0 pb-8">
+              <CardContent className="px-4 pt-0 pb-4">
                 <div className="rounded-2xl border border-slate-200 overflow-hidden">
                   <Table>
                     <TableHeader>
