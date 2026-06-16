@@ -110,10 +110,30 @@ export default function POSPage() {
 
   const totalAmount = filteredPOs.reduce((sum, po) => sum + po.totalAmount, 0);
 
+  // 格式化日期
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+
+  // 格式化金额
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('zh-CN', {
+      style: 'currency',
+      currency: 'CNY'
+    }).format(amount);
+  };
+
   const stats = [
     { 
       label: '总金额', 
-      value: `¥${totalAmount.toLocaleString()}`, 
+      value: formatCurrency(totalAmount), 
       icon: FileText,
       color: 'text-slate-600',
       bg: 'bg-slate-50'
@@ -155,29 +175,38 @@ export default function POSPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2 h-10 border-slate-200 hover:border-slate-300">
-              <FileSpreadsheet className="w-4 h-4" />
-              导出报表
+            <Button variant="outline" className="gap-2 h-10 border-slate-200 hover:border-slate-300 whitespace-nowrap">
+              <FileSpreadsheet className="w-4 h-4" aria-hidden="true" />
+              <span className="hidden sm:inline">导出报表</span>
+              <span className="sm:hidden">导出</span>
             </Button>
           </div>
         </div>
 
         {/* Stats Grid - Top */}
         <Card className="border-slate-200 shadow-sm overflow-hidden">
-          <CardHeader 
+          <div 
             className="pb-1 pt-2 px-4 flex flex-row items-center justify-between cursor-pointer select-none"
             onClick={() => setShowStats(!showStats)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setShowStats(!showStats);
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
             <div className="flex items-center gap-2">
               <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100">
+            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100" aria-label={showStats ? "收起指标" : "展开指标"}>
               {showStats ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
             </Button>
-          </CardHeader>
+          </div>
           {showStats && (
             <CardContent className="px-4 pb-4 pt-0">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 {stats.map((stat, index) => (
                   <div 
                     key={index} 
@@ -202,18 +231,22 @@ export default function POSPage() {
             <CardContent className="pt-3 px-4 pb-3">
               <div className="flex flex-col gap-4 md:flex-row md:items-center">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <label htmlFor="po-search" className="sr-only">搜索采购订单</label>
                   <Input
+                    id="po-search"
                     type="search"
-                    placeholder="搜索PO号、产品名称、供应商..."
+                    placeholder="搜索PO号、产品名称、供应商…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9 h-10 bg-white border-slate-200"
+                    aria-label="搜索PO号、产品名称、供应商"
                   />
                 </div>
                 <div className="flex gap-2">
+                  <label htmlFor="status-filter" className="sr-only">状态筛选</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
+                    <SelectTrigger id="status-filter" className="w-[180px] h-10 bg-white border-slate-200" aria-label="订单状态筛选">
                       <SelectValue placeholder="状态筛选" />
                     </SelectTrigger>
                     <SelectContent>
@@ -232,70 +265,127 @@ export default function POSPage() {
             </CardContent>
           </Card>
 
-          {/* Table */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
-                <CardDescription className="text-xs text-slate-500 mt-1">
-                  共 {filteredPOs.length} 个采购订单
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4">
-              <div className="rounded-xl border border-slate-200 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50 border-b border-slate-200">
-                      <TableHead className="font-semibold text-slate-700">PO号</TableHead>
-                      <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
-                      <TableHead className="font-semibold text-slate-700 text-slate-500">供应商</TableHead>
-                      <TableHead className="font-semibold text-slate-700">金额</TableHead>
-                      <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
-                      <TableHead className="font-semibold text-slate-700">状态</TableHead>
-                      <TableHead className="font-semibold text-slate-700 text-slate-500">创建时间</TableHead>
-                      <TableHead className="text-right font-semibold text-slate-700">操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPOs.map((po) => {
-                      const config = statusConfig[po.status];
-                      const IconComponent = config.icon;
-                      
-                      return (
-                        <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
-                          <TableCell className="font-medium text-slate-900">{po.id}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Package className="w-4 h-4 text-slate-400" />
-                              <span className="text-slate-900">{po.productName}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-slate-500 text-sm">{po.supplier}</TableCell>
-                          <TableCell className="font-medium text-slate-900">¥{po.totalAmount.toLocaleString()}</TableCell>
-                          <TableCell className="text-slate-600">{po.deliveryDate}</TableCell>
-                          <TableCell>
-                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
-                              <IconComponent className={`w-3.5 h-3.5 ${config.color}`} />
-                              <span className={`text-xs font-medium ${config.color}`}>
-                                {config.label}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-slate-500 text-sm">{po.createdAt}</TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100">
-                              <Eye className="h-4 w-4 text-slate-600" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Desktop Table */}
+          <div className="hidden md:block">
+            <Card className="border-slate-200 shadow-sm">
+              <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 mt-1">
+                    共 {filteredPOs.length} 个采购订单
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <div className="rounded-xl border border-slate-200 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50 border-b border-slate-200">
+                        <TableHead className="font-semibold text-slate-700">PO号</TableHead>
+                        <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
+                        <TableHead className="font-semibold text-slate-700 text-slate-500">供应商</TableHead>
+                        <TableHead className="font-semibold text-slate-700">金额</TableHead>
+                        <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
+                        <TableHead className="font-semibold text-slate-700">状态</TableHead>
+                        <TableHead className="font-semibold text-slate-700 text-slate-500">创建时间</TableHead>
+                        <TableHead className="text-right font-semibold text-slate-700">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPOs.map((po) => {
+                        const config = statusConfig[po.status];
+                        const IconComponent = config.icon;
+                        
+                        return (
+                          <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
+                            <TableCell className="font-medium text-slate-900">{po.id}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Package className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                                <span className="text-slate-900">{po.productName}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-slate-500 text-sm">{po.supplier}</TableCell>
+                            <TableCell className="font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
+                            <TableCell className="text-slate-600">{po.deliveryDate}</TableCell>
+                            <TableCell>
+                              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
+                                <IconComponent className={`w-3.5 h-3.5 ${config.color}`} aria-hidden="true" />
+                                <span className={`text-xs font-medium ${config.color}`}>
+                                  {config.label}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-slate-500 text-sm">{formatDate(po.createdAt)}</TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
+                                <Eye className="h-4 w-4 text-slate-600" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-slate-900">订单列表</h3>
+              <span className="text-xs text-slate-500">共 {filteredPOs.length} 个</span>
+            </div>
+            {filteredPOs.map((po) => {
+              const config = statusConfig[po.status];
+              const IconComponent = config.icon;
+              
+              return (
+                <Card key={po.id} className="border-slate-200 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="font-medium text-slate-900">{po.id}</div>
+                        <div className="text-sm text-slate-500 mt-0.5">{po.productName}</div>
+                      </div>
+                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${config.bg} border border-slate-200`}>
+                        <IconComponent className={`w-3 h-3 ${config.color}`} aria-hidden="true" />
+                        <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500">供应商</span>
+                        <span className="text-slate-900">{po.supplier}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500">金额</span>
+                        <span className="font-medium text-slate-900">{formatCurrency(po.totalAmount)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500">交货日期</span>
+                        <span className="text-slate-900">{po.deliveryDate}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500">创建时间</span>
+                        <span className="text-slate-500">{formatDate(po.createdAt)}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 pt-3 border-t border-slate-100">
+                      <Button variant="ghost" size="sm" className="w-full justify-center gap-2 h-9" aria-label={`查看订单 ${po.id}`}>
+                        <Eye className="w-4 h-4" />
+                        <span>查看详情</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
