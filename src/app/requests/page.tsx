@@ -78,7 +78,7 @@ export default function RequestsPage() {
       status: 'draft' as PurchaseRequestStatus,
       requester: '张三',
       createdAt: '2024-01-20 10:30:00',
-      budget: 30000,
+      budget: 50000,
     },
     {
       id: 'PR-2024-0119-002',
@@ -124,122 +124,128 @@ export default function RequestsPage() {
   });
 
   return (
-    <AppLayout initialRole="purchaser">
-      <div className="space-y-6 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              采购需求
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              管理所有采购需求，查看进度和状态
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Link href="/requests/new">
-              <Button className="gap-2 h-10 px-5">
-                <Plus className="h-4 w-4" />
-                新建需求
-              </Button>
-            </Link>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <AppLayout initialRole="purchaser">
+        <div className="px-8 py-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-12">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-semibold text-slate-900 tracking-tight mb-3">
+                    采购需求
+                  </h1>
+                  <p className="text-slate-600 text-lg">
+                    管理所有采购需求，查看进度和状态
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Link href="/requests/new">
+                    <Button className="gap-2 h-11 px-6 bg-orange-500 hover:bg-orange-600 text-white">
+                      <Plus className="h-4 w-4" />
+                      新建需求
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <Card className="border-none shadow-sm mb-8">
+              <CardContent className="p-8">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                    <Input
+                      type="search"
+                      placeholder="搜索需求ID、产品名称、申请人..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-12 h-11 bg-white border-slate-200"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="w-[180px] h-11 bg-white border-slate-200">
+                        <SelectValue placeholder="状态筛选" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">全部状态</SelectItem>
+                        <SelectItem value="draft">草稿</SelectItem>
+                        <SelectItem value="pending_confirmation">待确认</SelectItem>
+                        <SelectItem value="inquiry">询价中</SelectItem>
+                        <SelectItem value="quoting">报价中</SelectItem>
+                        <SelectItem value="comparing">比价中</SelectItem>
+                        <SelectItem value="pending_approval">待审批</SelectItem>
+                        <SelectItem value="approved">已批准</SelectItem>
+                        <SelectItem value="rejected">已拒绝</SelectItem>
+                        <SelectItem value="po_created">PO已生成</SelectItem>
+                        <SelectItem value="shipped">已发货</SelectItem>
+                        <SelectItem value="invoiced">已收票</SelectItem>
+                        <SelectItem value="paid">已付款</SelectItem>
+                        <SelectItem value="exception">异常</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Table */}
+            <Card className="border-none shadow-sm">
+              <CardHeader className="px-8 pb-6 pt-8">
+                <CardTitle className="text-xl text-slate-900">需求列表</CardTitle>
+                <CardDescription className="text-slate-600">
+                  共 {filteredRequests.length} 条采购需求
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-8 pt-0 pb-8">
+                <div className="rounded-2xl border border-slate-200 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50 border-b border-slate-200">
+                        <TableHead className="font-semibold text-slate-700">需求ID</TableHead>
+                        <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
+                        <TableHead className="font-semibold text-slate-700">数量</TableHead>
+                        <TableHead className="font-semibold text-slate-700">申请人</TableHead>
+                        <TableHead className="font-semibold text-slate-700">状态</TableHead>
+                        <TableHead className="font-semibold text-slate-700">创建时间</TableHead>
+                        <TableHead className="font-semibold text-slate-700 text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredRequests.map((request) => (
+                        <TableRow key={request.id} className="hover:bg-slate-50/50 transition-colors">
+                          <TableCell className="font-medium text-slate-900">{request.id}</TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium text-slate-900">{request.productName}</p>
+                              <p className="text-sm text-slate-500">{request.specifications}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-slate-600">{request.quantity}</TableCell>
+                          <TableCell className="text-slate-600">{request.requester}</TableCell>
+                          <TableCell>
+                            <Badge variant={statusConfig[request.status].variant} className="flex items-center gap-1">
+                              {statusIcons[request.status]}
+                              {statusConfig[request.status].label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-slate-500">{request.createdAt}</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
-
-        {/* Filters */}
-        <Card className="border shadow-sm">
-          <CardContent className="pt-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="搜索需求ID、产品名称、申请人..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-10"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px] h-10">
-                    <SelectValue placeholder="状态筛选" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">全部状态</SelectItem>
-                    <SelectItem value="draft">草稿</SelectItem>
-                    <SelectItem value="pending_confirmation">待确认</SelectItem>
-                    <SelectItem value="inquiry">询价中</SelectItem>
-                    <SelectItem value="quoting">报价中</SelectItem>
-                    <SelectItem value="comparing">比价中</SelectItem>
-                    <SelectItem value="pending_approval">待审批</SelectItem>
-                    <SelectItem value="approved">已批准</SelectItem>
-                    <SelectItem value="rejected">已拒绝</SelectItem>
-                    <SelectItem value="po_created">PO已生成</SelectItem>
-                    <SelectItem value="shipped">已发货</SelectItem>
-                    <SelectItem value="invoiced">已收票</SelectItem>
-                    <SelectItem value="paid">已付款</SelectItem>
-                    <SelectItem value="exception">异常</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Table */}
-        <Card className="border shadow-sm">
-          <CardHeader className="px-6 pb-4">
-            <CardTitle>需求列表</CardTitle>
-            <CardDescription>
-              共 {filteredRequests.length} 条采购需求
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-6 pt-0">
-            <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead className="font-medium">需求ID</TableHead>
-                    <TableHead className="font-medium">产品名称</TableHead>
-                    <TableHead className="font-medium text-muted-foreground">规格</TableHead>
-                    <TableHead className="font-medium">数量</TableHead>
-                    <TableHead className="font-medium">预算</TableHead>
-                    <TableHead className="font-medium">申请人</TableHead>
-                    <TableHead className="font-medium">状态</TableHead>
-                    <TableHead className="font-medium text-muted-foreground">创建时间</TableHead>
-                    <TableHead className="text-right font-medium">操作</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredRequests.map((request) => (
-                    <TableRow key={request.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium">{request.id}</TableCell>
-                      <TableCell>{request.productName}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{request.specifications}</TableCell>
-                      <TableCell>{request.quantity}</TableCell>
-                      <TableCell>¥{request.budget.toLocaleString()}</TableCell>
-                      <TableCell>{request.requester}</TableCell>
-                      <TableCell>
-                        <Badge variant={statusConfig[request.status].variant} className="gap-1 h-6 px-2.5">
-                          {statusIcons[request.status]}
-                          {statusConfig[request.status].label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{request.createdAt}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </AppLayout>
+      </AppLayout>
+    </div>
   );
 }
