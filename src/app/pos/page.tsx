@@ -165,7 +165,7 @@ export default function POSPage() {
         {/* Stats Grid - Top */}
         <Card className="border-slate-200 shadow-sm overflow-hidden">
           <CardHeader 
-            className="pb-2 pt-3 px-4 flex flex-row items-center justify-between cursor-pointer select-none"
+            className="pb-1 pt-2 px-4 flex flex-row items-center justify-between cursor-pointer select-none"
             onClick={() => setShowStats(!showStats)}
           >
             <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ export default function POSPage() {
         <div className="space-y-4">
           {/* Filters */}
           <Card className="border-slate-200 shadow-sm">
-            <CardContent className="pt-6 px-4 pb-4">
+            <CardContent className="pt-3 px-4 pb-3">
               <div className="flex flex-col gap-4 md:flex-row md:items-center">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -234,7 +234,7 @@ export default function POSPage() {
 
           {/* Table */}
           <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-3 pt-4 px-4 flex flex-row items-center justify-between">
+            <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
                 <CardDescription className="text-xs text-slate-500 mt-1">
