@@ -140,9 +140,9 @@ export default function POSPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
               采购订单
@@ -159,137 +159,132 @@ export default function POSPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-12 gap-4">
-          {/* Left Column - Stats */}
-          <div className="col-span-4 space-y-4">
-            {/* Stats Grid */}
-            <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3 pt-4 px-4">
-                <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <div className="grid grid-cols-2 gap-3">
-                  {stats.map((stat, index) => (
-                    <div 
-                      key={index} 
-                      className={`p-3 rounded-xl border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-slate-900 leading-none">{stat.value}</div>
-                        <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Filters & Table */}
-          <div className="col-span-8 space-y-4">
-            {/* Filters */}
-            <Card className="border-slate-200 shadow-sm">
-              <CardContent className="pt-6 px-4 pb-4">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                    <Input
-                      type="search"
-                      placeholder="搜索PO号、产品名称、供应商..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 h-10 bg-white border-slate-200"
-                    />
+        {/* Stats Grid - Top */}
+        <Card className="border-slate-200 shadow-sm">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {stats.map((stat, index) => (
+                <div 
+                  key={index} 
+                  className={`p-3 rounded-xl border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
-                  <div className="flex gap-2">
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
-                        <SelectValue placeholder="状态筛选" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">全部状态</SelectItem>
-                        <SelectItem value="pending_signature">待签署</SelectItem>
-                        <SelectItem value="signed">已签署</SelectItem>
-                        <SelectItem value="shipped">已发货</SelectItem>
-                        <SelectItem value="delivered">已收货</SelectItem>
-                        <SelectItem value="invoiced">已收票</SelectItem>
-                        <SelectItem value="paid">已付款</SelectItem>
-                        <SelectItem value="exception">异常</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div>
+                    <div className="text-lg font-bold text-slate-900 leading-none">{stat.value}</div>
+                    <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-            {/* Table */}
-            <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3 pt-4 px-4 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 mt-1">
-                    共 {filteredPOs.length} 个采购订单
-                  </CardDescription>
+        {/* Filters & Table - Bottom */}
+        <div className="space-y-4">
+          {/* Filters */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardContent className="pt-6 px-4 pb-4">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Input
+                    type="search"
+                    placeholder="搜索PO号、产品名称、供应商..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 h-10 bg-white border-slate-200"
+                  />
                 </div>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <div className="rounded-xl border border-slate-200 overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-slate-50 border-b border-slate-200">
-                        <TableHead className="font-semibold text-slate-700">PO号</TableHead>
-                        <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
-                        <TableHead className="font-semibold text-slate-700 text-slate-500">供应商</TableHead>
-                        <TableHead className="font-semibold text-slate-700">金额</TableHead>
-                        <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
-                        <TableHead className="font-semibold text-slate-700">状态</TableHead>
-                        <TableHead className="font-semibold text-slate-700 text-slate-500">创建时间</TableHead>
-                        <TableHead className="text-right font-semibold text-slate-700">操作</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredPOs.map((po) => {
-                        const config = statusConfig[po.status];
-                        const IconComponent = config.icon;
-                        
-                        return (
-                          <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
-                            <TableCell className="font-medium text-slate-900">{po.id}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Package className="w-4 h-4 text-slate-400" />
-                                <span className="text-slate-900">{po.productName}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-slate-500 text-sm">{po.supplier}</TableCell>
-                            <TableCell className="font-medium text-slate-900">¥{po.totalAmount.toLocaleString()}</TableCell>
-                            <TableCell className="text-slate-600">{po.deliveryDate}</TableCell>
-                            <TableCell>
-                              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
-                                <IconComponent className={`w-3.5 h-3.5 ${config.color}`} />
-                                <span className={`text-xs font-medium ${config.color}`}>
-                                  {config.label}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-slate-500 text-sm">{po.createdAt}</TableCell>
-                            <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100">
-                                <Eye className="h-4 w-4 text-slate-600" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+                <div className="flex gap-2">
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200">
+                      <SelectValue placeholder="状态筛选" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">全部状态</SelectItem>
+                      <SelectItem value="pending_signature">待签署</SelectItem>
+                      <SelectItem value="signed">已签署</SelectItem>
+                      <SelectItem value="shipped">已发货</SelectItem>
+                      <SelectItem value="delivered">已收货</SelectItem>
+                      <SelectItem value="invoiced">已收票</SelectItem>
+                      <SelectItem value="paid">已付款</SelectItem>
+                      <SelectItem value="exception">异常</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Table */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardHeader className="pb-3 pt-4 px-4 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
+                <CardDescription className="text-xs text-slate-500 mt-1">
+                  共 {filteredPOs.length} 个采购订单
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pb-4">
+              <div className="rounded-xl border border-slate-200 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50 border-b border-slate-200">
+                      <TableHead className="font-semibold text-slate-700">PO号</TableHead>
+                      <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
+                      <TableHead className="font-semibold text-slate-700 text-slate-500">供应商</TableHead>
+                      <TableHead className="font-semibold text-slate-700">金额</TableHead>
+                      <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
+                      <TableHead className="font-semibold text-slate-700">状态</TableHead>
+                      <TableHead className="font-semibold text-slate-700 text-slate-500">创建时间</TableHead>
+                      <TableHead className="text-right font-semibold text-slate-700">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPOs.map((po) => {
+                      const config = statusConfig[po.status];
+                      const IconComponent = config.icon;
+                      
+                      return (
+                        <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
+                          <TableCell className="font-medium text-slate-900">{po.id}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Package className="w-4 h-4 text-slate-400" />
+                              <span className="text-slate-900">{po.productName}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-slate-500 text-sm">{po.supplier}</TableCell>
+                          <TableCell className="font-medium text-slate-900">¥{po.totalAmount.toLocaleString()}</TableCell>
+                          <TableCell className="text-slate-600">{po.deliveryDate}</TableCell>
+                          <TableCell>
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
+                              <IconComponent className={`w-3.5 h-3.5 ${config.color}`} />
+                              <span className={`text-xs font-medium ${config.color}`}>
+                                {config.label}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-slate-500 text-sm">{po.createdAt}</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100">
+                              <Eye className="h-4 w-4 text-slate-600" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
