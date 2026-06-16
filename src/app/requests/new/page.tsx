@@ -21,7 +21,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
-import { analyzePurchaseRequirement } from '@/lib/hermes-agent';
+import { analyzePurchaseRequirement } from '@/app/actions/hermes';
 import { AIAnalysisResult } from '@/types';
 
 export default function NewRequestPage() {
