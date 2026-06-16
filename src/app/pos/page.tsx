@@ -29,7 +29,9 @@ import {
   FileCheck,
   CreditCard,
   FileSpreadsheet,
-  Package
+  Package,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import type { POStatus } from '@/types';
 
@@ -48,6 +50,7 @@ const statusConfig: Record<POStatus, { label: string; color: string; bg: string;
 export default function POSPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [showStats, setShowStats] = useState(true);
 
   const pos = [
     {
@@ -160,28 +163,36 @@ export default function POSPage() {
         </div>
 
         {/* Stats Grid - Top */}
-        <Card className="border-slate-200 shadow-sm">
-          <CardHeader className="pb-3 pt-4 px-4">
-            <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {stats.map((stat, index) => (
-                <div 
-                  key={index} 
-                  className={`p-3 rounded-xl border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-slate-900 leading-none">{stat.value}</div>
-                    <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
-                  </div>
-                </div>
-              ))}
+        <Card className="border-slate-200 shadow-sm overflow-hidden">
+          <CardHeader 
+            className="pb-2 pt-3 px-4 flex flex-row items-center justify-between cursor-pointer select-none"
+            onClick={() => setShowStats(!showStats)}
+          >
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
             </div>
-          </CardContent>
+            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100">
+              {showStats ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+            </Button>
+          </CardHeader>
+          {showStats && (
+            <CardContent className="px-4 pb-4 pt-0">
+              <div className="grid grid-cols-4 gap-2">
+                {stats.map((stat, index) => (
+                  <div 
+                    key={index} 
+                    className={`p-2.5 rounded-lg border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                      <span className="text-xs text-slate-500">{stat.label}</span>
+                    </div>
+                    <div className="text-base font-bold text-slate-900 leading-tight">{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          )}
         </Card>
 
         {/* Filters & Table - Bottom */}
