@@ -1,116 +1,136 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { 
   Home, 
   ShoppingCart, 
-  Users, 
   FileText, 
+  Users, 
   Settings,
   Bot,
-  ChevronRight,
-  ChevronLeft
+  Package
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { UserRole } from '@/types';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { UserRole } from '@/types';
 
-interface AppSidebarProps {
-  userRole: UserRole;
-}
-
-const navigation = {
-  requester: [
-    { name: '首页', href: '/', icon: Home },
-    { name: '我的需求', href: '/requests', icon: ShoppingCart },
-    { name: 'AI助手', href: '/ai-assistant', icon: Bot },
-  ],
-  purchaser: [
-    { name: '首页', href: '/', icon: Home },
-    { name: '采购需求', href: '/requests', icon: ShoppingCart },
-    { name: '供应商管理', href: '/suppliers', icon: Users },
-    { name: 'PO管理', href: '/pos', icon: FileText },
-    { name: 'AI助手', href: '/ai-assistant', icon: Bot },
-  ],
-  approver: [
-    { name: '首页', href: '/', icon: Home },
-    { name: '待审批', href: '/approvals', icon: FileText },
-    { name: 'AI助手', href: '/ai-assistant', icon: Bot },
-  ],
-  finance: [
-    { name: '首页', href: '/', icon: Home },
-    { name: '发票管理', href: '/invoices', icon: FileText },
-    { name: '付款记录', href: '/payments', icon: FileText },
-    { name: 'AI助手', href: '/ai-assistant', icon: Bot },
-  ],
+const roleNames: Record<UserRole, string> = {
+  requester: '需求申请人',
+  request_confirmer: '需求确认人',
+  purchaser: '采购专员',
+  approver: '审批人员',
+  finance: '财务人员',
+  supplier: '供应商',
 };
 
-export function AppSidebar({ userRole }: AppSidebarProps) {
-  const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+interface AppSidebarProps {
+  initialRole?: UserRole;
+}
 
-  const navItems = navigation[userRole] || navigation.requester;
+export function AppSidebar({ initialRole = 'purchaser' }: AppSidebarProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [currentRole, setCurrentRole] = useState<UserRole>(initialRole);
+
+  const menuItems = [
+    {
+      title: '首页',
+      icon: Home,
+      href: '/',
+    },
+    {
+      title: '采购需求',
+      icon: ShoppingCart,
+      href: '/requests',
+    },
+    {
+      title: '采购订单',
+      icon: FileText,
+      href: '/pos',
+    },
+    {
+      title: '供应商管理',
+      icon: Users,
+      href: '/suppliers',
+    },
+  ];
 
   return (
-    <div className={cn(
-      'flex flex-col border-r bg-card transition-all duration-300',
-      collapsed ? 'w-16' : 'w-64'
-    )}>
-      <div className="flex h-16 items-center justify-between border-b px-4">
-        {!collapsed && (
-          <h1 className="text-xl font-bold text-foreground">
-            AI采购系统
-          </h1>
-        )}
-        {collapsed && (
-          <Bot className="h-6 w-6 text-primary" />
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-md p-1 hover:bg-accent"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </button>
+    <div className="w-60 border-r border-slate-200 bg-slate-50/50 flex flex-col h-full">
+      <div className="p-6 border-b border-slate-200 bg-white/80">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <Bot className="h-5 w-5 text-white" />
+          </div>
+          <div className="space-y-0.5">
+            <h1 className="font-semibold text-slate-900">Hermes SRM</h1>
+            <p className="text-xs text-slate-500">智能采购管理系统</p>
+          </div>
+        </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
+      <div className="p-4 border-b border-slate-200">
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-slate-500">当前角色</label>
+          <Select 
+            value={currentRole} 
+            onValueChange={(value) => setCurrentRole(value as UserRole)}
+          >
+            <SelectTrigger className="h-9 bg-white border-slate-200">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(roleNames).map(([role, name]) => (
+                <SelectItem key={role} value={role}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <nav className="flex-1 p-4 space-y-1">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-              )}
+            <Button
+              key={item.href}
+              variant={isActive ? 'secondary' : 'ghost'}
+              className={`w-full justify-start gap-3 h-9 ${
+                isActive ? 'bg-white border border-slate-200 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              }`}
+              onClick={() => router.push(item.href)}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
-            </Link>
+              <item.icon className={`h-4 w-4 ${isActive ? 'text-orange-600' : 'text-slate-500'}`} />
+              {item.title}
+            </Button>
           );
         })}
       </nav>
 
-      <div className="border-t p-4">
-        <div className="flex items-center gap-3">
-          {!collapsed && (
-            <div className="text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">
-                {userRole === 'requester' && '需求申请人'}
-                {userRole === 'purchaser' && '采购专员'}
-                {userRole === 'approver' && '审批人员'}
-                {userRole === 'finance' && '财务人员'}
-              </p>
+      <div className="p-4 border-t border-slate-200 bg-white/50">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-100">
+            <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center">
+              <Package className="h-4 w-4 text-slate-600" />
             </div>
-          )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-900 truncate">演示用户</p>
+              <p className="text-xs text-slate-500 truncate">{roleNames[currentRole]}</p>
+            </div>
+          </div>
+          <Button variant="ghost" className="w-full justify-start gap-2 h-9 text-slate-600">
+            <Settings className="h-4 w-4" />
+            系统设置
+          </Button>
         </div>
       </div>
     </div>

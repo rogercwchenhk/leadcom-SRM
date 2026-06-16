@@ -1,6 +1,6 @@
 // 核心类型定义
 
-export type UserRole = 'requester' | 'purchaser' | 'approver' | 'finance';
+export type UserRole = 'requester' | 'request_confirmer' | 'purchaser' | 'approver' | 'finance' | 'supplier';
 
 export interface User {
   id: string;
@@ -98,13 +98,13 @@ export interface SupplierRecommendation {
 }
 
 export type POStatus = 
-  | 'pending' 
-  | 'confirmed' 
+  | 'pending_signature' 
+  | 'signed' 
   | 'shipped' 
+  | 'delivered'
   | 'invoiced' 
   | 'paid' 
-  | 'completed' 
-  | 'cancelled';
+  | 'exception';
 
 export interface PurchaseOrder {
   id: string;

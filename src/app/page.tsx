@@ -11,7 +11,8 @@ import {
   TrendingUp,
   Plus,
   ArrowRight,
-  Bot
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,15 +57,20 @@ const recentActivity = [
 export default function Home() {
   return (
     <AppLayout>
-      <div className="space-y-6">
+      <div className="space-y-8 max-w-6xl mx-auto">
+        {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">AI采购管理系统</h1>
-            <p className="text-muted-foreground">基于Hermes Agent的智能采购平台</p>
+          <div className="space-y-1">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              采购管理系统
+            </h1>
+            <p className="text-muted-foreground">
+              基于 Hermes Agent 的智能采购平台
+            </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Link href="/requests/new">
-              <Button className="gap-2">
+              <Button className="gap-2 h-10 px-5">
                 <Plus className="h-4 w-4" />
                 新建采购需求
               </Button>
@@ -75,18 +81,20 @@ export default function Home() {
         {/* Stats Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
-            <Card key={index}>
+            <Card key={index} className="border shadow-sm hover:shadow-md transition-shadow duration-200">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className="h-4 w-4 text-muted-foreground" />
+                <div className="p-2 bg-muted rounded-lg">
+                  <stat.icon className="h-4 w-4 text-foreground" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                <p className={`text-xs ${
-                  stat.trend === 'up' ? 'text-green-500' : 
-                  stat.trend === 'down' ? 'text-red-500' : 'text-muted-foreground'
+                <div className="text-2xl font-semibold text-foreground">{stat.value}</div>
+                <p className={`text-xs mt-1 ${
+                  stat.trend === 'up' ? 'text-emerald-600' : 
+                  stat.trend === 'down' ? 'text-rose-600' : 'text-muted-foreground'
                 }`}>
                   {stat.change}
                 </p>
@@ -97,37 +105,47 @@ export default function Home() {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-primary" />
-                AI智能助手
-              </CardTitle>
-              <CardDescription>
-                Hermes Agent 为您提供智能采购辅助
-              </CardDescription>
+          <Card className="border shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-orange-50 rounded-lg">
+                  <Bot className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <CardTitle>AI 智能助手</CardTitle>
+                  <CardDescription>
+                    Hermes Agent 为您提供智能采购辅助
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-3">
                 <Link href="/requests/new">
-                  <Button variant="secondary" className="w-full justify-start gap-2">
-                    <Bot className="h-4 w-4" />
-                    用自然语言描述采购需求
-                    <ArrowRight className="ml-auto h-4 w-4" />
+                  <Button variant="secondary" className="w-full justify-start gap-3 h-11 border shadow-sm hover:shadow transition-all duration-200">
+                    <div className="p-1.5 bg-orange-50 rounded-md">
+                      <Sparkles className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <span className="font-medium">用自然语言描述采购需求</span>
+                    <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />
                   </Button>
                 </Link>
                 <Link href="/requests">
-                  <Button variant="secondary" className="w-full justify-start gap-2">
-                    <ShoppingCart className="h-4 w-4" />
-                    查看所有采购需求
-                    <ArrowRight className="ml-auto h-4 w-4" />
+                  <Button variant="secondary" className="w-full justify-start gap-3 h-11 border shadow-sm hover:shadow transition-all duration-200">
+                    <div className="p-1.5 bg-muted rounded-md">
+                      <ShoppingCart className="h-4 w-4 text-foreground" />
+                    </div>
+                    <span className="font-medium">查看所有采购需求</span>
+                    <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />
                   </Button>
                 </Link>
                 <Link href="/pos">
-                  <Button variant="secondary" className="w-full justify-start gap-2">
-                    <FileText className="h-4 w-4" />
-                    管理采购订单
-                    <ArrowRight className="ml-auto h-4 w-4" />
+                  <Button variant="secondary" className="w-full justify-start gap-3 h-11 border shadow-sm hover:shadow transition-all duration-200">
+                    <div className="p-1.5 bg-muted rounded-md">
+                      <FileText className="h-4 w-4 text-foreground" />
+                    </div>
+                    <span className="font-medium">管理采购订单</span>
+                    <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />
                   </Button>
                 </Link>
               </div>
@@ -135,8 +153,8 @@ export default function Home() {
           </Card>
 
           {/* Recent Activity */}
-          <Card>
-            <CardHeader>
+          <Card className="border shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="pb-4">
               <CardTitle>最近动态</CardTitle>
               <CardDescription>
                 系统最新的采购活动记录
@@ -145,7 +163,7 @@ export default function Home() {
             <CardContent>
               <div className="space-y-4">
                 {recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-center justify-between">
+                  <div key={activity.id} className="flex items-center justify-between py-1">
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-foreground">
                         {activity.title}
@@ -154,10 +172,10 @@ export default function Home() {
                         {activity.type} · {activity.time}
                       </p>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      activity.status === '已完成' ? 'bg-green-100 text-green-700' :
-                      activity.status === '待确认' || activity.status === '待付款' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-blue-100 text-blue-700'
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                      activity.status === '已完成' ? 'bg-emerald-50 text-emerald-700' :
+                      activity.status === '待确认' || activity.status === '待付款' ? 'bg-amber-50 text-amber-700' :
+                      'bg-sky-50 text-sky-700'
                     }`}>
                       {activity.status}
                     </span>

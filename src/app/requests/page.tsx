@@ -25,15 +25,13 @@ import {
   ShoppingCart, 
   Plus, 
   Search, 
-  Filter, 
   Eye,
   Clock,
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { PurchaseRequestStatus } from '@/types';
-import { mockPurchaseRequests } from '@/lib/mock-data';
+import type { PurchaseRequestStatus } from '@/types';
 
 const statusConfig: Record<PurchaseRequestStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
   draft: { label: '草稿', variant: 'outline' },
@@ -52,19 +50,19 @@ const statusConfig: Record<PurchaseRequestStatus, { label: string; variant: 'def
 };
 
 const statusIcons: Record<PurchaseRequestStatus, React.ReactNode> = {
-  draft: <ShoppingCart className="h-4 w-4" />,
-  pending_confirmation: <Clock className="h-4 w-4" />,
-  inquiry: <ShoppingCart className="h-4 w-4" />,
-  quoting: <Clock className="h-4 w-4" />,
-  comparing: <Filter className="h-4 w-4" />,
-  pending_approval: <Clock className="h-4 w-4" />,
-  approved: <CheckCircle2 className="h-4 w-4" />,
-  rejected: <AlertCircle className="h-4 w-4" />,
-  po_created: <CheckCircle2 className="h-4 w-4" />,
-  shipped: <CheckCircle2 className="h-4 w-4" />,
-  invoiced: <CheckCircle2 className="h-4 w-4" />,
-  paid: <CheckCircle2 className="h-4 w-4" />,
-  exception: <AlertCircle className="h-4 w-4" />,
+  draft: <ShoppingCart className="h-3.5 w-3.5" />,
+  pending_confirmation: <Clock className="h-3.5 w-3.5" />,
+  inquiry: <ShoppingCart className="h-3.5 w-3.5" />,
+  quoting: <Clock className="h-3.5 w-3.5" />,
+  comparing: <Search className="h-3.5 w-3.5" />,
+  pending_approval: <Clock className="h-3.5 w-3.5" />,
+  approved: <CheckCircle2 className="h-3.5 w-3.5" />,
+  rejected: <AlertCircle className="h-3.5 w-3.5" />,
+  po_created: <CheckCircle2 className="h-3.5 w-3.5" />,
+  shipped: <CheckCircle2 className="h-3.5 w-3.5" />,
+  invoiced: <CheckCircle2 className="h-3.5 w-3.5" />,
+  paid: <CheckCircle2 className="h-3.5 w-3.5" />,
+  exception: <AlertCircle className="h-3.5 w-3.5" />,
 };
 
 export default function RequestsPage() {
@@ -127,17 +125,20 @@ export default function RequestsPage() {
 
   return (
     <AppLayout initialRole="purchaser">
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-6xl mx-auto">
+        {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">采购需求</h1>
-            <p className="text-muted-foreground">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              采购需求
+            </h1>
+            <p className="text-muted-foreground text-sm">
               管理所有采购需求，查看进度和状态
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Link href="/requests/new">
-              <Button className="gap-2">
+              <Button className="gap-2 h-10 px-5">
                 <Plus className="h-4 w-4" />
                 新建需求
               </Button>
@@ -146,22 +147,22 @@ export default function RequestsPage() {
         </div>
 
         {/* Filters */}
-        <Card>
+        <Card className="border shadow-sm">
           <CardContent className="pt-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="搜索需求ID、产品名称、申请人..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
+                  className="pl-9 h-10"
                 />
               </div>
               <div className="flex gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-[180px] h-10">
                     <SelectValue placeholder="状态筛选" />
                   </SelectTrigger>
                   <SelectContent>
@@ -187,53 +188,55 @@ export default function RequestsPage() {
         </Card>
 
         {/* Table */}
-        <Card>
-          <CardHeader className="px-6">
+        <Card className="border shadow-sm">
+          <CardHeader className="px-6 pb-4">
             <CardTitle>需求列表</CardTitle>
             <CardDescription>
               共 {filteredRequests.length} 条采购需求
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>需求ID</TableHead>
-                  <TableHead>产品名称</TableHead>
-                  <TableHead>规格</TableHead>
-                  <TableHead>数量</TableHead>
-                  <TableHead>预算</TableHead>
-                  <TableHead>申请人</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>创建时间</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredRequests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell className="font-medium">{request.id}</TableCell>
-                    <TableCell>{request.productName}</TableCell>
-                    <TableCell className="text-muted-foreground">{request.specifications}</TableCell>
-                    <TableCell>{request.quantity}</TableCell>
-                    <TableCell>¥{request.budget.toLocaleString()}</TableCell>
-                    <TableCell>{request.requester}</TableCell>
-                    <TableCell>
-                      <Badge variant={statusConfig[request.status].variant} className="gap-1">
-                        {statusIcons[request.status]}
-                        {statusConfig[request.status].label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{request.createdAt}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+          <CardContent className="px-6 pt-0">
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="font-medium">需求ID</TableHead>
+                    <TableHead className="font-medium">产品名称</TableHead>
+                    <TableHead className="font-medium text-muted-foreground">规格</TableHead>
+                    <TableHead className="font-medium">数量</TableHead>
+                    <TableHead className="font-medium">预算</TableHead>
+                    <TableHead className="font-medium">申请人</TableHead>
+                    <TableHead className="font-medium">状态</TableHead>
+                    <TableHead className="font-medium text-muted-foreground">创建时间</TableHead>
+                    <TableHead className="text-right font-medium">操作</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredRequests.map((request) => (
+                    <TableRow key={request.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium">{request.id}</TableCell>
+                      <TableCell>{request.productName}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{request.specifications}</TableCell>
+                      <TableCell>{request.quantity}</TableCell>
+                      <TableCell>¥{request.budget.toLocaleString()}</TableCell>
+                      <TableCell>{request.requester}</TableCell>
+                      <TableCell>
+                        <Badge variant={statusConfig[request.status].variant} className="gap-1 h-6 px-2.5">
+                          {statusIcons[request.status]}
+                          {statusConfig[request.status].label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{request.createdAt}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

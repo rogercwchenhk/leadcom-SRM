@@ -4,258 +4,392 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   FileText, 
-  Search, 
+  Upload, 
   Truck, 
   FileCheck, 
   CreditCard,
-  Upload,
-  Send,
-  Eye
+  CheckCircle2,
+  Search,
+  Eye,
+  Package
 } from 'lucide-react';
+import type { POStatus } from '@/types';
 
-export default function SupplierPortal() {
+const statusConfig: Record<POStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+  pending_signature: { label: '待确认', variant: 'secondary' },
+  signed: { label: '已确认', variant: 'default' },
+  shipped: { label: '已发货', variant: 'default' },
+  delivered: { label: '已收货', variant: 'default' },
+  invoiced: { label: '已收票', variant: 'default' },
+  paid: { label: '已付款', variant: 'default' },
+  exception: { label: '异常', variant: 'destructive' },
+};
+
+export default function SupplierPage() {
   const [activeTab, setActiveTab] = useState('orders');
+  const [selectedPO, setSelectedPO] = useState<string | null>(null);
+  const [shippingTrackingNumber, setShippingTrackingNumber] = useState('');
+  const [invoiceImage, setInvoiceImage] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const orders = [
     {
-      id: 'PO202401200001',
+      id: 'PO-2024-0120-001',
+      productName: '笔记本电脑',
+      specifications: '联想ThinkPad X1 Carbon',
+      quantity: 5,
+      totalAmount: 28500,
+      status: 'pending_signature' as POStatus,
+      createdAt: '2024-01-20 14:30:00',
+      deliveryDate: '2024-01-27',
+    },
+    {
+      id: 'PO-2024-0119-001',
+      productName: '打印机',
+      specifications: '惠普 LaserJet Pro',
+      quantity: 2,
+      totalAmount: 7800,
+      status: 'signed' as POStatus,
+      createdAt: '2024-01-19 16:45:00',
+      deliveryDate: '2024-01-24',
+    },
+    {
+      id: 'PO-2024-0118-001',
       productName: '办公用纸',
       specifications: 'A4复印纸 80g',
       quantity: 100,
-      totalAmount: 4800,
-      status: 'pending_confirmation',
-      createdAt: '2024-01-20 11:00:00',
-    },
-    {
-      id: 'PO202401190002',
-      productName: '显示器',
-      specifications: '戴尔 27英寸 4K',
-      quantity: 3,
-      totalAmount: 11500,
-      status: 'shipped',
-      trackingNumber: 'SF1234567890',
-      createdAt: '2024-01-19 15:30:00',
+      totalAmount: 4500,
+      status: 'paid' as POStatus,
+      createdAt: '2024-01-18 10:20:00',
+      deliveryDate: '2024-01-20',
+      paidAt: '2024-01-21 15:30:00',
     },
   ];
 
+  const filteredOrders = orders.filter(order => 
+    order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const selectedOrder = orders.find(o => o.id === selectedPO);
+
+  const handleConfirmOrder = (orderId: string) => {
+    // 模拟确认订单
+    alert(`订单 ${orderId} 已确认`);
+  };
+
+  const handleSubmitShipping = () => {
+    if (!shippingTrackingNumber) return;
+    // 模拟提交发货单号
+    alert(`发货单号 ${shippingTrackingNumber} 已提交`);
+    setShippingTrackingNumber('');
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setInvoiceImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmitInvoice = () => {
+    if (!invoiceImage) return;
+    // 模拟提交发票
+    alert('发票照片已提交');
+    setInvoiceImage(null);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">供应商协作平台</h1>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">诚信电子有限公司</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+                供应商协作平台
+              </h1>
+              <p className="text-slate-600">
+                查看订单、发货、提交发票和查询付款
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <Package className="h-5 w-5 text-orange-600" />
+              </div>
+            </div>
           </div>
         </div>
-      </header>
 
-      <main className="p-6">
-        <div className="max-w-5xl mx-auto space-y-6">
-          {/* Welcome Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>欢迎，诚信电子</CardTitle>
-              <CardDescription>
-                管理您的订单、发货和发票
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="orders">订单管理</TabsTrigger>
-              <TabsTrigger value="shipments">发货管理</TabsTrigger>
-              <TabsTrigger value="invoices">发票管理</TabsTrigger>
-              <TabsTrigger value="payments">付款查询</TabsTrigger>
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full border-b border-slate-100 bg-transparent px-6 py-4">
+              <div className="flex gap-2">
+                <TabsTrigger value="orders" className="data-[state=active]:bg-slate-50">
+                  <FileText className="h-4 w-4 mr-2" />
+                  订单管理
+                </TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-slate-50">
+                  <FileCheck className="h-4 w-4 mr-2" />
+                  历史订单
+                </TabsTrigger>
+                <TabsTrigger value="payment" className="data-[state=active]:bg-slate-50">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  付款查询
+                </TabsTrigger>
+              </div>
             </TabsList>
 
-            {/* 订单管理 */}
-            <TabsContent value="orders" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>订单列表</CardTitle>
-                  <CardDescription>查看和确认采购订单</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {orders.map((order) => (
-                      <Card key={order.id}>
-                        <CardContent className="pt-6">
-                          <div className="flex items-center justify-between">
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-3">
-                                <h3 className="font-semibold text-foreground">{order.id}</h3>
-                                <Badge variant="outline">
-                                  {order.status === 'pending_confirmation' ? '待确认' : 
-                                   order.status === 'shipped' ? '已发货' : '已完成'}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground">
-                                {order.productName} - {order.specifications}
-                              </p>
-                              <div className="flex gap-6 text-sm text-muted-foreground">
-                                <span>数量：{order.quantity}</span>
-                                <span>金额：¥{order.totalAmount.toLocaleString()}</span>
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              {order.status === 'pending_confirmation' && (
-                                <Button>
-                                  确认订单
+            <TabsContent value="orders" className="p-6 space-y-6">
+              {!selectedPO ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-slate-900">待处理订单</h2>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <Input
+                        type="search"
+                        placeholder="搜索订单..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 w-64"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-slate-200 overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-slate-50">
+                          <TableHead className="font-medium">PO号</TableHead>
+                          <TableHead className="font-medium">产品名称</TableHead>
+                          <TableHead className="font-medium">数量</TableHead>
+                          <TableHead className="font-medium">金额</TableHead>
+                          <TableHead className="font-medium">状态</TableHead>
+                          <TableHead className="text-right font-medium">操作</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredOrders.map((order) => (
+                          <TableRow key={order.id} className="hover:bg-slate-50">
+                            <TableCell className="font-medium">{order.id}</TableCell>
+                            <TableCell>{order.productName}</TableCell>
+                            <TableCell>{order.quantity}</TableCell>
+                            <TableCell>¥{order.totalAmount.toLocaleString()}</TableCell>
+                            <TableCell>
+                              <Badge variant={statusConfig[order.status].variant}>
+                                {statusConfig[order.status].label}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => setSelectedPO(order.id)}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  查看
                                 </Button>
-                              )}
-                              <Button variant="ghost" size="icon">
-                                <Eye className="h-4 w-4" />
-                              </Button>
+                                {order.status === 'pending_signature' && (
+                                  <Button 
+                                    size="sm"
+                                    onClick={() => handleConfirmOrder(order.id)}
+                                  >
+                                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                                    确认
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setSelectedPO(null)}
+                    >
+                      ← 返回
+                    </Button>
+                    <h2 className="text-lg font-semibold text-slate-900">
+                      订单详情 {selectedPO}
+                    </h2>
+                  </div>
+
+                  {selectedOrder && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <Card className="border-slate-200">
+                        <CardHeader>
+                          <CardTitle>订单信息</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">产品名称</span>
+                              <span className="font-medium">{selectedOrder.productName}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">规格</span>
+                              <span className="font-medium">{selectedOrder.specifications}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">数量</span>
+                              <span className="font-medium">{selectedOrder.quantity}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">总金额</span>
+                              <span className="font-semibold text-lg">¥{selectedOrder.totalAmount.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">交货日期</span>
+                              <span className="font-medium">{selectedOrder.deliveryDate}</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
-            {/* 发货管理 */}
-            <TabsContent value="shipments" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>输入发货单号</CardTitle>
-                  <CardDescription>为已确认的订单输入发货信息</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="poNumber">PO编号</Label>
-                      <Input id="poNumber" placeholder="输入PO编号" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="trackingNumber">发货单号</Label>
-                      <Input id="trackingNumber" placeholder="输入快递单号" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="carrier">物流公司</Label>
-                      <Input id="carrier" placeholder="如：顺丰、圆通等" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="estimatedDelivery">预计送达日期</Label>
-                      <Input id="estimatedDelivery" type="date" />
-                    </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <Button className="gap-2">
-                      <Send className="h-4 w-4" />
-                      提交发货信息
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="space-y-6">
+                        {selectedOrder.status === 'signed' && (
+                          <Card className="border-slate-200">
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2">
+                                <Truck className="h-5 w-5" />
+                                发货信息
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <div className="space-y-2">
+                                <Label>发货单号</Label>
+                                <Input
+                                  placeholder="请输入发货单号"
+                                  value={shippingTrackingNumber}
+                                  onChange={(e) => setShippingTrackingNumber(e.target.value)}
+                                />
+                              </div>
+                              <Button 
+                                onClick={handleSubmitShipping}
+                                disabled={!shippingTrackingNumber}
+                                className="w-full"
+                              >
+                                提交发货单号
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>发货记录</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-muted-foreground text-center py-8">
-                    暂无发货记录
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                        {selectedOrder.status === 'shipped' && (
+                          <Card className="border-slate-200">
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2">
+                                <FileCheck className="h-5 w-5" />
+                                提交发票
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <div className="space-y-2">
+                                <Label>发票照片</Label>
+                                {invoiceImage ? (
+                                  <div className="space-y-2">
+                                    <img src={invoiceImage} alt="发票预览" className="rounded-lg border border-slate-200 max-h-40 object-cover" />
+                                    <Button variant="ghost" size="sm" onClick={() => setInvoiceImage(null)}>
+                                      重新上传
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center cursor-pointer hover:border-slate-400 transition-colors">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={handleFileUpload}
+                                      className="hidden"
+                                      id="invoice-upload"
+                                    />
+                                    <label htmlFor="invoice-upload" className="cursor-pointer">
+                                      <Upload className="h-10 w-10 text-slate-400 mx-auto mb-2" />
+                                      <p className="text-slate-600">点击上传发票照片</p>
+                                      <p className="text-sm text-slate-500">支持 JPG、PNG 格式</p>
+                                    </label>
+                                  </div>
+                                )}
+                              </div>
+                              {invoiceImage && (
+                                <Button 
+                                  onClick={handleSubmitInvoice}
+                                  className="w-full"
+                                >
+                                  提交发票
+                                </Button>
+                              )}
+                            </CardContent>
+                          </Card>
+                        )}
 
-            {/* 发票管理 */}
-            <TabsContent value="invoices" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>提交发票</CardTitle>
-                  <CardDescription>上传发票照片</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="invoicePoNumber">PO编号</Label>
-                      <Input id="invoicePoNumber" placeholder="输入PO编号" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="invoiceNumber">发票号码</Label>
-                      <Input id="invoiceNumber" placeholder="输入发票号码" />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="invoiceAmount">发票金额</Label>
-                      <Input id="invoiceAmount" type="number" placeholder="输入发票金额" />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label>发票照片</Label>
-                      <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">点击或拖拽上传发票照片</p>
+                        {selectedOrder.status === 'paid' && (
+                          <Card className="border-emerald-200 bg-emerald-50">
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2 text-emerald-800">
+                                <CreditCard className="h-5 w-5" />
+                                付款状态
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                              <div className="flex items-center gap-2 text-emerald-700">
+                                <CheckCircle2 className="h-5 w-5" />
+                                <span className="font-medium">已付款</span>
+                              </div>
+                              <p className="text-sm text-emerald-600">
+                                付款时间：{selectedOrder.paidAt}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <Button className="gap-2">
-                      <Upload className="h-4 w-4" />
-                      提交发票
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>发票记录</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-muted-foreground text-center py-8">
-                    暂无发票记录
-                  </div>
-                </CardContent>
-              </Card>
+                  )}
+                </div>
+              )}
             </TabsContent>
 
-            {/* 付款查询 */}
-            <TabsContent value="payments" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>付款查询</CardTitle>
-                  <CardDescription>查询订单的付款状态</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex gap-2">
-                    <Input placeholder="输入PO编号查询" />
-                    <Button>
-                      <Search className="h-4 w-4 mr-2" />
-                      查询
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="history" className="p-6">
+              <div className="text-center py-12">
+                <FileCheck className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-slate-900 mb-2">历史订单</h3>
+                <p className="text-slate-600">查看您的所有历史订单记录</p>
+              </div>
+            </TabsContent>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>付款记录</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-muted-foreground text-center py-8">
-                    暂无付款记录
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="payment" className="p-6">
+              <div className="text-center py-12">
+                <CreditCard className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-slate-900 mb-2">付款查询</h3>
+                <p className="text-slate-600">查询所有订单的付款状态和记录</p>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
