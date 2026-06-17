@@ -146,7 +146,7 @@ export default function RequestsPage() {
           </div>
           <div className="flex gap-3">
             <Link href="/requests/new">
-              <Button className="gap-2 h-10 px-6 bg-orange-600 hover:bg-orange-700 text-white rounded-lg">
+              <Button className="gap-2 h-10 px-6 rounded-lg">
                 <Plus className="h-4 w-4" />
                 新建需求
               </Button>
