@@ -290,8 +290,8 @@ export default function SupplierPage() {
           <div className="flex items-center gap-3">
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                  <Plus className="w-4 h-4 mr-1.5" />
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs">
+                  <Plus className="w-3.5 h-3.5 mr-1" />
                   新增供应商
                 </Button>
               </DialogTrigger>
@@ -409,87 +409,87 @@ export default function SupplierPage() {
             <div className="col-span-5 space-y-4">
               {/* Search and Supplier List */}
               <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-1 pt-2 px-4">
+                <CardHeader className="pb-1 pt-1.5 px-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-slate-900">供应商列表</CardTitle>
+                    <CardTitle className="text-xs font-semibold text-slate-900">供应商列表</CardTitle>
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-1.5">
                     <div className="relative">
-                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
                       <Input
                         type="search"
                         placeholder="搜索供应商..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 w-full"
+                        className="pl-8 w-full h-8 text-xs"
                       />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {filteredSuppliers.map((supplier) => (
                       <div 
                         key={supplier.id}
                         onClick={() => setSelectedSupplier(supplier.id)}
-                        className={`p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
+                        className={`p-2.5 rounded-lg border cursor-pointer transition-all duration-200 ${
                           selectedSupplier === supplier.id 
                             ? 'border-orange-300 bg-orange-50' 
                             : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-start justify-between mb-1.5">
                           <div className="flex items-center gap-2">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                               selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
                             }`}>
-                              <Building2 className={`w-4 h-4 ${
+                              <Building2 className={`w-3.5 h-3.5 ${
                                 selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
                               }`} />
                             </div>
                             <div>
-                              <h3 className={`text-sm font-semibold ${
+                              <h3 className={`text-xs font-semibold ${
                                 selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
                               }`}>
                                 {supplier.name}
                               </h3>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-[10px] text-slate-500">
                                 {supplier.categories.join(' · ')}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             <div className="flex items-center">
-                              <span className="text-xs font-medium text-yellow-600">★</span>
-                              <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
+                              <span className="text-[10px] font-medium text-yellow-600">★</span>
+                              <span className="text-[10px] text-slate-600 ml-0.5">{supplier.rating}</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="grid grid-cols-2 gap-1.5 text-[10px]">
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Users className="w-3 h-3" />
+                            <Users className="w-2.5 h-2.5" />
                             <span>{supplier.contactPerson}</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Phone className="w-3 h-3" />
-                            <span>{supplier.phone}</span>
+                            <Phone className="w-2.5 h-2.5" />
+                            <span className="truncate">{supplier.phone}</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <FileText className="w-3 h-3" />
+                            <FileText className="w-2.5 h-2.5" />
                             <span>合作 {supplier.historicalCooperationCount} 次</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Clock className="w-3 h-3" />
+                            <Clock className="w-2.5 h-2.5" />
                             <span>平均 {supplier.averageDeliveryDays} 天</span>
                           </div>
                         </div>
 
                         {supplier.activePOCount > 0 && (
-                          <div className="mt-2 pt-2 border-t border-slate-200">
+                          <div className="mt-1.5 pt-1.5 border-t border-slate-200">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-slate-500">进行中订单</span>
-                              <Badge variant="secondary" className="text-xs">
+                              <span className="text-[10px] text-slate-500">进行中订单</span>
+                              <Badge variant="secondary" className="text-[9px] h-4 px-1">
                                 {supplier.activePOCount} 个
                               </Badge>
                             </div>
@@ -508,55 +508,55 @@ export default function SupplierPage() {
                 <div className="space-y-4">
                   {/* Supplier Info Card */}
                   <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="pb-1 pt-2 px-4">
-                      <CardTitle className="text-sm font-semibold text-slate-900">
+                    <CardHeader className="pb-1 pt-1.5 px-3">
+                      <CardTitle className="text-xs font-semibold text-slate-900">
                         供应商详情
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="px-4 pb-4 pt-0">
                       <div className="space-y-3">
                         {/* Basic Info */}
-                        <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                          <div className="flex items-start justify-between mb-3">
+                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                          <div className="flex items-start justify-between mb-2.5">
                             <div>
-                              <h3 className="text-base font-semibold text-slate-900">
+                              <h3 className="text-sm font-semibold text-slate-900">
                                 {selectedSupplierData.name}
                               </h3>
-                              <p className="text-xs text-slate-500 mt-1">
+                              <p className="text-[10px] text-slate-500 mt-0.5">
                                 {selectedSupplierData.categories.join(' · ')}
                               </p>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded-full">
-                                <span className="text-sm font-medium text-yellow-600">★</span>
-                                <span className="text-sm font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-yellow-50 rounded-full">
+                                <span className="text-[10px] font-medium text-yellow-600">★</span>
+                                <span className="text-[10px] font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm">
-                                <Users className="w-4 h-4 text-slate-400" />
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-1.5 text-[11px]">
+                                <Users className="w-3.5 h-3.5 text-slate-400" />
                                 <span className="text-slate-600">联系人：</span>
                                 <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <Phone className="w-4 h-4 text-slate-400" />
+                              <div className="flex items-center gap-1.5 text-[11px]">
+                                <Phone className="w-3.5 h-3.5 text-slate-400" />
                                 <span className="text-slate-600">电话：</span>
                                 <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <Mail className="w-4 h-4 text-slate-400" />
+                              <div className="flex items-center gap-1.5 text-[11px]">
+                                <Mail className="w-3.5 h-3.5 text-slate-400" />
                                 <span className="text-slate-600">邮箱：</span>
-                                <span className="font-medium text-slate-900 text-xs">{selectedSupplierData.email}</span>
+                                <span className="font-medium text-slate-900 text-[10px] truncate">{selectedSupplierData.email}</span>
                               </div>
                             </div>
-                            <div className="space-y-2">
-                              <div className="flex items-start gap-2 text-sm">
-                                <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <div className="space-y-1.5">
+                              <div className="flex items-start gap-1.5 text-[11px]">
+                                <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
                                 <span className="text-slate-600">地址：</span>
-                                <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
+                                <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
                                   {selectedSupplierData.address}
                                 </span>
                               </div>
@@ -565,34 +565,34 @@ export default function SupplierPage() {
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-4 gap-2">
-                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-1">
-                              <FileText className="w-3.5 h-3.5 text-blue-500" />
+                        <div className="grid grid-cols-4 gap-1.5">
+                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <FileText className="w-3 h-3 text-blue-500" />
                             </div>
-                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.historicalCooperationCount}</div>
-                            <div className="text-[10px] text-slate-500">合作次数</div>
+                            <div className="text-xs font-bold text-slate-900 leading-tight">{selectedSupplierData.historicalCooperationCount}</div>
+                            <div className="text-[9px] text-slate-500">合作次数</div>
                           </div>
-                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-1">
-                              <Clock className="w-3.5 h-3.5 text-purple-500" />
+                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <Clock className="w-3 h-3 text-purple-500" />
                             </div>
-                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.averageDeliveryDays}</div>
-                            <div className="text-[10px] text-slate-500">平均货期</div>
+                            <div className="text-xs font-bold text-slate-900 leading-tight">{selectedSupplierData.averageDeliveryDays}</div>
+                            <div className="text-[9px] text-slate-500">平均货期</div>
                           </div>
-                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-1">
-                              <DollarSign className="w-3.5 h-3.5 text-green-500" />
+                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <DollarSign className="w-3 h-3 text-green-500" />
                             </div>
-                            <div className="text-sm font-bold text-slate-900">¥{(selectedSupplierData.totalTransactionAmount / 1000).toFixed(0)}K</div>
-                            <div className="text-[10px] text-slate-500">累计金额</div>
+                            <div className="text-xs font-bold text-slate-900 leading-tight">¥{(selectedSupplierData.totalTransactionAmount / 1000).toFixed(0)}K</div>
+                            <div className="text-[9px] text-slate-500">累计金额</div>
                           </div>
-                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-1">
-                              <Calendar className="w-3.5 h-3.5 text-orange-500" />
+                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <Calendar className="w-3 h-3 text-orange-500" />
                             </div>
-                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.lastTransactionDate}</div>
-                            <div className="text-[10px] text-slate-500">最后交易</div>
+                            <div className="text-[10px] font-bold text-slate-900 leading-tight">{selectedSupplierData.lastTransactionDate}</div>
+                            <div className="text-[9px] text-slate-500">最后交易</div>
                           </div>
                         </div>
                       </div>
@@ -601,9 +601,9 @@ export default function SupplierPage() {
 
                   {/* Historical POs */}
                   <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
-                      <CardTitle className="text-sm font-semibold text-slate-900">历史订单</CardTitle>
-                      <Button variant="ghost" size="sm" className="text-xs text-slate-500 hover:text-slate-700 h-7">
+                    <CardHeader className="pb-1 pt-1.5 px-3 flex flex-row items-center justify-between">
+                      <CardTitle className="text-xs font-semibold text-slate-900">历史订单</CardTitle>
+                      <Button variant="ghost" size="sm" className="text-[10px] text-slate-500 hover:text-slate-700 h-6">
                         查看全部
                       </Button>
                     </CardHeader>
@@ -612,35 +612,35 @@ export default function SupplierPage() {
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-slate-50">
-                              <TableHead className="py-2 px-3 text-xs font-medium">PO号</TableHead>
-                              <TableHead className="py-2 px-3 text-xs font-medium">产品名称</TableHead>
-                              <TableHead className="py-2 px-3 text-xs font-medium">数量</TableHead>
-                              <TableHead className="py-2 px-3 text-xs font-medium">金额</TableHead>
-                              <TableHead className="py-2 px-3 text-xs font-medium">状态</TableHead>
-                              <TableHead className="py-2 px-3 text-right text-xs font-medium">交期</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">PO号</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">产品名称</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">数量</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">金额</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">状态</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-right text-[10px] font-medium">交期</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {selectedPOs.map((po) => (
                               <TableRow key={po.id} className="hover:bg-slate-50">
-                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
                                   {po.poNumber}
                                 </TableCell>
-                                <TableCell className="py-2 px-3 text-xs text-slate-700">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-700">
                                   {po.productName}
                                 </TableCell>
-                                <TableCell className="py-2 px-3 text-xs text-slate-600">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-600">
                                   {po.quantity}
                                 </TableCell>
-                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
                                   ¥{po.totalAmount.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="py-2 px-3">
-                                  <Badge variant={statusConfig[po.status].variant} className="text-[10px]">
+                                <TableCell className="py-1.5 px-2.5">
+                                  <Badge variant={statusConfig[po.status].variant} className="text-[9px] h-4 px-1">
                                     {statusConfig[po.status].label}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="py-2 px-3 text-right text-xs text-slate-600">
+                                <TableCell className="py-1.5 px-2.5 text-right text-[10px] text-slate-600">
                                   {po.deliveryDate}
                                 </TableCell>
                               </TableRow>
@@ -670,13 +670,13 @@ export default function SupplierPage() {
         <div className="md:hidden space-y-4">
           {/* Search and Add Button */}
           <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
+            <CardHeader className="pb-1 pt-1.5 px-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold text-slate-900">供应商管理</CardTitle>
+                <CardTitle className="text-xs font-semibold text-slate-900">供应商管理</CardTitle>
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-8">
-                      <Plus className="w-4 h-4" />
+                    <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-7 px-2">
+                      <Plus className="w-3.5 h-3.5" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-lg">
@@ -794,53 +794,53 @@ export default function SupplierPage() {
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-4 pt-0">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {filteredSuppliers.map((supplier) => (
                   <div 
                     key={supplier.id}
-                    className="p-3 rounded-lg border border-slate-200 bg-white"
+                    className="p-2.5 rounded-lg border border-slate-200 bg-white"
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                          <Building2 className="w-4 h-4 text-slate-600" />
+                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
+                          <Building2 className="w-3.5 h-3.5 text-slate-600" />
                         </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-slate-900">{supplier.name}</h3>
-                          <p className="text-xs text-slate-500">{supplier.categories.join(' · ')}</p>
+                          <h3 className="text-xs font-semibold text-slate-900">{supplier.name}</h3>
+                          <p className="text-[10px] text-slate-500">{supplier.categories.join(' · ')}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs font-medium text-yellow-600">★</span>
-                        <span className="text-xs text-slate-600">{supplier.rating}</span>
+                      <div className="flex items-center gap-0.5">
+                        <span className="text-[10px] font-medium text-yellow-600">★</span>
+                        <span className="text-[10px] text-slate-600">{supplier.rating}</span>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] mb-1.5">
                       <div className="flex items-center gap-1 text-slate-600">
-                        <Users className="w-3 h-3" />
+                        <Users className="w-2.5 h-2.5" />
                         <span>{supplier.contactPerson}</span>
                       </div>
                       <div className="flex items-center gap-1 text-slate-600">
-                        <Phone className="w-3 h-3" />
-                        <span>{supplier.phone}</span>
+                        <Phone className="w-2.5 h-2.5" />
+                        <span className="truncate">{supplier.phone}</span>
                       </div>
                       <div className="flex items-center gap-1 text-slate-600">
-                        <FileText className="w-3 h-3" />
+                        <FileText className="w-2.5 h-2.5" />
                         <span>{supplier.historicalCooperationCount} 次合作</span>
                       </div>
                       <div className="flex items-center gap-1 text-slate-600">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-2.5 h-2.5" />
                         <span>{supplier.averageDeliveryDays} 天</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                      <div className="text-xs text-slate-500">
+                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-200">
+                      <div className="text-[10px] text-slate-500">
                         累计 ¥{(supplier.totalTransactionAmount / 1000).toFixed(0)}K
                       </div>
                       {supplier.activePOCount > 0 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[9px] h-4 px-1">
                           {supplier.activePOCount} 个进行中
                         </Badge>
                       )}
