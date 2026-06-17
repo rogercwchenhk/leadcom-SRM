@@ -155,7 +155,7 @@ export function AIChatWindow() {
         className="fixed bottom-6 right-6 z-50 flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA] px-2 py-1.5 text-white shadow-lg hover:from-[#7C3AED] hover:to-[#9333EA] transition-all hover:scale-105"
       >
         <MessageSquare className="size-4" />
-        <span className="font-medium text-sm">AI助手</span>
+        <span className="font-medium text-base">AI助手</span>
       </button>
     );
   }
@@ -170,7 +170,7 @@ export function AIChatWindow() {
           </div>
           <div>
             <h3 className="font-semibold text-foreground">AI采购助手</h3>
-            <p className="text-xs text-muted-foreground">基于Hermes Agent</p>
+            <p className="text-sm text-muted-foreground">基于Hermes Agent</p>
           </div>
         </div>
         <Button
@@ -203,7 +203,7 @@ export function AIChatWindow() {
                 )}
               >
                 {message.role === 'user' ? (
-                  <span className="text-xs font-medium">你</span>
+                  <span className="text-sm font-medium">你</span>
                 ) : (
                   <Bot className="size-4 text-muted-foreground" />
                 )}
@@ -218,7 +218,7 @@ export function AIChatWindow() {
               >
                 <p className={cn(
                   'whitespace-pre-wrap leading-relaxed',
-                  message.role === 'user' ? 'text-xs' : 'text-[10px]'
+                  message.role === 'user' ? 'text-sm' : 'text-xs'
                 )}>
                   {message.content}
                 </p>
@@ -251,7 +251,7 @@ export function AIChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="输入你的需求..."
             disabled={isLoading}
-            className="flex-1 bg-background text-xs"
+            className="flex-1 bg-background text-sm"
           />
           <Button
             type="submit"
