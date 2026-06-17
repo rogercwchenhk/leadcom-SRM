@@ -105,9 +105,10 @@ export default function TeamPage() {
                       { step: 1, title: '对外询价', role: '梁静（采购专员）' },
                       { step: 2, title: '订单生产', role: '梁静（采购专员）' },
                       { step: 3, title: '收货确认', role: '客服 + 梁静' },
-                      { step: 4, title: '付款申请', role: '梁静（采购专员）' },
-                      { step: 5, title: '审批', role: '钟丽莉（采购负责人）' },
-                      { step: 6, title: '付款完成', role: '财务' }
+                      { step: 4, title: '收发票', role: '梁静（采购专员）' },
+                      { step: 5, title: '付款申请', role: '梁静（采购专员）' },
+                      { step: 6, title: '审批', role: '钟丽莉（采购负责人）' },
+                      { step: 7, title: '付款完成', role: '财务' }
                     ].map((item) => (
                       <div key={item.step} className="flex items-start gap-3">
                         <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center flex-shrink-0 mt-0.5">
