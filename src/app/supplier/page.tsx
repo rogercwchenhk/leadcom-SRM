@@ -287,114 +287,7 @@ export default function SupplierPage() {
               管理供应商信息、查看合作记录和历史订单
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs">
-                  <Plus className="w-3.5 h-3.5 mr-1" />
-                  新增供应商
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>新增供应商</DialogTitle>
-                  <DialogDescription>
-                    添加新的供应商信息，带 * 号的为必填项
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">
-                      供应商名称 <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="name"
-                      value={newSupplier.name}
-                      onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
-                      placeholder="请输入供应商名称"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="contactPerson">
-                        联系人 <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="contactPerson"
-                        value={newSupplier.contactPerson}
-                        onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
-                        placeholder="联系人姓名"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="phone">联系电话</Label>
-                      <Input
-                        id="phone"
-                        value={newSupplier.phone}
-                        onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
-                        placeholder="联系电话"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">电子邮箱</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newSupplier.email}
-                      onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
-                      placeholder="example@company.com"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="address">地址</Label>
-                    <Textarea
-                      id="address"
-                      value={newSupplier.address}
-                      onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
-                      placeholder="供应商地址"
-                      rows={2}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="categories">
-                      经营类别 <span className="text-xs text-slate-500">(多个类别用逗号分隔)</span>
-                    </Label>
-                    <Input
-                      id="categories"
-                      value={newSupplier.categories}
-                      onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
-                      placeholder="例如：办公设备, 电子产品, 文具"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsAddDialogOpen(false);
-                      setNewSupplier({
-                        name: '',
-                        contactPerson: '',
-                        phone: '',
-                        email: '',
-                        address: '',
-                        categories: '',
-                      });
-                    }}
-                  >
-                    取消
-                  </Button>
-                  <Button
-                    onClick={handleAddSupplier}
-                    disabled={!newSupplier.name || !newSupplier.contactPerson}
-                    className="bg-orange-500 hover:bg-orange-600 text-white"
-                  >
-                    保存
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg">
               <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" aria-hidden="true" />
               <span className="text-sm font-medium text-orange-700">共 {suppliers.length} 家供应商</span>
@@ -412,6 +305,112 @@ export default function SupplierPage() {
                 <CardHeader className="pb-1 pt-1.5 px-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xs font-semibold text-slate-900">供应商列表</CardTitle>
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-7 px-2">
+                          <Plus className="w-3.5 h-3.5" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-lg">
+                        <DialogHeader>
+                          <DialogTitle>新增供应商</DialogTitle>
+                          <DialogDescription>
+                            添加新的供应商信息，带 * 号的为必填项
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid gap-2">
+                            <Label htmlFor="name">
+                              供应商名称 <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                              id="name"
+                              value={newSupplier.name}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
+                              placeholder="请输入供应商名称"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="contactPerson">
+                                联系人 <span className="text-red-500">*</span>
+                              </Label>
+                              <Input
+                                id="contactPerson"
+                                value={newSupplier.contactPerson}
+                                onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
+                                placeholder="联系人姓名"
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="phone">联系电话</Label>
+                              <Input
+                                id="phone"
+                                value={newSupplier.phone}
+                                onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
+                                placeholder="联系电话"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="email">电子邮箱</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={newSupplier.email}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
+                              placeholder="example@company.com"
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="address">地址</Label>
+                            <Textarea
+                              id="address"
+                              value={newSupplier.address}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
+                              placeholder="供应商地址"
+                              rows={2}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="categories">
+                              经营类别 <span className="text-[10px] text-slate-500">(多个类别用逗号分隔)</span>
+                            </Label>
+                            <Input
+                              id="categories"
+                              value={newSupplier.categories}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
+                              placeholder="例如：办公设备, 电子产品, 文具"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setIsAddDialogOpen(false);
+                              setNewSupplier({
+                                name: '',
+                                contactPerson: '',
+                                phone: '',
+                                email: '',
+                                address: '',
+                                categories: '',
+                              });
+                            }}
+                          >
+                            取消
+                          </Button>
+                          <Button
+                            onClick={handleAddSupplier}
+                            disabled={!newSupplier.name || !newSupplier.contactPerson}
+                            className="bg-orange-500 hover:bg-orange-600 text-white"
+                          >
+                            保存
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <div className="mt-1.5">
                     <div className="relative">
