@@ -92,15 +92,30 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface SupplierContact {
+  id: string;
+  name: string;
+  position?: string;
+  phone?: string;
+  wechat?: string;
+  email?: string;
+  isPrimary?: boolean;
+}
+
 export interface Supplier {
   id: string;
   name: string;
-  contactPerson?: string;
-  phone?: string;
-  email?: string;
+  registeredAddress?: string;
+  businessLicenseNumber?: string;
+  businessScope?: string;
+  contacts: SupplierContact[];
   categories: string[];
   historicalCooperationCount: number;
   averageDeliveryDays?: number;
+  // AI查询相关
+  aiVerified?: boolean;
+  aiVerificationSource?: string;
+  aiVerifiedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

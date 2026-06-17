@@ -48,48 +48,100 @@ export const mockSuppliers: Supplier[] = [
   {
     id: 'supplier-1',
     name: '诚信电子有限公司',
-    contactPerson: '陈经理',
-    phone: '13800138001',
-    email: 'chen@chengxin.com',
+    registeredAddress: '北京市朝阳区建国路88号',
+    businessLicenseNumber: '91110000MA00ABC123',
+    businessScope: '技术开发、技术咨询、技术服务；销售电子产品、计算机软硬件及辅助设备',
+    contacts: [
+      {
+        id: 'contact-1',
+        name: '陈经理',
+        position: '销售总监',
+        phone: '13800138001',
+        wechat: 'chen_chengxin',
+        email: 'chen@chengxin.com',
+        isPrimary: true
+      }
+    ],
     categories: ['电脑', '笔记本', '电子设备', '办公外设'],
     historicalCooperationCount: 15,
     averageDeliveryDays: 5,
+    aiVerified: true,
+    aiVerificationSource: '企查查',
+    aiVerifiedAt: new Date('2024-01-01'),
     createdAt: new Date('2023-06-01'),
     updatedAt: new Date('2024-01-15')
   },
   {
     id: 'supplier-2',
     name: '科技办公设备有限公司',
-    contactPerson: '刘总',
-    phone: '13800138002',
-    email: 'liu@techoffice.com',
+    registeredAddress: '上海市浦东新区张江高科技园区创业路288号',
+    businessLicenseNumber: '91310000MA00DEF456',
+    businessScope: '办公用品、文具用品、日用百货的销售；商务信息咨询',
+    contacts: [
+      {
+        id: 'contact-2',
+        name: '刘总',
+        position: '总经理',
+        phone: '13800138002',
+        wechat: 'liu_techoffice',
+        email: 'liu@techoffice.com',
+        isPrimary: true
+      }
+    ],
     categories: ['打印机', '显示器', '办公设备', '办公用纸'],
     historicalCooperationCount: 8,
     averageDeliveryDays: 7,
+    aiVerified: false,
     createdAt: new Date('2023-08-01'),
     updatedAt: new Date('2024-01-10')
   },
   {
     id: 'supplier-3',
     name: '现代办公用品批发',
-    contactPerson: '周小姐',
-    phone: '13800138003',
-    email: 'zhou@modernoffice.com',
+    registeredAddress: '广州市天河区天河路385号',
+    businessLicenseNumber: '91440100MA00GHI789',
+    businessScope: '办公用品、文具用品批发零售；国内贸易',
+    contacts: [
+      {
+        id: 'contact-3',
+        name: '周小姐',
+        position: '销售经理',
+        phone: '13800138003',
+        wechat: 'zhou_modern',
+        email: 'zhou@modernoffice.com',
+        isPrimary: true
+      }
+    ],
     categories: ['办公用纸', '办公外设', '文具'],
     historicalCooperationCount: 22,
     averageDeliveryDays: 3,
+    aiVerified: true,
+    aiVerificationSource: '企查查',
+    aiVerifiedAt: new Date('2023-12-01'),
     createdAt: new Date('2023-01-01'),
     updatedAt: new Date('2024-01-20')
   },
   {
     id: 'supplier-4',
     name: '数码科技有限公司',
-    contactPerson: '吴先生',
-    phone: '13800138004',
-    email: 'wu@digitaltech.com',
+    registeredAddress: '深圳市南山区科技园南区A座15层',
+    businessLicenseNumber: '91440300MA00JKL012',
+    businessScope: '电子设备、通讯设备的生产与销售；国内贸易；货物及技术进出口',
+    contacts: [
+      {
+        id: 'contact-4',
+        name: '吴先生',
+        position: '商务总监',
+        phone: '13800138004',
+        wechat: 'wu_digital',
+        email: 'wu@digitaltech.com',
+        isPrimary: true
+      }
+    ],
     categories: ['电脑', '笔记本', '电子设备'],
     historicalCooperationCount: 3,
     averageDeliveryDays: 10,
+    aiVerified: false,
     createdAt: new Date('2023-11-01'),
     updatedAt: new Date('2024-01-05')
   }
