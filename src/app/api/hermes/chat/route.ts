@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { HERMES_CONFIG } from '@/lib/hermes-config';
 
 export const maxDuration = 60;
 
@@ -48,95 +49,59 @@ export async function POST(request: NextRequest) {
       ...messages,
     ];
 
-    // 创建流式响应
-    const stream = new ReadableStream({
-      async start(controller) {
-        const encoder = new TextEncoder();
+    // 如果Hermes Agent未启用，使用模拟响应
+    if (!HERMES_CONFIG.enabled) {
+      return createMockResponse();
+    }
 
-        try {
-          // 这里应该调用Hermes Agent的gateway/api
-          // 暂时使用模拟响应来演示流式输出
-          // 实际项目中需要替换为真实的Hermes Agent API调用
-          
-          const mockResponses = [
-            '好的，我理解你的需求了。',
-            '让我帮你处理这个采购任务。',
-            '\n\n首先，我需要确认一些关键信息：',
-            '\n1. 产品名称和规格',
-            '\n2. 需要的数量',
-            '\n3. 期望的到货时间',
-            '\n\n请提供这些信息，我将帮你创建采购需求并启动智能询价流程。',
-          ];
+    try {
+      // 调用本地Hermes Agent API
+      const hermesResponse = await fetch(`${HERMES_CONFIG.baseUrl}${HERMES_CONFIG.endpoints.chat}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${HERMES_CONFIG.apiKey}`,
+        },
+        body: JSON.stringify({
+          messages: hermesMessages,
+          stream: true,
+          temperature: 0.7,
+        }),
+      });
 
-          // 模拟流式输出
-          for (const response of mockResponses) {
-            for (let i = 0; i < response.length; i++) {
-              const chunk = response[i];
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`)
-              );
-              // 模拟打字机效果的延迟
-              await new Promise((resolve) => setTimeout(resolve, 30));
-            }
-          }
-
-          // 发送完成信号
-          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-          controller.close();
-
-          /* 
-          // 真实的Hermes Agent API调用示例（需要根据实际API调整）
-          const hermesResponse = await fetch('https://hermes-agent-gateway/api/chat', {
+      if (!hermesResponse.ok) {
+        console.error(`Hermes API error: ${hermesResponse.status}`);
+        // 如果主API Key失败，尝试备用Key
+        if (HERMES_CONFIG.apiKeyAlt && HERMES_CONFIG.apiKey !== HERMES_CONFIG.apiKeyAlt) {
+          console.log('Trying alternative API key...');
+          const fallbackResponse = await fetch(`${HERMES_CONFIG.baseUrl}${HERMES_CONFIG.endpoints.chat}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.HERMES_API_KEY}`,
+              'Authorization': `Bearer ${HERMES_CONFIG.apiKeyAlt}`,
             },
             body: JSON.stringify({
               messages: hermesMessages,
               stream: true,
+              temperature: 0.7,
             }),
           });
-
-          if (!hermesResponse.ok) {
-            throw new Error(`Hermes API error: ${hermesResponse.status}`);
+          
+          if (fallbackResponse.ok) {
+            return createStreamResponse(fallbackResponse);
           }
-
-          const reader = hermesResponse.body?.getReader();
-          if (!reader) {
-            throw new Error('No reader available from Hermes API');
-          }
-
-          const decoder = new TextDecoder();
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            
-            // 直接透传Hermes Agent的流式响应
-            controller.enqueue(value);
-          }
-          */
-
-        } catch (error) {
-          console.error('Stream error:', error);
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({ content: '\n抱歉，处理请求时出现错误。' })}\n\n`
-            )
-          );
-          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-          controller.close();
         }
-      },
-    });
+        throw new Error(`Hermes API error: ${hermesResponse.status}`);
+      }
 
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+      return createStreamResponse(hermesResponse);
+
+    } catch (apiError) {
+      console.error('Failed to connect to Hermes Agent:', apiError);
+      console.log('Falling back to mock response...');
+      return createMockResponse();
+    }
+
   } catch (error) {
     console.error('Chat API error:', error);
     return new Response(
@@ -147,4 +112,117 @@ export async function POST(request: NextRequest) {
       }
     );
   }
+}
+
+// 创建流式响应
+function createStreamResponse(hermesResponse: Response) {
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      
+      try {
+        const reader = hermesResponse.body?.getReader();
+        if (!reader) {
+          throw new Error('No reader available from Hermes API');
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          // 解析Hermes Agent的流式响应
+          // 假设是OpenAI兼容格式
+          const chunk = decoder.decode(value, { stream: true });
+          buffer += chunk;
+          
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (!trimmedLine || trimmedLine === 'data: [DONE]') continue;
+            if (trimmedLine.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(trimmedLine.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
+                  );
+                }
+              } catch (e) {
+                // 忽略解析错误
+              }
+            }
+          }
+        }
+
+        // 发送完成信号
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        controller.close();
+
+      } catch (error) {
+        console.error('Stream error:', error);
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ content: '\n抱歉，处理请求时出现错误。' })}\n\n`
+          )
+        );
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
+}
+
+// 创建模拟响应（作为后备方案）
+function createMockResponse() {
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+
+      const mockResponses = [
+        '好的，我理解你的需求了。',
+        '让我帮你处理这个采购任务。',
+        '\n\n首先，我需要确认一些关键信息：',
+        '\n1. 产品名称和规格',
+        '\n2. 需要的数量',
+        '\n3. 期望的到货时间',
+        '\n\n请提供这些信息，我将帮你创建采购需求并启动智能询价流程。',
+        '\n\n💡 提示：目前连接本地Hermes Agent失败，正在使用模拟响应。请检查网络连接和API配置。'
+      ];
+
+      for (const response of mockResponses) {
+        for (let i = 0; i < response.length; i++) {
+          const chunk = response[i];
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`)
+          );
+          await new Promise((resolve) => setTimeout(resolve, 30));
+        }
+      }
+
+      controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
 }
