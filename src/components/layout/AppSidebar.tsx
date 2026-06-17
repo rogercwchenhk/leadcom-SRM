@@ -10,7 +10,8 @@ import {
   Users, 
   Settings,
   Bot,
-  Package
+  Package,
+  Shield
 } from 'lucide-react';
 import { 
   Select,
@@ -59,6 +60,11 @@ export function AppSidebar({ initialRole = 'purchaser' }: AppSidebarProps) {
       title: '供应商管理',
       icon: Users,
       href: '/suppliers',
+    },
+    {
+      title: '权限管理',
+      icon: Shield,
+      href: '/permissions',
     },
   ];
 
