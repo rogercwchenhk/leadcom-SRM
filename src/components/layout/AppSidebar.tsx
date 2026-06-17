@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import type { UserRole } from '@/types';
 import { ROLE_LABELS } from '@/types';
 
@@ -207,6 +207,9 @@ export function MobileSidebarSheet({ initialRole }: { initialRole?: UserRole }) 
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
+          <SheetHeader className="sr-only">
+            <SheetTitle>导航菜单</SheetTitle>
+          </SheetHeader>
           <AppSidebar initialRole={initialRole} isMobile={true} onClose={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
