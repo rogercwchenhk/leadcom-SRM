@@ -228,7 +228,7 @@ export default function RequestsPage() {
                         <TableCell className="text-xs font-medium text-slate-900">{request.id}</TableCell>
                         <TableCell>
                           <div>
-                            <p className="text-sm text-slate-600 font-medium">{request.productName}</p>
+                            <p className="text-xs text-slate-600 font-medium">{request.productName}</p>
                             <p className="text-xs text-slate-400 mt-0.5">{request.specifications}</p>
                           </div>
                         </TableCell>
