@@ -175,7 +175,7 @@ export default function RequestsPage() {
                 </div>
                 <div className="flex gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg">
+                    <SelectTrigger className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs">
                       <SelectValue placeholder="状态筛选" />
                     </SelectTrigger>
                     <SelectContent>
