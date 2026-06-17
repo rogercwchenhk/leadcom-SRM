@@ -826,10 +826,17 @@ export default function SupplierPortalPage() {
             </div>
             <div>
               <Label>发票照片</Label>
-              <div className="mt-2 border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
+              <div 
+                className="mt-2 border-2 border-dashed border-slate-300 rounded-lg p-6 text-center cursor-pointer hover:border-slate-400 hover:bg-slate-50 transition-colors"
+                onClick={() => {
+                  const fileInput = document.getElementById('invoice-photo-input') as HTMLInputElement;
+                  fileInput?.click();
+                }}
+              >
                 <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                 <p className="text-sm text-slate-500">点击或拖拽上传发票照片</p>
                 <Input
+                  id="invoice-photo-input"
                   type="file"
                   accept="image/*"
                   className="hidden"
