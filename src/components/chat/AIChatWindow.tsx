@@ -161,7 +161,7 @@ export function AIChatWindow() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col w-[420px] h-[600px] bg-card rounded-2xl shadow-2xl border overflow-hidden">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col w-[420px] max-w-[calc(100vw-3rem)] h-[600px] bg-card rounded-2xl shadow-2xl border overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-background/50 backdrop-blur-sm">
         <div className="flex items-center gap-3">
@@ -248,7 +248,7 @@ export function AIChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="输入你的需求..."
             disabled={isLoading}
-            className="flex-1 bg-background"
+            className="flex-1 bg-background text-sm"
           />
           <Button
             type="submit"
