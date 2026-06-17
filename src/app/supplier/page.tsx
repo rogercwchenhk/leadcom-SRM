@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { 
   Table,
   TableBody,
@@ -15,19 +13,22 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  FileText, 
-  Upload, 
-  Truck, 
-  FileCheck, 
-  CreditCard,
-  CheckCircle2,
-  Search,
-  Eye,
-  Package
+  Search, 
+  Users, 
+  Phone, 
+  Mail, 
+  MapPin, 
+  TrendingUp, 
+  Clock,
+  DollarSign,
+  FileText,
+  CheckCircle,
+  Building2,
+  Calendar,
+  Eye
 } from 'lucide-react';
-import type { POStatus } from '@/types';
+import type { POStatus, Supplier } from '@/types';
 
 const statusConfig: Record<POStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
   pending_signature: { label: '待确认', variant: 'secondary' },
@@ -39,355 +40,532 @@ const statusConfig: Record<POStatus, { label: string; variant: 'default' | 'seco
   exception: { label: '异常', variant: 'destructive' },
 };
 
-export default function SupplierPage() {
-  const [activeTab, setActiveTab] = useState('orders');
-  const [selectedPO, setSelectedPO] = useState<string | null>(null);
-  const [shippingTrackingNumber, setShippingTrackingNumber] = useState('');
-  const [invoiceImage, setInvoiceImage] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+interface SupplierWithDetails extends Supplier {
+  address?: string;
+  totalTransactionAmount: number;
+  lastTransactionDate: string;
+  activePOCount: number;
+  rating: number;
+}
 
-  const orders = [
+interface SupplierPO {
+  id: string;
+  poNumber: string;
+  productName: string;
+  quantity: number;
+  totalAmount: number;
+  status: POStatus;
+  createdAt: string;
+  deliveryDate: string;
+}
+
+export default function SupplierPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
+
+  const suppliers: SupplierWithDetails[] = [
     {
-      id: 'PO-2024-0120-001',
-      productName: '笔记本电脑',
-      specifications: '联想ThinkPad X1 Carbon',
-      quantity: 5,
-      totalAmount: 28500,
-      status: 'pending_signature' as POStatus,
-      createdAt: '2024-01-20 14:30:00',
-      deliveryDate: '2024-01-27',
+      id: 'sup-001',
+      name: '北京科技发展有限公司',
+      contactPerson: '张明',
+      phone: '138-0013-8000',
+      email: 'zhangming@bjtech.com',
+      address: '北京市海淀区中关村科技园区1号楼8层',
+      categories: ['办公设备', '电子产品'],
+      historicalCooperationCount: 45,
+      averageDeliveryDays: 3.5,
+      totalTransactionAmount: 528000,
+      lastTransactionDate: '2024-01-20',
+      activePOCount: 2,
+      rating: 4.8,
+      createdAt: new Date('2023-01-15'),
+      updatedAt: new Date('2024-01-20'),
     },
     {
-      id: 'PO-2024-0119-001',
-      productName: '打印机',
-      specifications: '惠普 LaserJet Pro',
-      quantity: 2,
-      totalAmount: 7800,
-      status: 'signed' as POStatus,
-      createdAt: '2024-01-19 16:45:00',
-      deliveryDate: '2024-01-24',
+      id: 'sup-002',
+      name: '上海办公用品供应商',
+      contactPerson: '李华',
+      phone: '139-0013-9000',
+      email: 'lihua@shoffice.com',
+      address: '上海市浦东新区张江高科技园区创业路288号',
+      categories: ['办公用品', '文具'],
+      historicalCooperationCount: 78,
+      averageDeliveryDays: 2.0,
+      totalTransactionAmount: 234000,
+      lastTransactionDate: '2024-01-19',
+      activePOCount: 1,
+      rating: 4.9,
+      createdAt: new Date('2022-06-20'),
+      updatedAt: new Date('2024-01-19'),
     },
     {
-      id: 'PO-2024-0118-001',
-      productName: '办公用纸',
-      specifications: 'A4复印纸 80g',
-      quantity: 100,
-      totalAmount: 4500,
-      status: 'paid' as POStatus,
-      createdAt: '2024-01-18 10:20:00',
-      deliveryDate: '2024-01-20',
-      paidAt: '2024-01-21 15:30:00',
+      id: 'sup-003',
+      name: '深圳电子设备厂',
+      contactPerson: '王芳',
+      phone: '137-0013-7000',
+      email: 'wangfang@szelec.com',
+      address: '深圳市南山区科技园南区A座15层',
+      categories: ['电子设备', 'IT服务'],
+      historicalCooperationCount: 32,
+      averageDeliveryDays: 5.0,
+      totalTransactionAmount: 892000,
+      lastTransactionDate: '2024-01-18',
+      activePOCount: 3,
+      rating: 4.5,
+      createdAt: new Date('2023-03-10'),
+      updatedAt: new Date('2024-01-18'),
     },
   ];
 
-  const filteredOrders = orders.filter(order => 
-    order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.id.toLowerCase().includes(searchQuery.toLowerCase())
+  const supplierPOs: Record<string, SupplierPO[]> = {
+    'sup-001': [
+      {
+        id: 'po-001',
+        poNumber: 'PO-2024-0120-001',
+        productName: '联想ThinkPad X1 Carbon',
+        quantity: 5,
+        totalAmount: 28500,
+        status: 'pending_signature',
+        createdAt: '2024-01-20 14:30:00',
+        deliveryDate: '2024-01-27',
+      },
+      {
+        id: 'po-002',
+        poNumber: 'PO-2024-0115-003',
+        productName: '戴尔显示器 U2720Q',
+        quantity: 3,
+        totalAmount: 14400,
+        status: 'signed',
+        createdAt: '2024-01-15 10:20:00',
+        deliveryDate: '2024-01-22',
+      },
+      {
+        id: 'po-003',
+        poNumber: 'PO-2024-0110-008',
+        productName: '罗技无线键盘鼠标套装',
+        quantity: 20,
+        totalAmount: 9600,
+        status: 'paid',
+        createdAt: '2024-01-10 16:45:00',
+        deliveryDate: '2024-01-15',
+      },
+    ],
+    'sup-002': [
+      {
+        id: 'po-004',
+        poNumber: 'PO-2024-0119-002',
+        productName: 'A4复印纸 80g',
+        quantity: 100,
+        totalAmount: 4500,
+        status: 'shipped',
+        createdAt: '2024-01-19 09:30:00',
+        deliveryDate: '2024-01-21',
+      },
+      {
+        id: 'po-005',
+        poNumber: 'PO-2024-0112-005',
+        productName: '得力文件夹套装',
+        quantity: 50,
+        totalAmount: 2250,
+        status: 'delivered',
+        createdAt: '2024-01-12 14:20:00',
+        deliveryDate: '2024-01-14',
+      },
+    ],
+    'sup-003': [
+      {
+        id: 'po-006',
+        poNumber: 'PO-2024-0118-004',
+        productName: '惠普 LaserJet Pro 打印机',
+        quantity: 2,
+        totalAmount: 7800,
+        status: 'invoiced',
+        createdAt: '2024-01-18 11:00:00',
+        deliveryDate: '2024-01-25',
+      },
+      {
+        id: 'po-007',
+        poNumber: 'PO-2024-0114-007',
+        productName: '网络交换机 24口',
+        quantity: 3,
+        totalAmount: 15600,
+        status: 'signed',
+        createdAt: '2024-01-14 15:30:00',
+        deliveryDate: '2024-01-21',
+      },
+    ],
+  };
+
+  const filteredSuppliers = suppliers.filter(supplier => 
+    supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.contactPerson?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const selectedOrder = orders.find(o => o.id === selectedPO);
-
-  const handleConfirmOrder = (orderId: string) => {
-    // 模拟确认订单
-    alert(`订单 ${orderId} 已确认`);
-  };
-
-  const handleSubmitShipping = () => {
-    if (!shippingTrackingNumber) return;
-    // 模拟提交发货单号
-    alert(`发货单号 ${shippingTrackingNumber} 已提交`);
-    setShippingTrackingNumber('');
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setInvoiceImage(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmitInvoice = () => {
-    if (!invoiceImage) return;
-    // 模拟提交发票
-    alert('发票照片已提交');
-    setInvoiceImage(null);
-  };
+  const selectedSupplierData = suppliers.find(s => s.id === selectedSupplier);
+  const selectedPOs = selectedSupplier ? supplierPOs[selectedSupplier] || [] : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-lg font-semibold tracking-tight text-slate-900">
-                供应商协作平台
-              </h1>
-              <p className="text-slate-600">
-                查看订单、发货、提交发票和查询付款
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <Package className="h-5 w-5 text-orange-600" />
-              </div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
+              供应商管理
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              管理供应商信息、查看合作记录和历史订单
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg">
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" aria-hidden="true" />
+              <span className="text-sm font-medium text-orange-700">共 {suppliers.length} 家供应商</span>
             </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full border-b border-slate-100 bg-transparent px-6 py-4">
-              <div className="flex gap-2">
-                <TabsTrigger value="orders" className="data-[state=active]:bg-slate-50">
-                  <FileText className="h-4 w-4 mr-2" />
-                  订单管理
-                </TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-slate-50">
-                  <FileCheck className="h-4 w-4 mr-2" />
-                  历史订单
-                </TabsTrigger>
-                <TabsTrigger value="payment" className="data-[state=active]:bg-slate-50">
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  付款查询
-                </TabsTrigger>
-              </div>
-            </TabsList>
-
-            <TabsContent value="orders" className="p-6 space-y-6">
-              {!selectedPO ? (
-                <div className="space-y-4">
+        {/* Desktop Layout */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-12 gap-4">
+            {/* Left Column - Supplier List */}
+            <div className="col-span-5 space-y-4">
+              {/* Search and Supplier List */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-900">待处理订单</h2>
+                    <CardTitle className="text-sm font-semibold text-slate-900">供应商列表</CardTitle>
+                  </div>
+                  <div className="mt-2">
                     <div className="relative">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                       <Input
                         type="search"
-                        placeholder="搜索订单..."
+                        placeholder="搜索供应商..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 w-64"
+                        className="pl-9 w-full"
                       />
                     </div>
                   </div>
-
-                  <div className="rounded-xl border border-slate-200 overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-slate-50">
-                          <TableHead className="font-medium">PO号</TableHead>
-                          <TableHead className="font-medium">产品名称</TableHead>
-                          <TableHead className="font-medium">数量</TableHead>
-                          <TableHead className="font-medium">金额</TableHead>
-                          <TableHead className="font-medium">状态</TableHead>
-                          <TableHead className="text-right font-medium">操作</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredOrders.map((order) => (
-                          <TableRow key={order.id} className="hover:bg-slate-50">
-                            <TableCell className="font-medium">{order.id}</TableCell>
-                            <TableCell>{order.productName}</TableCell>
-                            <TableCell>{order.quantity}</TableCell>
-                            <TableCell>¥{order.totalAmount.toLocaleString()}</TableCell>
-                            <TableCell>
-                              <Badge variant={statusConfig[order.status].variant}>
-                                {statusConfig[order.status].label}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm"
-                                  onClick={() => setSelectedPO(order.id)}
-                                >
-                                  <Eye className="h-4 w-4 mr-1" />
-                                  查看
-                                </Button>
-                                {order.status === 'pending_signature' && (
-                                  <Button 
-                                    size="sm"
-                                    onClick={() => handleConfirmOrder(order.id)}
-                                  >
-                                    <CheckCircle2 className="h-4 w-4 mr-1" />
-                                    确认
-                                  </Button>
-                                )}
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => setSelectedPO(null)}
-                    >
-                      ← 返回
-                    </Button>
-                    <h2 className="text-lg font-semibold text-slate-900">
-                      订单详情 {selectedPO}
-                    </h2>
-                  </div>
-
-                  {selectedOrder && (
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <Card className="border-slate-200">
-                        <CardHeader className="pb-1 pt-2">
-                          <CardTitle className="text-sm font-semibold">订单信息</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">产品名称</span>
-                              <span className="font-medium">{selectedOrder.productName}</span>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-2">
+                    {filteredSuppliers.map((supplier) => (
+                      <div 
+                        key={supplier.id}
+                        onClick={() => setSelectedSupplier(supplier.id)}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
+                          selectedSupplier === supplier.id 
+                            ? 'border-orange-300 bg-orange-50' 
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
+                            }`}>
+                              <Building2 className={`w-4 h-4 ${
+                                selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
+                              }`} />
                             </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">规格</span>
-                              <span className="font-medium">{selectedOrder.specifications}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">数量</span>
-                              <span className="font-medium">{selectedOrder.quantity}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">总金额</span>
-                              <span className="font-semibold text-lg">¥{selectedOrder.totalAmount.toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">交货日期</span>
-                              <span className="font-medium">{selectedOrder.deliveryDate}</span>
+                            <div>
+                              <h3 className={`text-sm font-semibold ${
+                                selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
+                              }`}>
+                                {supplier.name}
+                              </h3>
+                              <p className="text-xs text-slate-500">
+                                {supplier.categories.join(' · ')}
+                              </p>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div className="flex items-center gap-1">
+                            <div className="flex items-center">
+                              <span className="text-xs font-medium text-yellow-600">★</span>
+                              <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Users className="w-3 h-3" />
+                            <span>{supplier.contactPerson}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Phone className="w-3 h-3" />
+                            <span>{supplier.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <FileText className="w-3 h-3" />
+                            <span>合作 {supplier.historicalCooperationCount} 次</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Clock className="w-3 h-3" />
+                            <span>平均 {supplier.averageDeliveryDays} 天</span>
+                          </div>
+                        </div>
 
-                      <div className="space-y-6">
-                        {selectedOrder.status === 'signed' && (
-                          <Card className="border-slate-200">
-                            <CardHeader className="pb-1 pt-2">
-                              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                <Truck className="h-4 w-4" />
-                                发货信息
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              <div className="space-y-2">
-                                <Label>发货单号</Label>
-                                <Input
-                                  placeholder="请输入发货单号"
-                                  value={shippingTrackingNumber}
-                                  onChange={(e) => setShippingTrackingNumber(e.target.value)}
-                                />
-                              </div>
-                              <Button 
-                                onClick={handleSubmitShipping}
-                                disabled={!shippingTrackingNumber}
-                                className="w-full"
-                              >
-                                提交发货单号
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        )}
-
-                        {selectedOrder.status === 'shipped' && (
-                          <Card className="border-slate-200">
-                            <CardHeader className="pb-1 pt-2">
-                              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                <FileCheck className="h-4 w-4" />
-                                提交发票
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              <div className="space-y-2">
-                                <Label>发票照片</Label>
-                                {invoiceImage ? (
-                                  <div className="space-y-2">
-                                    <img src={invoiceImage} alt="发票预览" className="rounded-lg border border-slate-200 max-h-40 object-cover" />
-                                    <Button variant="ghost" size="sm" onClick={() => setInvoiceImage(null)}>
-                                      重新上传
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center cursor-pointer hover:border-slate-400 transition-colors">
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={handleFileUpload}
-                                      className="hidden"
-                                      id="invoice-upload"
-                                    />
-                                    <label htmlFor="invoice-upload" className="cursor-pointer">
-                                      <Upload className="h-10 w-10 text-slate-400 mx-auto mb-2" />
-                                      <p className="text-slate-600">点击上传发票照片</p>
-                                      <p className="text-sm text-slate-500">支持 JPG、PNG 格式</p>
-                                    </label>
-                                  </div>
-                                )}
-                              </div>
-                              {invoiceImage && (
-                                <Button 
-                                  onClick={handleSubmitInvoice}
-                                  className="w-full"
-                                >
-                                  提交发票
-                                </Button>
-                              )}
-                            </CardContent>
-                          </Card>
-                        )}
-
-                        {selectedOrder.status === 'paid' && (
-                          <Card className="border-emerald-200 bg-emerald-50">
-                            <CardHeader className="pb-1 pt-2">
-                              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-emerald-800">
-                                <CreditCard className="h-4 w-4" />
-                                付款状态
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-2">
-                              <div className="flex items-center gap-2 text-emerald-700">
-                                <CheckCircle2 className="h-5 w-5" />
-                                <span className="font-medium">已付款</span>
-                              </div>
-                              <p className="text-sm text-emerald-600">
-                                付款时间：{selectedOrder.paidAt}
-                              </p>
-                            </CardContent>
-                          </Card>
+                        {supplier.activePOCount > 0 && (
+                          <div className="mt-2 pt-2 border-t border-slate-200">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-slate-500">进行中订单</span>
+                              <Badge variant="secondary" className="text-xs">
+                                {supplier.activePOCount} 个
+                              </Badge>
+                            </div>
+                          </div>
                         )}
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Supplier Details */}
+            <div className="col-span-7">
+              {selectedSupplierData ? (
+                <div className="space-y-4">
+                  {/* Supplier Info Card */}
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader className="pb-1 pt-2 px-4">
+                      <CardTitle className="text-sm font-semibold text-slate-900">
+                        供应商详情
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-4 pt-0">
+                      <div className="space-y-3">
+                        {/* Basic Info */}
+                        <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="text-base font-semibold text-slate-900">
+                                {selectedSupplierData.name}
+                              </h3>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {selectedSupplierData.categories.join(' · ')}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded-full">
+                                <span className="text-sm font-medium text-yellow-600">★</span>
+                                <span className="text-sm font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-sm">
+                                <Users className="w-4 h-4 text-slate-400" />
+                                <span className="text-slate-600">联系人：</span>
+                                <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-sm">
+                                <Phone className="w-4 h-4 text-slate-400" />
+                                <span className="text-slate-600">电话：</span>
+                                <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-sm">
+                                <Mail className="w-4 h-4 text-slate-400" />
+                                <span className="text-slate-600">邮箱：</span>
+                                <span className="font-medium text-slate-900 text-xs">{selectedSupplierData.email}</span>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex items-start gap-2 text-sm">
+                                <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+                                <span className="text-slate-600">地址：</span>
+                                <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
+                                  {selectedSupplierData.address}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-4 gap-2">
+                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                              <FileText className="w-3.5 h-3.5 text-blue-500" />
+                            </div>
+                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.historicalCooperationCount}</div>
+                            <div className="text-[10px] text-slate-500">合作次数</div>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                              <Clock className="w-3.5 h-3.5 text-purple-500" />
+                            </div>
+                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.averageDeliveryDays}</div>
+                            <div className="text-[10px] text-slate-500">平均货期</div>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                              <DollarSign className="w-3.5 h-3.5 text-green-500" />
+                            </div>
+                            <div className="text-sm font-bold text-slate-900">¥{(selectedSupplierData.totalTransactionAmount / 1000).toFixed(0)}K</div>
+                            <div className="text-[10px] text-slate-500">累计金额</div>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                              <Calendar className="w-3.5 h-3.5 text-orange-500" />
+                            </div>
+                            <div className="text-sm font-bold text-slate-900">{selectedSupplierData.lastTransactionDate}</div>
+                            <div className="text-[10px] text-slate-500">最后交易</div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Historical POs */}
+                  <Card className="border-slate-200 shadow-sm">
+                    <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
+                      <CardTitle className="text-sm font-semibold text-slate-900">历史订单</CardTitle>
+                      <Button variant="ghost" size="sm" className="text-xs text-slate-500 hover:text-slate-700 h-7">
+                        查看全部
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-4 pt-0">
+                      <div className="rounded-lg border border-slate-200 overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-slate-50">
+                              <TableHead className="py-2 px-3 text-xs font-medium">PO号</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">产品名称</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">数量</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">金额</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">状态</TableHead>
+                              <TableHead className="py-2 px-3 text-right text-xs font-medium">交期</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedPOs.map((po) => (
+                              <TableRow key={po.id} className="hover:bg-slate-50">
+                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
+                                  {po.poNumber}
+                                </TableCell>
+                                <TableCell className="py-2 px-3 text-xs text-slate-700">
+                                  {po.productName}
+                                </TableCell>
+                                <TableCell className="py-2 px-3 text-xs text-slate-600">
+                                  {po.quantity}
+                                </TableCell>
+                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
+                                  ¥{po.totalAmount.toLocaleString()}
+                                </TableCell>
+                                <TableCell className="py-2 px-3">
+                                  <Badge variant={statusConfig[po.status].variant} className="text-[10px]">
+                                    {statusConfig[po.status].label}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="py-2 px-3 text-right text-xs text-slate-600">
+                                  {po.deliveryDate}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
+              ) : (
+                <Card className="border-slate-200 shadow-sm">
+                  <CardContent className="p-12">
+                    <div className="text-center">
+                      <Building2 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                      <h3 className="text-sm font-medium text-slate-900 mb-1">选择供应商</h3>
+                      <p className="text-xs text-slate-500">从左侧列表选择供应商查看详情</p>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
-            </TabsContent>
+            </div>
+          </div>
+        </div>
 
-            <TabsContent value="history" className="p-6">
-              <div className="text-center py-12">
-                <FileCheck className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">历史订单</h3>
-                <p className="text-slate-600">查看您的所有历史订单记录</p>
+        {/* Mobile Layout */}
+        <div className="md:hidden space-y-4">
+          {/* Search */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardHeader className="pb-1 pt-2 px-4">
+              <CardTitle className="text-sm font-semibold text-slate-900">供应商管理</CardTitle>
+              <div className="mt-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Input
+                    type="search"
+                    placeholder="搜索供应商..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 w-full"
+                  />
+                </div>
               </div>
-            </TabsContent>
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
+              <div className="space-y-2">
+                {filteredSuppliers.map((supplier) => (
+                  <div 
+                    key={supplier.id}
+                    className="p-3 rounded-lg border border-slate-200 bg-white"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                          <Building2 className="w-4 h-4 text-slate-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-slate-900">{supplier.name}</h3>
+                          <p className="text-xs text-slate-500">{supplier.categories.join(' · ')}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-medium text-yellow-600">★</span>
+                        <span className="text-xs text-slate-600">{supplier.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Users className="w-3 h-3" />
+                        <span>{supplier.contactPerson}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Phone className="w-3 h-3" />
+                        <span>{supplier.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <FileText className="w-3 h-3" />
+                        <span>{supplier.historicalCooperationCount} 次合作</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Clock className="w-3 h-3" />
+                        <span>{supplier.averageDeliveryDays} 天</span>
+                      </div>
+                    </div>
 
-            <TabsContent value="payment" className="p-6">
-              <div className="text-center py-12">
-                <CreditCard className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">付款查询</h3>
-                <p className="text-slate-600">查询所有订单的付款状态和记录</p>
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+                      <div className="text-xs text-slate-500">
+                        累计 ¥{(supplier.totalTransactionAmount / 1000).toFixed(0)}K
+                      </div>
+                      {supplier.activePOCount > 0 && (
+                        <Badge variant="secondary" className="text-xs">
+                          {supplier.activePOCount} 个进行中
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </TabsContent>
-          </Tabs>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
