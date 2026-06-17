@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -63,58 +62,60 @@ export default function NewRequestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
-      <AppLayout initialRole="requester">
-        <div className="px-3 py-4 pb-8">
-          <div className="w-full max-w-full">
-            {/* 页面头部 - 垂直布局 */}
-            <div className="mb-4">
-              <div className="mb-4">
-                <Link href="/">
-                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl hover:bg-orange-100 bg-white shadow-sm border border-orange-100 mb-3" aria-label="返回首页">
-                    <ArrowLeft className="h-5 w-5 text-orange-600" aria-hidden="true" />
-                  </Button>
-                </Link>
-                <div>
-                  <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                    新建采购需求
-                  </h1>
-                  <p className="text-orange-600 text-xs mt-1 font-medium">
-                    用自然语言描述您的需求，AI 帮您处理
-                  </p>
-                </div>
-              </div>
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg hover:bg-slate-100" aria-label="返回首页">
+                <ArrowLeft className="h-5 w-5 text-slate-600" aria-hidden="true" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+                新建采购需求
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Hermes AI 智能驱动 · 用自然语言描述您的需求
+              </p>
+            </div>
+          </div>
+        </div>
 
-              {/* 步骤指示器 - 垂直布局 */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-orange-100 mb-4">
-                <div className="space-y-4">
-                  <div className={`flex items-center gap-3 ${step === 'input' || step === 'analyzing' || step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'input' || step === 'analyzing' || step === 'review' || step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                      1
-                    </div>
-                    <span className="text-sm font-semibold">描述需求</span>
+        {/* 主内容区域 */}
+        <div className="w-full max-w-2xl mx-auto">
+          {/* 页面头部 - 垂直布局 */}
+          <div className="mb-6">
+            {/* 步骤指示器 - 垂直布局 */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-orange-100 mb-6">
+              <div className="space-y-5">
+                <div className={`flex items-center gap-4 ${step === 'input' || step === 'analyzing' || step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'input' || step === 'analyzing' || step === 'review' || step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    1
                   </div>
-                  
-                  <div className={`flex items-center gap-3 ${step === 'analyzing' || step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'analyzing' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white animate-pulse' : step === 'review' || step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                      {step === 'analyzing' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                      ) : (
-                        '2'
-                      )}
-                    </div>
-                    <span className="text-sm font-semibold">AI分析</span>
+                  <span className="text-base font-semibold">描述需求</span>
+                </div>
+                
+                <div className={`flex items-center gap-4 ${step === 'analyzing' || step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'analyzing' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white animate-pulse' : step === 'review' || step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    {step === 'analyzing' ? (
+                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      '2'
+                    )}
                   </div>
-                  
-                  <div className={`flex items-center gap-3 ${step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white animate-pulse' : step === 'review' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                      {step === 'submitting' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                      ) : (
-                        '3'
-                      )}
-                    </div>
-                    <span className="text-sm font-semibold">确认提交</span>
+                  <span className="text-base font-semibold">AI分析</span>
+                </div>
+                
+                <div className={`flex items-center gap-4 ${step === 'review' || step === 'submitting' ? 'text-orange-600' : 'text-slate-400'}`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${step === 'submitting' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white animate-pulse' : step === 'review' ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    {step === 'submitting' ? (
+                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      '3'
+                    )}
                   </div>
+                  <span className="text-base font-semibold">确认提交</span>
                 </div>
               </div>
             </div>
@@ -122,8 +123,8 @@ export default function NewRequestPage() {
             {/* Input Step */}
             {(step === 'input' || step === 'analyzing') && (
               <Card className="border-2 border-orange-100 shadow-lg bg-white">
-                <CardHeader className="pb-3 pt-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
-                  <div className="space-y-3">
+                <CardHeader className="pb-4 pt-5 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+                  <div className="space-y-4">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
                       <Sparkles className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
@@ -135,8 +136,8 @@ export default function NewRequestPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-5 pt-5">
-                  <div className="space-y-5">
+                <CardContent className="pb-6 pt-6">
+                  <div className="space-y-6">
                     <div className="space-y-3">
                       <Label htmlFor="requirement-input" className="text-slate-700 font-bold text-base flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-orange-500" />
@@ -147,43 +148,43 @@ export default function NewRequestPage() {
                         placeholder="例如：我需要采购5台联想ThinkPad X1 Carbon笔记本电脑，预算大约5万元，希望在2月底前到货…"
                         value={naturalLanguageInput}
                         onChange={(e) => setNaturalLanguageInput(e.target.value)}
-                        className="min-h-[160px] resize-none bg-slate-50 border-2 border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-base leading-relaxed rounded-xl"
+                        className="min-h-[180px] resize-none bg-slate-50 border-2 border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-base leading-relaxed rounded-xl"
                         disabled={step === 'analyzing'}
                       />
                     </div>
 
                     {step === 'input' && (
-                      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-5 border-2 border-orange-200">
-                        <p className="text-sm font-bold text-orange-800 mb-3 flex items-center gap-2">
+                      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border-2 border-orange-200">
+                        <p className="text-sm font-bold text-orange-800 mb-4 flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-orange-600" aria-hidden="true" />
                           您的描述应该包含这些信息
                         </p>
                         <div className="space-y-3">
-                          <div className="flex items-start gap-3 bg-white rounded-xl p-3 shadow-sm">
-                            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm">
+                            <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <span className="text-orange-600 font-bold text-sm">1</span>
                             </div>
                             <div className="flex-1">
                               <p className="text-slate-700 font-semibold text-sm">产品名称和规格</p>
-                              <p className="text-slate-500 text-xs mt-0.5">例如：联想ThinkPad X1 Carbon</p>
+                              <p className="text-slate-500 text-xs mt-1">例如：联想ThinkPad X1 Carbon</p>
                             </div>
                           </div>
-                          <div className="flex items-start gap-3 bg-white rounded-xl p-3 shadow-sm">
-                            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm">
+                            <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <span className="text-orange-600 font-bold text-sm">2</span>
                             </div>
                             <div className="flex-1">
                               <p className="text-slate-700 font-semibold text-sm">需要的数量</p>
-                              <p className="text-slate-500 text-xs mt-0.5">例如：5台</p>
+                              <p className="text-slate-500 text-xs mt-1">例如：5台</p>
                             </div>
                           </div>
-                          <div className="flex items-start gap-3 bg-white rounded-xl p-3 shadow-sm">
-                            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm">
+                            <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <span className="text-orange-600 font-bold text-sm">3</span>
                             </div>
                             <div className="flex-1">
                               <p className="text-slate-700 font-semibold text-sm">期望的到货时间</p>
-                              <p className="text-slate-500 text-xs mt-0.5">例如：2月底前</p>
+                              <p className="text-slate-500 text-xs mt-1">例如：2月底前</p>
                             </div>
                           </div>
                         </div>
@@ -191,11 +192,11 @@ export default function NewRequestPage() {
                     )}
                   </div>
                 </CardContent>
-                <CardFooter className="pb-5 pt-0 flex flex-col gap-3">
+                <CardFooter className="pb-6 pt-0 flex flex-col gap-4">
                   <Button 
                     onClick={handleAnalyze} 
                     disabled={step === 'analyzing' || !naturalLanguageInput.trim()}
-                    className="h-12 px-8 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white gap-3 text-base font-bold shadow-lg hover:shadow-xl w-full rounded-xl active:scale-[0.98] transition-transform"
+                    className="h-13 px-8 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white gap-3 text-base font-bold shadow-lg hover:shadow-xl w-full rounded-xl active:scale-[0.98] transition-transform"
                   >
                     {step === 'analyzing' ? (
                       <>
@@ -216,8 +217,8 @@ export default function NewRequestPage() {
             {/* Review Step */}
             {(step === 'review' || step === 'submitting') && aiAnalysis && (
               <Card className="border-2 border-green-100 shadow-lg bg-white">
-                <CardHeader className="pb-3 pt-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
-                  <div className="space-y-3">
+                <CardHeader className="pb-4 pt-5 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+                  <div className="space-y-4">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
                       <CheckCircle2 className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
@@ -229,11 +230,11 @@ export default function NewRequestPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-5 pt-5">
-                  <div className="space-y-6">
+                <CardContent className="pb-6 pt-6">
+                  <div className="space-y-7">
                     {/* Original Input */}
                     <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-5 border-2 border-slate-200">
-                      <h3 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-slate-500" />
                         您的原始描述
                       </h3>
@@ -243,8 +244,8 @@ export default function NewRequestPage() {
                     <Separator className="bg-slate-300 h-0.5" />
 
                     {/* Extracted Info */}
-                    <div className="space-y-5">
-                      <div className="space-y-2">
+                    <div className="space-y-6">
+                      <div className="space-y-3">
                         <div className="flex items-center gap-3">
                           <Edit className="w-5 h-5 text-green-600" aria-hidden="true" />
                           <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 rounded-full text-sm font-bold">
@@ -253,7 +254,7 @@ export default function NewRequestPage() {
                         </div>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-5">
                         <div className="space-y-3">
                           <Label htmlFor="product-name" className="text-slate-700 font-bold text-base flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500" />
@@ -280,7 +281,7 @@ export default function NewRequestPage() {
                           />
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                           <div className="space-y-3">
                             <Label htmlFor="quantity" className="text-slate-700 font-bold text-base flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-green-500" />
@@ -322,7 +323,7 @@ export default function NewRequestPage() {
                     </Alert>
                   </div>
                 </CardContent>
-                <CardFooter className="pb-5 pt-0 flex flex-col gap-4">
+                <CardFooter className="pb-6 pt-0 flex flex-col gap-4">
                   <Button 
                     variant="ghost" 
                     onClick={() => setStep('input')}
@@ -353,7 +354,7 @@ export default function NewRequestPage() {
             )}
           </div>
         </div>
-      </AppLayout>
+      </div>
     </div>
   );
 }
