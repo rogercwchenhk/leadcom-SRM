@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UsersRound, Shield, UserPlus, UserMinus, Plus, Trash2, Edit } from 'lucide-react';
+import { Users, UsersRound, Shield, UserPlus, UserMinus, Plus, Trash2, Edit, ArrowRightLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserManagement } from '@/components/permissions/UserManagement';
 import { GroupManagement } from '@/components/permissions/GroupManagement';
 import { PermissionTree } from '@/components/permissions/PermissionTree';
 import { HierarchyView } from '@/components/permissions/HierarchyView';
+import { TeamPermissionSync } from '@/components/permissions/TeamPermissionSync';
 import { AppLayout } from '@/components/layout/AppLayout';
 
 export default function PermissionsPage() {
@@ -22,6 +23,11 @@ export default function PermissionsPage() {
           <div className="mb-6">
             <h1 className="text-lg font-semibold text-slate-900 tracking-tight">权限管理</h1>
             <p className="text-sm text-slate-500 mt-1">管理用户、用户组和权限分配</p>
+          </div>
+
+          {/* 团队-权限同步卡片 */}
+          <div className="mb-6">
+            <TeamPermissionSync />
           </div>
 
           <Card className="border-slate-200 shadow-sm">
