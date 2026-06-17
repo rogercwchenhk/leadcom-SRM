@@ -851,40 +851,42 @@ export default function SupplierPage() {
                           <div className="space-y-3">
                             {/* 营业信息 */}
                             {(selectedSupplierData.businessLicenseNumber || selectedSupplierData.registeredAddress || selectedSupplierData.businessScope) && (
-                              <div className="border-t border-slate-200 pt-2">
+                              <div className="border-t border-slate-200 pt-3">
                                 <h4 className="text-xs font-semibold text-slate-700 mb-2">营业信息</h4>
-                                <div className="grid grid-cols-1 gap-2">
-                                  {selectedSupplierData.businessLicenseNumber && (
-                                    <div className="flex items-center gap-1.5 text-xs">
-                                      <FileText className="w-4 h-4 text-slate-400" />
-                                      <span className="text-slate-600">营业执照号：</span>
-                                      <span className="font-medium text-slate-900">{selectedSupplierData.businessLicenseNumber}</span>
-                                    </div>
-                                  )}
-                                  {selectedSupplierData.registeredAddress && (
-                                    <div className="flex items-start gap-1.5 text-xs">
-                                      <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
-                                      <span className="text-slate-600">注册地址：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
-                                        {selectedSupplierData.registeredAddress}
-                                      </span>
-                                    </div>
-                                  )}
-                                  {selectedSupplierData.businessScope && (
-                                    <div className="flex items-start gap-1.5 text-xs">
-                                      <List className="w-4 h-4 text-slate-400 mt-0.5" />
-                                      <span className="text-slate-600">经营范围：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
-                                        {selectedSupplierData.businessScope}
-                                      </span>
-                                    </div>
-                                  )}
+                                <div className="bg-white p-2.5 rounded border border-slate-200">
+                                  <div className="grid grid-cols-1 gap-2">
+                                    {selectedSupplierData.businessLicenseNumber && (
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <FileText className="w-4 h-4 text-slate-400" />
+                                        <span className="text-slate-600">营业执照号：</span>
+                                        <span className="font-medium text-slate-900">{selectedSupplierData.businessLicenseNumber}</span>
+                                      </div>
+                                    )}
+                                    {selectedSupplierData.registeredAddress && (
+                                      <div className="flex items-start gap-1.5 text-xs">
+                                        <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+                                        <span className="text-slate-600">注册地址：</span>
+                                        <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
+                                          {selectedSupplierData.registeredAddress}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {selectedSupplierData.businessScope && (
+                                      <div className="flex items-start gap-1.5 text-xs">
+                                        <List className="w-4 h-4 text-slate-400 mt-0.5" />
+                                        <span className="text-slate-600">经营范围：</span>
+                                        <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
+                                          {selectedSupplierData.businessScope}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             )}
 
                             {/* 联系信息 - 支持多个联系人 */}
-                            <div className="border-t border-slate-200 pt-2">
+                            <div className="border-t border-slate-200 pt-3">
                               <h4 className="text-xs font-semibold text-slate-700 mb-2">联系人</h4>
                               {selectedSupplierData.contacts && selectedSupplierData.contacts.length > 0 ? (
                                 <div className="space-y-2">
@@ -929,31 +931,33 @@ export default function SupplierPage() {
                                   ))}
                                 </div>
                               ) : (
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div className="space-y-2">
-                                    <div className="flex items-center gap-1.5 text-xs">
-                                      <Users className="w-4 h-4 text-slate-400" />
-                                      <span className="text-slate-600">联系人：</span>
-                                      <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
+                                <div className="bg-white p-2.5 rounded border border-slate-200">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="space-y-2">
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <Users className="w-4 h-4 text-slate-400" />
+                                        <span className="text-slate-600">联系人：</span>
+                                        <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <Phone className="w-4 h-4 text-slate-400" />
+                                        <span className="text-slate-600">电话：</span>
+                                        <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <Mail className="w-4 h-4 text-slate-400" />
+                                        <span className="text-slate-600">邮箱：</span>
+                                        <span className="font-medium text-slate-900 text-xs truncate">{selectedSupplierData.email}</span>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-xs">
-                                      <Phone className="w-4 h-4 text-slate-400" />
-                                      <span className="text-slate-600">电话：</span>
-                                      <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5 text-xs">
-                                      <Mail className="w-4 h-4 text-slate-400" />
-                                      <span className="text-slate-600">邮箱：</span>
-                                      <span className="font-medium text-slate-900 text-xs truncate">{selectedSupplierData.email}</span>
-                                    </div>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <div className="flex items-start gap-1.5 text-xs">
-                                      <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
-                                      <span className="text-slate-600">地址：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
-                                        {selectedSupplierData.address}
-                                      </span>
+                                    <div className="space-y-2">
+                                      <div className="flex items-start gap-1.5 text-xs">
+                                        <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+                                        <span className="text-slate-600">地址：</span>
+                                        <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
+                                          {selectedSupplierData.address}
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
