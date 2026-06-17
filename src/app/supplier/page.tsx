@@ -444,7 +444,7 @@ export default function SupplierPage() {
                             <div className="p-3 border rounded-lg bg-slate-50 space-y-3">
                               <div className="grid gap-1">
                                 <div className="flex items-center justify-between">
-                                  <Label htmlFor="name" className="text-[10px]">
+                                  <Label htmlFor="name" className="text-xs">
                                     供应商名称 <span className="text-red-500">*</span>
                                   </Label>
                                   <Button
@@ -453,7 +453,7 @@ export default function SupplierPage() {
                                     size="sm"
                                     onClick={handleAiQuery}
                                     disabled={isAiQuerying || (!newSupplier.name && !newSupplier.businessLicenseNumber)}
-                                    className="h-7 text-[10px] gap-1"
+                                    className="h-7 text-xs gap-1"
                                   >
                                     {isAiQuerying ? (
                                       <>
@@ -473,13 +473,13 @@ export default function SupplierPage() {
                                   value={newSupplier.name}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
                                   placeholder="请输入供应商名称"
-                                  className="h-8 text-[10px]"
+                                  className="h-8 text-xs"
                                 />
                               </div>
                               
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="grid gap-1">
-                                  <Label htmlFor="contactPerson" className="text-[10px]">
+                                  <Label htmlFor="contactPerson" className="text-xs">
                                     联系人 <span className="text-red-500">*</span>
                                   </Label>
                                   <Input
@@ -487,35 +487,35 @@ export default function SupplierPage() {
                                     value={newSupplier.contactPerson}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
                                     placeholder="主要联系人姓名"
-                                    className="h-8 text-[10px]"
+                                    className="h-8 text-xs"
                                   />
                                 </div>
                                 <div className="grid gap-1">
-                                  <Label htmlFor="phone" className="text-[10px]">联系电话</Label>
+                                  <Label htmlFor="phone" className="text-xs">联系电话</Label>
                                   <Input
                                     id="phone"
                                     value={newSupplier.phone}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
                                     placeholder="联系电话"
-                                    className="h-8 text-[10px]"
+                                    className="h-8 text-xs"
                                   />
                                 </div>
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="email" className="text-[10px]">电子邮箱</Label>
+                                <Label htmlFor="email" className="text-xs">电子邮箱</Label>
                                 <Input
                                   id="email"
                                   type="email"
                                   value={newSupplier.email}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
                                   placeholder="example@company.com"
-                                  className="h-8 text-[10px]"
+                                  className="h-8 text-xs"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="businessLicenseNumber" className="text-[10px]">
+                                <Label htmlFor="businessLicenseNumber" className="text-xs">
                                   营业执照号
                                 </Label>
                                 <Input
@@ -523,12 +523,12 @@ export default function SupplierPage() {
                                   value={newSupplier.businessLicenseNumber}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
                                   placeholder="营业执照号（选填，用于AI查询）"
-                                  className="h-8 text-[10px]"
+                                  className="h-8 text-xs"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="registeredAddress" className="text-[10px]">
+                                <Label htmlFor="registeredAddress" className="text-xs">
                                   注册地址
                                 </Label>
                                 <Textarea
@@ -537,12 +537,12 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
                                   placeholder="注册地址"
                                   rows={2}
-                                  className="text-[10px]"
+                                  className="text-xs"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="address" className="text-[10px]">
+                                <Label htmlFor="address" className="text-xs">
                                   经营地址
                                 </Label>
                                 <Textarea
@@ -551,12 +551,12 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
                                   placeholder="经营地址"
                                   rows={2}
-                                  className="text-[10px]"
+                                  className="text-xs"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="businessScope" className="text-[10px]">
+                                <Label htmlFor="businessScope" className="text-xs">
                                   经营范围
                                 </Label>
                                 <Textarea
@@ -565,20 +565,20 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
                                   placeholder="经营范围"
                                   rows={3}
-                                  className="text-[10px]"
+                                  className="text-xs"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="categories" className="text-[10px]">
-                                  经营类别 <span className="text-[10px] text-slate-500">(多个类别用逗号分隔)</span>
+                                <Label htmlFor="categories" className="text-xs">
+                                  经营类别 <span className="text-xs text-slate-500">(多个类别用逗号分隔)</span>
                                 </Label>
                                 <Input
                                   id="categories"
                                   value={newSupplier.categories}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
                                   placeholder="例如：办公设备, 电子产品, 文具"
-                                  className="h-8 text-[10px]"
+                                  className="h-8 text-xs"
                                 />
                               </div>
                             </div>
