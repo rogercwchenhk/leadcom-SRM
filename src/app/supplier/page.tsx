@@ -473,7 +473,7 @@ export default function SupplierPage() {
                                   value={newSupplier.name}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
                                   placeholder="请输入供应商名称"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-[10px]"
                                 />
                               </div>
                               
@@ -487,7 +487,7 @@ export default function SupplierPage() {
                                     value={newSupplier.contactPerson}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
                                     placeholder="主要联系人姓名"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-[10px]"
                                   />
                                 </div>
                                 <div className="grid gap-1">
@@ -497,7 +497,7 @@ export default function SupplierPage() {
                                     value={newSupplier.phone}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
                                     placeholder="联系电话"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-[10px]"
                                   />
                                 </div>
                               </div>
@@ -510,7 +510,7 @@ export default function SupplierPage() {
                                   value={newSupplier.email}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
                                   placeholder="example@company.com"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-[10px]"
                                 />
                               </div>
                               
@@ -523,7 +523,7 @@ export default function SupplierPage() {
                                   value={newSupplier.businessLicenseNumber}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
                                   placeholder="营业执照号（选填，用于AI查询）"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-[10px]"
                                 />
                               </div>
                               
@@ -537,7 +537,7 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
                                   placeholder="注册地址"
                                   rows={2}
-                                  className="text-xs"
+                                  className="text-[10px]"
                                 />
                               </div>
                               
@@ -551,7 +551,7 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
                                   placeholder="经营地址"
                                   rows={2}
-                                  className="text-xs"
+                                  className="text-[10px]"
                                 />
                               </div>
                               
@@ -565,7 +565,7 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
                                   placeholder="经营范围"
                                   rows={3}
-                                  className="text-xs"
+                                  className="text-[10px]"
                                 />
                               </div>
                               
@@ -578,7 +578,7 @@ export default function SupplierPage() {
                                   value={newSupplier.categories}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
                                   placeholder="例如：办公设备, 电子产品, 文具"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-[10px]"
                                 />
                               </div>
                             </div>
