@@ -414,9 +414,9 @@ export default function SupplierPage() {
             <div className="col-span-5 space-y-4">
               {/* Search and Supplier List */}
               <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-1 pt-1.5 px-3">
+                <CardHeader className="pb-1 pt-2 px-4">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xs font-semibold text-slate-900">供应商列表</CardTitle>
+                    <CardTitle className="text-sm font-semibold text-slate-900">供应商列表</CardTitle>
                     <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
                       setIsAddDialogOpen(open);
                       if (!open) resetForm();
@@ -710,13 +710,13 @@ export default function SupplierPage() {
                   </div>
                   <div className="mt-1.5">
                     <div className="relative">
-                      <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <Input
                         type="search"
                         placeholder="搜索供应商..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 w-full h-8 text-xs"
+                        className="pl-10 w-full text-sm"
                       />
                     </div>
                   </div>
@@ -733,53 +733,53 @@ export default function SupplierPage() {
                             : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-1.5">
+                        <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                               selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
                             }`}>
-                              <Building2 className={`w-3.5 h-3.5 ${
+                              <Building2 className={`w-4 h-4 ${
                                 selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
                               }`} />
                             </div>
                             <div>
-                              <h3 className={`text-xs font-semibold ${
+                              <h3 className={`text-sm font-semibold ${
                                 selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
                               }`}>
                                 {supplier.name}
                               </h3>
-                              <p className="text-[10px] text-slate-500">
+                              <p className="text-xs text-slate-500 mt-1">
                                 {supplier.categories.join(' · ')}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-0.5">
                             <div className="flex items-center">
-                              <span className="text-[10px] font-medium text-yellow-600">★</span>
-                              <span className="text-[10px] text-slate-600 ml-0.5">{supplier.rating}</span>
+                              <span className="text-xs font-medium text-yellow-600">★</span>
+                              <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                        <div className="grid grid-cols-2 gap-1.5 text-xs">
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Users className="w-2.5 h-2.5" />
+                            <Users className="w-3 h-3" />
                             <span>{supplier.contacts && supplier.contacts.length > 0 
                               ? supplier.contacts.find(c => c.isPrimary)?.name || supplier.contacts[0].name 
                               : supplier.contactPerson}</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Phone className="w-2.5 h-2.5" />
+                            <Phone className="w-3 h-3" />
                             <span className="truncate">{supplier.contacts && supplier.contacts.length > 0 
                               ? supplier.contacts.find(c => c.isPrimary)?.phone || supplier.contacts[0].phone 
                               : supplier.phone}</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <FileText className="w-2.5 h-2.5" />
+                            <FileText className="w-3 h-3" />
                             <span>合作 {supplier.historicalCooperationCount} 次</span>
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
-                            <Clock className="w-2.5 h-2.5" />
+                            <Clock className="w-3 h-3" />
                             <span>平均 {supplier.averageDeliveryDays} 天</span>
                           </div>
                         </div>
@@ -815,35 +815,35 @@ export default function SupplierPage() {
                 <div className="space-y-4">
                   {/* Supplier Info Card */}
                   <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="pb-1 pt-1.5 px-3">
-                      <CardTitle className="text-xs font-semibold text-slate-900">
+                    <CardHeader className="pb-1 pt-2 px-4">
+                      <CardTitle className="text-sm font-semibold text-slate-900">
                         供应商详情
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="px-4 pb-4 pt-0">
                       <div className="space-y-3">
                         {/* Basic Info */}
-                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                          <div className="flex items-start justify-between mb-2.5">
+                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                          <div className="flex items-start justify-between mb-2">
                             <div>
                               <div className="flex items-center gap-2">
-                                <h3 className="text-sm font-semibold text-slate-900">
+                                <h3 className="text-lg font-bold text-slate-900 leading-none">
                                   {selectedSupplierData.name}
                                 </h3>
                                 {selectedSupplierData.aiVerified && (
-                                  <Badge className="h-4 px-1 text-[9px] bg-green-100 text-green-700 border-green-200">
+                                  <Badge className="h-5 px-1.5 text-xs bg-green-100 text-green-700 border-green-200">
                                     AI已验证
                                   </Badge>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 mt-0.5">
+                              <p className="text-xs text-slate-500 mt-1">
                                 {selectedSupplierData.categories.join(' · ')}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-yellow-50 rounded-full">
-                                <span className="text-[10px] font-medium text-yellow-600">★</span>
-                                <span className="text-[10px] font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
+                              <div className="flex items-center gap-0.5 px-2 py-1 bg-yellow-50 rounded-full">
+                                <span className="text-xs font-medium text-yellow-600">★</span>
+                                <span className="text-xs font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
                               </div>
                             </div>
                           </div>
@@ -852,29 +852,29 @@ export default function SupplierPage() {
                             {/* 营业信息 */}
                             {(selectedSupplierData.businessLicenseNumber || selectedSupplierData.registeredAddress || selectedSupplierData.businessScope) && (
                               <div className="border-t border-slate-200 pt-2">
-                                <h4 className="text-[10px] font-semibold text-slate-700 mb-1.5">营业信息</h4>
-                                <div className="grid grid-cols-1 gap-1.5">
+                                <h4 className="text-xs font-semibold text-slate-700 mb-2">营业信息</h4>
+                                <div className="grid grid-cols-1 gap-2">
                                   {selectedSupplierData.businessLicenseNumber && (
-                                    <div className="flex items-center gap-1.5 text-[11px]">
-                                      <FileText className="w-3.5 h-3.5 text-slate-400" />
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                      <FileText className="w-4 h-4 text-slate-400" />
                                       <span className="text-slate-600">营业执照号：</span>
                                       <span className="font-medium text-slate-900">{selectedSupplierData.businessLicenseNumber}</span>
                                     </div>
                                   )}
                                   {selectedSupplierData.registeredAddress && (
-                                    <div className="flex items-start gap-1.5 text-[11px]">
-                                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                    <div className="flex items-start gap-1.5 text-xs">
+                                      <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
                                       <span className="text-slate-600">注册地址：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
                                         {selectedSupplierData.registeredAddress}
                                       </span>
                                     </div>
                                   )}
                                   {selectedSupplierData.businessScope && (
-                                    <div className="flex items-start gap-1.5 text-[11px]">
-                                      <List className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                    <div className="flex items-start gap-1.5 text-xs">
+                                      <List className="w-4 h-4 text-slate-400 mt-0.5" />
                                       <span className="text-slate-600">经营范围：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
                                         {selectedSupplierData.businessScope}
                                       </span>
                                     </div>
@@ -885,41 +885,41 @@ export default function SupplierPage() {
 
                             {/* 联系信息 - 支持多个联系人 */}
                             <div className="border-t border-slate-200 pt-2">
-                              <h4 className="text-[10px] font-semibold text-slate-700 mb-1.5">联系人</h4>
+                              <h4 className="text-xs font-semibold text-slate-700 mb-2">联系人</h4>
                               {selectedSupplierData.contacts && selectedSupplierData.contacts.length > 0 ? (
                                 <div className="space-y-2">
                                   {selectedSupplierData.contacts.map((contact, index) => (
-                                    <div key={index} className="bg-white p-2 rounded border border-slate-200">
-                                      <div className="flex items-center gap-1.5 mb-1">
-                                        <Users className="w-3.5 h-3.5 text-slate-400" />
-                                        <span className="text-[11px] font-semibold text-slate-900">{contact.name}</span>
+                                    <div key={index} className="bg-white p-2.5 rounded border border-slate-200">
+                                      <div className="flex items-center gap-1.5 mb-1.5">
+                                        <Users className="w-4 h-4 text-slate-400" />
+                                        <span className="text-xs font-semibold text-slate-900">{contact.name}</span>
                                         {contact.isPrimary && (
-                                          <Badge className="h-4 px-1 text-[9px] bg-orange-100 text-orange-700 border-orange-200">
+                                          <Badge className="h-5 px-1.5 text-xs bg-orange-100 text-orange-700 border-orange-200">
                                             主要
                                           </Badge>
                                         )}
                                         {contact.position && (
-                                          <span className="text-[10px] text-slate-500">{contact.position}</span>
+                                          <span className="text-xs text-slate-500">{contact.position}</span>
                                         )}
                                       </div>
-                                      <div className="grid grid-cols-1 gap-1 text-[10px]">
+                                      <div className="grid grid-cols-1 gap-1.5 text-xs">
                                         {contact.phone && (
                                           <div className="flex items-center gap-1">
-                                            <Phone className="w-3 h-3 text-slate-400" />
+                                            <Phone className="w-3.5 h-3.5 text-slate-400" />
                                             <span className="text-slate-600">手机：</span>
                                             <span className="text-slate-900">{contact.phone}</span>
                                           </div>
                                         )}
                                         {contact.email && (
                                           <div className="flex items-center gap-1">
-                                            <Mail className="w-3 h-3 text-slate-400" />
+                                            <Mail className="w-3.5 h-3.5 text-slate-400" />
                                             <span className="text-slate-600">邮箱：</span>
                                             <span className="text-slate-900 truncate">{contact.email}</span>
                                           </div>
                                         )}
                                         {contact.wechat && (
                                           <div className="flex items-center gap-1">
-                                            <MessageCircle className="w-3 h-3 text-slate-400" />
+                                            <MessageCircle className="w-3.5 h-3.5 text-slate-400" />
                                             <span className="text-slate-600">微信：</span>
                                             <span className="text-slate-900">{contact.wechat}</span>
                                           </div>
@@ -930,28 +930,28 @@ export default function SupplierPage() {
                                 </div>
                               ) : (
                                 <div className="grid grid-cols-2 gap-2">
-                                  <div className="space-y-1.5">
-                                    <div className="flex items-center gap-1.5 text-[11px]">
-                                      <Users className="w-3.5 h-3.5 text-slate-400" />
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                      <Users className="w-4 h-4 text-slate-400" />
                                       <span className="text-slate-600">联系人：</span>
                                       <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[11px]">
-                                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                      <Phone className="w-4 h-4 text-slate-400" />
                                       <span className="text-slate-600">电话：</span>
                                       <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[11px]">
-                                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                      <Mail className="w-4 h-4 text-slate-400" />
                                       <span className="text-slate-600">邮箱：</span>
-                                      <span className="font-medium text-slate-900 text-[10px] truncate">{selectedSupplierData.email}</span>
+                                      <span className="font-medium text-slate-900 text-xs truncate">{selectedSupplierData.email}</span>
                                     </div>
                                   </div>
-                                  <div className="space-y-1.5">
-                                    <div className="flex items-start gap-1.5 text-[11px]">
-                                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                  <div className="space-y-2">
+                                    <div className="flex items-start gap-1.5 text-xs">
+                                      <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
                                       <span className="text-slate-600">地址：</span>
-                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                      <span className="font-medium text-slate-900 flex-1 text-xs leading-relaxed">
                                         {selectedSupplierData.address}
                                       </span>
                                     </div>
@@ -963,34 +963,42 @@ export default function SupplierPage() {
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-4 gap-1.5">
-                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-0.5">
-                              <FileText className="w-3 h-3 text-blue-500" />
+                        <div className="grid grid-cols-4 gap-3">
+                          <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all duration-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <FileText className="w-5 h-5 text-blue-600" aria-hidden="true" />
                             </div>
-                            <div className="text-xs font-bold text-slate-900 leading-tight">{selectedSupplierData.historicalCooperationCount}</div>
-                            <div className="text-[9px] text-slate-500">合作次数</div>
+                            <div>
+                              <div className="text-lg font-bold text-slate-900 leading-none">{selectedSupplierData.historicalCooperationCount}</div>
+                              <div className="text-xs text-slate-500 mt-1">合作次数</div>
+                            </div>
                           </div>
-                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-0.5">
-                              <Clock className="w-3 h-3 text-purple-500" />
+                          <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all duration-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <Clock className="w-5 h-5 text-purple-600" aria-hidden="true" />
                             </div>
-                            <div className="text-xs font-bold text-slate-900 leading-tight">{selectedSupplierData.averageDeliveryDays}</div>
-                            <div className="text-[9px] text-slate-500">平均货期</div>
+                            <div>
+                              <div className="text-lg font-bold text-slate-900 leading-none">{selectedSupplierData.averageDeliveryDays}</div>
+                              <div className="text-xs text-slate-500 mt-1">平均货期</div>
+                            </div>
                           </div>
-                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-0.5">
-                              <DollarSign className="w-3 h-3 text-green-500" />
+                          <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all duration-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <DollarSign className="w-5 h-5 text-green-600" aria-hidden="true" />
                             </div>
-                            <div className="text-xs font-bold text-slate-900 leading-tight">¥{(selectedSupplierData.totalTransactionAmount / 1000).toFixed(0)}K</div>
-                            <div className="text-[9px] text-slate-500">累计金额</div>
+                            <div>
+                              <div className="text-lg font-bold text-slate-900 leading-none">¥{(selectedSupplierData.totalTransactionAmount / 1000).toFixed(0)}K</div>
+                              <div className="text-xs text-slate-500 mt-1">累计金额</div>
+                            </div>
                           </div>
-                          <div className="p-2 rounded-lg border border-slate-200 bg-white">
-                            <div className="flex items-center justify-between mb-0.5">
-                              <Calendar className="w-3 h-3 text-orange-500" />
+                          <div className="p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all duration-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <Calendar className="w-5 h-5 text-orange-600" aria-hidden="true" />
                             </div>
-                            <div className="text-[10px] font-bold text-slate-900 leading-tight">{selectedSupplierData.lastTransactionDate}</div>
-                            <div className="text-[9px] text-slate-500">最后交易</div>
+                            <div>
+                              <div className="text-lg font-bold text-slate-900 leading-none">{selectedSupplierData.lastTransactionDate}</div>
+                              <div className="text-xs text-slate-500 mt-1">最后交易</div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -999,9 +1007,9 @@ export default function SupplierPage() {
 
                   {/* Historical POs */}
                   <Card className="border-slate-200 shadow-sm">
-                    <CardHeader className="pb-1 pt-1.5 px-3 flex flex-row items-center justify-between">
-                      <CardTitle className="text-xs font-semibold text-slate-900">历史订单</CardTitle>
-                      <Button variant="ghost" size="sm" className="text-[10px] text-slate-500 hover:text-slate-700 h-6">
+                    <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
+                      <CardTitle className="text-sm font-semibold text-slate-900">历史订单</CardTitle>
+                      <Button variant="ghost" size="sm" className="text-xs text-slate-500 hover:text-slate-700 h-8" aria-label="查看全部订单">
                         查看全部
                       </Button>
                     </CardHeader>
@@ -1010,35 +1018,35 @@ export default function SupplierPage() {
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-slate-50">
-                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">PO号</TableHead>
-                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">产品名称</TableHead>
-                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">数量</TableHead>
-                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">金额</TableHead>
-                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">状态</TableHead>
-                              <TableHead className="py-1.5 px-2.5 text-right text-[10px] font-medium">交期</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">PO号</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">产品名称</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">数量</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">金额</TableHead>
+                              <TableHead className="py-2 px-3 text-xs font-medium">状态</TableHead>
+                              <TableHead className="py-2 px-3 text-right text-xs font-medium">交期</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {selectedPOs.map((po) => (
                               <TableRow key={po.id} className="hover:bg-slate-50">
-                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
+                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
                                   {po.poNumber}
                                 </TableCell>
-                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-700">
+                                <TableCell className="py-2 px-3 text-xs text-slate-700">
                                   {po.productName}
                                 </TableCell>
-                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-600">
+                                <TableCell className="py-2 px-3 text-xs text-slate-600">
                                   {po.quantity}
                                 </TableCell>
-                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
+                                <TableCell className="py-2 px-3 text-xs font-medium text-slate-900">
                                   ¥{po.totalAmount.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="py-1.5 px-2.5">
-                                  <Badge variant={statusConfig[po.status].variant} className="text-[9px] h-4 px-1">
+                                <TableCell className="py-2 px-3">
+                                  <Badge variant={statusConfig[po.status].variant} className="text-xs h-5 px-1.5">
                                     {statusConfig[po.status].label}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="py-1.5 px-2.5 text-right text-[10px] text-slate-600">
+                                <TableCell className="py-2 px-3 text-right text-xs text-slate-600">
                                   {po.deliveryDate}
                                 </TableCell>
                               </TableRow>
