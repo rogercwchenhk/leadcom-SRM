@@ -120,7 +120,7 @@ export default function SupplierPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+              <h1 className="text-xl font-semibold tracking-tight text-slate-900">
                 供应商协作平台
               </h1>
               <p className="text-slate-600">

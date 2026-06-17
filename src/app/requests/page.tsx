@@ -136,7 +136,7 @@ export default function RequestsPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+              <h1 className="text-xl font-semibold text-slate-900 tracking-tight">
                 采购需求
               </h1>
               <p className="text-sm text-slate-500 mt-1">
