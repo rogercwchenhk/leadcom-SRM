@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, initDatabase, sqlite } from '@/db';
+import { db, initDatabase } from '@/db';
+import { 
+  users, 
+  userGroupRelations, 
+  userGroups,
+  User,
+  NewUser
+} from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import type { UserWithGroups } from '@/types';
 
 // 初始化数据库
 export async function GET(request: NextRequest) {
@@ -8,32 +17,60 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const userId = searchParams.get('id');
   
-  // 获取所有用户（使用原始SQL）
-  const allUsers = sqlite.prepare('SELECT * FROM users').all() as any[];
+  // 获取所有用户
+  const allUsers = await db.select().from(users).all();
   
   if (userId) {
     // 获取单个用户详情
-    const user = allUsers.find((u: any) => u.id === parseInt(userId));
+    const user = allUsers.find((u) => u.id === parseInt(userId));
     if (!user) {
       return NextResponse.json(null);
     }
     
-    // 获取用户组关系
-    const groups = sqlite.prepare('SELECT * FROM user_group_relations WHERE user_id = ?').all(parseInt(userId)) as any[];
+    // 获取用户组关系，并 JOIN 获取组名
+    const groupRelations = await db.select({
+      userId: userGroupRelations.userId,
+      groupId: userGroupRelations.groupId,
+      groupName: userGroups.name,
+    })
+      .from(userGroupRelations)
+      .leftJoin(userGroups, eq(userGroupRelations.groupId, userGroups.id))
+      .where(eq(userGroupRelations.userId, parseInt(userId)))
+      .all();
     
-    return NextResponse.json({
+    const result: UserWithGroups = {
       ...user,
-      userGroups: groups.map((g: any) => ({ group: { id: g.group_id, name: '' } })),
-    });
+      userGroups: groupRelations.map((g) => ({ 
+        group: { 
+          id: g.groupId, 
+          name: g.groupName || '' 
+        } 
+      })),
+    };
+    
+    return NextResponse.json(result);
   }
   
   // 获取所有用户及其用户组
-  const usersWithGroups = await Promise.all(allUsers.map(async (user: any) => {
-    const groups = sqlite.prepare('SELECT * FROM user_group_relations WHERE user_id = ?').all(user.id) as any[];
+  const usersWithGroups: UserWithGroups[] = await Promise.all(allUsers.map(async (user) => {
+    const groupRelations = await db.select({
+      userId: userGroupRelations.userId,
+      groupId: userGroupRelations.groupId,
+      groupName: userGroups.name,
+    })
+      .from(userGroupRelations)
+      .leftJoin(userGroups, eq(userGroupRelations.groupId, userGroups.id))
+      .where(eq(userGroupRelations.userId, user.id))
+      .all();
     
     return {
       ...user,
-      userGroups: groups.map((g: any) => ({ group: { id: g.group_id, name: '' } })),
+      userGroups: groupRelations.map((g) => ({ 
+        group: { 
+          id: g.groupId, 
+          name: g.groupName || '' 
+        } 
+      })),
     };
   }));
   
@@ -46,26 +83,55 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { username, email, groupIds = [] } = body;
   
-  // 创建用户
-  const stmt = sqlite.prepare(`
-    INSERT INTO users (username, email, status, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-  const now = Date.now();
-  const result = stmt.run(username, email, 'active', now, now);
-  
-  // 获取刚创建的用户
-  const newUser = sqlite.prepare('SELECT * FROM users WHERE id = ?').get((result as any).lastInsertRowid) as any;
-  
-  // 分配用户组
-  if (groupIds.length > 0 && newUser) {
-    const groupStmt = sqlite.prepare('INSERT INTO user_group_relations (user_id, group_id) VALUES (?, ?)');
-    for (const groupId of groupIds) {
-      groupStmt.run(newUser.id, groupId);
-    }
+  // 输入校验
+  if (!username || username.trim() === '') {
+    return NextResponse.json({ error: '用户名不能为空' }, { status: 400 });
   }
   
-  return NextResponse.json(newUser || { success: true });
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: '请输入有效的邮箱地址' }, { status: 400 });
+  }
+  
+  try {
+    const now = new Date();
+    const newUserData: NewUser = {
+      username: username.trim(),
+      email: email.trim(),
+      status: 'active',
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    // 创建用户
+    const result = await db.insert(users).values(newUserData).returning();
+    const newUser = result[0];
+    
+    if (!newUser) {
+      return NextResponse.json({ error: '创建用户失败' }, { status: 500 });
+    }
+    
+    // 分配用户组
+    if (groupIds.length > 0) {
+      await db.insert(userGroupRelations).values(
+        groupIds.map((groupId: number) => ({
+          userId: newUser.id,
+          groupId,
+        }))
+      );
+    }
+    
+    return NextResponse.json(newUser);
+  } catch (error: any) {
+    if (error?.code === 'SQLITE_CONSTRAINT') {
+      if (error?.message?.includes('username')) {
+        return NextResponse.json({ error: '用户名已存在' }, { status: 409 });
+      }
+      if (error?.message?.includes('email')) {
+        return NextResponse.json({ error: '邮箱已存在' }, { status: 409 });
+      }
+    }
+    return NextResponse.json({ error: '创建用户失败' }, { status: 500 });
+  }
 }
 
 export async function PUT(request: NextRequest) {
@@ -74,24 +140,58 @@ export async function PUT(request: NextRequest) {
   const body = await request.json();
   const { id, username, email, status, groupIds = [] } = body;
   
-  // 更新用户基本信息
-  sqlite.prepare(`
-    UPDATE users 
-    SET username = ?, email = ?, status = ?, updated_at = ?
-    WHERE id = ?
-  `).run(username, email, status, Date.now(), id);
-  
-  // 更新用户组关系
-  sqlite.prepare('DELETE FROM user_group_relations WHERE user_id = ?').run(id);
-  
-  if (groupIds.length > 0) {
-    const groupStmt = sqlite.prepare('INSERT INTO user_group_relations (user_id, group_id) VALUES (?, ?)');
-    for (const groupId of groupIds) {
-      groupStmt.run(id, groupId);
-    }
+  if (!id) {
+    return NextResponse.json({ error: '用户ID不能为空' }, { status: 400 });
   }
   
-  return NextResponse.json({ success: true });
+  if (!username || username.trim() === '') {
+    return NextResponse.json({ error: '用户名不能为空' }, { status: 400 });
+  }
+  
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: '请输入有效的邮箱地址' }, { status: 400 });
+  }
+  
+  if (!status || !['active', 'inactive', 'suspended'].includes(status)) {
+    return NextResponse.json({ error: '无效的用户状态' }, { status: 400 });
+  }
+  
+  try {
+    // 更新用户基本信息
+    await db.update(users)
+      .set({
+        username: username.trim(),
+        email: email.trim(),
+        status: status as 'active' | 'inactive' | 'suspended',
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id));
+    
+    // 更新用户组关系
+    await db.delete(userGroupRelations)
+      .where(eq(userGroupRelations.userId, id));
+    
+    if (groupIds.length > 0) {
+      await db.insert(userGroupRelations).values(
+        groupIds.map((groupId: number) => ({
+          userId: id,
+          groupId,
+        }))
+      );
+    }
+    
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    if (error?.code === 'SQLITE_CONSTRAINT') {
+      if (error?.message?.includes('username')) {
+        return NextResponse.json({ error: '用户名已存在' }, { status: 409 });
+      }
+      if (error?.message?.includes('email')) {
+        return NextResponse.json({ error: '邮箱已存在' }, { status: 409 });
+      }
+    }
+    return NextResponse.json({ error: '更新用户失败' }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: NextRequest) {
@@ -104,11 +204,17 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: '用户ID不能为空' }, { status: 400 });
   }
   
-  // 删除用户组关系
-  sqlite.prepare('DELETE FROM user_group_relations WHERE user_id = ?').run(parseInt(id));
-  
-  // 删除用户
-  sqlite.prepare('DELETE FROM users WHERE id = ?').run(parseInt(id));
-  
-  return NextResponse.json({ success: true });
+  try {
+    // 删除用户组关系
+    await db.delete(userGroupRelations)
+      .where(eq(userGroupRelations.userId, parseInt(id)));
+    
+    // 删除用户
+    await db.delete(users)
+      .where(eq(users.id, parseInt(id)));
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: '删除用户失败' }, { status: 500 });
+  }
 }

@@ -1,5 +1,3 @@
-import { AIAnalysisResult, Supplier, SupplierQuote, SupplierRecommendation } from '@/types';
-
 /**
  * Hermes Agent - AI 服务工具函数
  */

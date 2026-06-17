@@ -1,5 +1,70 @@
 // 核心类型定义
 
+// ========== 权限管理相关类型 ==========
+
+export interface UserGroupRelation {
+  userId: number;
+  groupId: number;
+}
+
+export interface GroupPermissionRelation {
+  groupId: number;
+  permissionId: number;
+}
+
+export interface UserPermissionRelation {
+  userId: number;
+  permissionId: number;
+}
+
+export interface UserWithGroups {
+  id: number;
+  username: string;
+  email: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userGroups: Array<{
+    group: {
+      id: number;
+      name: string;
+    };
+  }>;
+}
+
+export interface GroupWithDetails {
+  id: number;
+  name: string;
+  description: string | null;
+  parentGroupId: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+  users: Array<{ user: UserGroupRelation }>;
+  permissions: Array<{ permission: GroupPermissionRelation }>;
+}
+
+export interface UserPermissionsResponse {
+  permissions: Array<{
+    id: number;
+    name: string;
+    code: string;
+    description: string | null;
+    parentPermissionId: number | null;
+    createdAt: Date;
+    source: 'direct' | 'group';
+    groupName?: string;
+  }>;
+  allPermissions: Array<{
+    id: number;
+    name: string;
+    code: string;
+    description: string | null;
+    parentPermissionId: number | null;
+    createdAt: Date;
+  }>;
+  directPermissionIds: number[];
+}
+
 // 用户角色类型
 export type UserRole = 'requester' | 'request_confirmer' | 'purchaser' | 'purchaser_manager' | 'customer_service' | 'approver' | 'finance' | 'supplier';
 

@@ -1,9 +1,9 @@
 // Hermes Agent 配置
 export const HERMES_CONFIG = {
-  baseUrl: process.env.HERMES_AGENT_URL || 'http://192.168.2.105:8642/V1',
-  apiKey: process.env.HERMES_API_KEY || '691b5dc834e04f39807e49f4bcb1715c98d610bed4',
+  baseUrl: process.env.HERMES_AGENT_URL || '',
+  apiKey: process.env.HERMES_API_KEY || '',
   // 备用API Key
-  apiKeyAlt: 'e009566f4b0c875d3482c9',
+  apiKeyAlt: process.env.HERMES_API_KEY_ALT || '',
   enabled: process.env.HERMES_ENABLED !== 'false',
   
   // API端点

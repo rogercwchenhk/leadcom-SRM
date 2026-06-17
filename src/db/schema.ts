@@ -8,8 +8,8 @@ export const users = sqliteTable('users', {
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash'),
   status: text('status', { enum: ['active', 'inactive', 'suspended'] }).notNull().default('active'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
 // 用户组表（支持树形层级）
@@ -18,8 +18,8 @@ export const userGroups = sqliteTable('user_groups', {
   name: text('name').notNull().unique(),
   description: text('description'),
   parentGroupId: integer('parent_group_id'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
 }, (table) => ({
   parentGroupIdx: index('parent_group_idx').on(table.parentGroupId),
 }));
@@ -31,7 +31,7 @@ export const permissions = sqliteTable('permissions', {
   code: text('code').notNull().unique(),
   description: text('description'),
   parentPermissionId: integer('parent_permission_id'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 }, (table) => ({
   parentPermissionIdx: index('parent_permission_idx').on(table.parentPermissionId),
 }));
