@@ -465,13 +465,6 @@ export default function POSPage() {
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                    
-                    <div className="mt-3 pt-3 border-t border-slate-100">
-                      <Button variant="ghost" size="sm" className="w-full justify-center gap-2 h-9 text-xs" aria-label={`查看订单 ${po.id}`}>
-                        <Eye className="w-4 h-4" />
-                        <span>查看详情</span>
-                      </Button>
-                    </div>
                   </CardContent>
                 </Card>
               );
