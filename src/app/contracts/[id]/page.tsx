@@ -113,45 +113,45 @@ export default function ContractDetailPage() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Left Column - Contract Info */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             {/* Basic Info Card */}
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-1 pt-2 px-4">
                 <CardTitle className="text-sm font-semibold text-slate-900">基本信息</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <p className="text-xs text-slate-500">客户名称</p>
-                    <p className="text-sm font-medium text-slate-900 flex items-center gap-2">
-                      <User className="w-4 h-4 text-slate-400" />
+              <CardContent className="px-4 pb-4 pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] text-slate-500">客户名称</p>
+                    <p className="text-sm font-medium text-slate-900 flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-slate-400" />
                       {contract.customerName}
                     </p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-slate-500">联系人</p>
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] text-slate-500">联系人</p>
                     <p className="text-sm text-slate-600">{contract.customerContact}</p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-slate-500">签订日期</p>
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-slate-400" />
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] text-slate-500">签订日期</p>
+                    <p className="text-sm text-slate-600 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       {contract.contractDate.toLocaleDateString('zh-CN')}
                     </p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-slate-500">约定交货</p>
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-slate-400" />
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] text-slate-500">约定交货</p>
+                    <p className="text-sm text-slate-600 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       {contract.deliveryDate.toLocaleDateString('zh-CN')}
                     </p>
                   </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="text-xs text-slate-500">合同金额</p>
-                    <p className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                      <DollarSign className="w-5 h-5 text-emerald-600" />
+                  <div className="space-y-0.5 md:col-span-2">
+                    <p className="text-[11px] text-slate-500">合同金额</p>
+                    <p className="text-base font-semibold text-slate-900 flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4 text-emerald-600" />
                       ¥{contract.totalAmount.toLocaleString()}
                     </p>
                   </div>
@@ -161,29 +161,29 @@ export default function ContractDetailPage() {
 
             {/* AI Summary Card */}
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-1 pt-2 px-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                  <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-orange-500" />
                     AI合同摘要
                   </CardTitle>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-[11px] h-5">
                     自动生成
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-slate-50 rounded-lg p-4">
+              <CardContent className="px-4 pb-4 pt-0 space-y-3">
+                <div className="bg-slate-50 rounded-lg p-3">
                   <p className="text-sm text-slate-700 leading-relaxed">
                     {contract.summary.summary}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-xs font-medium text-slate-900 mb-2">关键要点</h4>
-                  <ul className="space-y-2">
+                  <h4 className="text-[11px] font-medium text-slate-900 mb-1.5">关键要点</h4>
+                  <ul className="space-y-1.5">
                     {contract.summary.keyPoints.map((point, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
+                      <li key={index} className="flex items-start gap-1.5">
+                        <div className="w-1 h-1 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
                         <span className="text-sm text-slate-600">{point}</span>
                       </li>
                     ))}
@@ -194,8 +194,8 @@ export default function ContractDetailPage() {
 
             {/* Contract Items Card */}
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <CardHeader className="pb-1 pt-2 px-4">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
                   <FileJson className="w-4 h-4 text-slate-500" />
                   合同明细
                 </CardTitle>
@@ -205,29 +205,29 @@ export default function ContractDetailPage() {
                   <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-200">
                       <tr>
-                        <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">产品名称</th>
-                        <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">规格</th>
-                        <th className="text-center text-xs font-medium text-slate-500 px-4 py-3">数量</th>
-                        <th className="text-right text-xs font-medium text-slate-500 px-4 py-3">单价</th>
-                        <th className="text-right text-xs font-medium text-slate-500 px-4 py-3">小计</th>
+                        <th className="text-left text-[11px] font-medium text-slate-500 px-3 py-2">产品名称</th>
+                        <th className="text-left text-[11px] font-medium text-slate-500 px-3 py-2">规格</th>
+                        <th className="text-center text-[11px] font-medium text-slate-500 px-3 py-2">数量</th>
+                        <th className="text-right text-[11px] font-medium text-slate-500 px-3 py-2">单价</th>
+                        <th className="text-right text-[11px] font-medium text-slate-500 px-3 py-2">小计</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
                       {contract.items.map((item) => (
                         <tr key={item.id} className="hover:bg-slate-50">
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <p className="text-sm font-medium text-slate-900">{item.productName}</p>
                           </td>
-                          <td className="px-4 py-3">
-                            <p className="text-xs text-slate-500">{item.specifications}</p>
+                          <td className="px-3 py-2">
+                            <p className="text-[11px] text-slate-500">{item.specifications}</p>
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-3 py-2 text-center">
                             <p className="text-sm text-slate-600">{item.quantity}</p>
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-3 py-2 text-right">
                             <p className="text-sm text-slate-600">¥{item.unitPrice?.toLocaleString()}</p>
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-3 py-2 text-right">
                             <p className="text-sm font-medium text-slate-900">¥{item.totalPrice?.toLocaleString()}</p>
                           </td>
                         </tr>
@@ -235,10 +235,10 @@ export default function ContractDetailPage() {
                     </tbody>
                     <tfoot className="bg-slate-50 border-t border-slate-200">
                       <tr>
-                        <td colSpan={4} className="px-4 py-3 text-right">
+                        <td colSpan={4} className="px-3 py-2 text-right">
                           <p className="text-sm font-medium text-slate-900">总计</p>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-3 py-2 text-right">
                           <p className="text-sm font-semibold text-emerald-600">
                             ¥{contract.totalAmount.toLocaleString()}
                           </p>
@@ -252,23 +252,23 @@ export default function ContractDetailPage() {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* PDF Preview Card */}
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <CardHeader className="pb-1 pt-2 px-4">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-slate-500" />
                   合同文件
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 pb-4 pt-0">
                 <div className="aspect-[3/4] bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
                   <div className="text-center">
-                    <FileText className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                    <p className="text-sm text-slate-500">PDF预览</p>
+                    <FileText className="w-10 h-10 text-slate-400 mx-auto mb-1.5" />
+                    <p className="text-xs text-slate-500">PDF预览</p>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full mt-4 border-slate-200">
+                <Button variant="outline" className="w-full mt-3 border-slate-200 h-9 text-xs">
                   下载PDF
                 </Button>
               </CardContent>
@@ -277,18 +277,18 @@ export default function ContractDetailPage() {
             {/* Linked Requests */}
             {contract.linkedRequests.length > 0 && (
               <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
                     <Link2 className="w-4 h-4 text-slate-500" />
                     关联需求
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-slate-200">
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-1.5">
                     {contract.linkedRequests.map((request) => (
                       <div 
                         key={request.id}
-                        className="p-4 hover:bg-slate-50 transition-colors cursor-pointer"
+                        className="p-2.5 rounded-lg hover:bg-slate-50 transition-colors duration-200 cursor-pointer"
                         onClick={() => router.push(`/requests/${request.id}`)}
                       >
                         <div className="flex items-start justify-between">
@@ -296,11 +296,11 @@ export default function ContractDetailPage() {
                             <p className="text-sm font-medium text-slate-900 truncate">
                               {request.title}
                             </p>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-[11px] text-slate-500 mt-0.5">
                               {request.createdAt.toLocaleDateString('zh-CN')}
                             </p>
                           </div>
-                          <Badge className="flex-shrink-0 ml-2 bg-blue-100 text-blue-700">
+                          <Badge className="flex-shrink-0 ml-2 bg-blue-100 text-blue-700 text-[11px]">
                             {request.status}
                           </Badge>
                         </div>
