@@ -2,17 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
-  ArrowLeft,
   Send,
   Loader2
 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function NewRequestPage() {
   const router = useRouter();
@@ -46,28 +44,21 @@ export default function NewRequestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Link href="/requests">
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg hover:bg-slate-100" aria-label="返回">
-                <ArrowLeft className="h-5 w-5 text-slate-600" aria-hidden="true" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
-                新建采购需求
-              </h1>
-              <p className="text-sm text-slate-500 mt-1">
-                填写采购需求信息，带 * 为必填项
-              </p>
-            </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
+              新建采购需求
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              填写采购需求信息，带 * 为必填项
+            </p>
           </div>
         </div>
 
         {/* 主内容区域 */}
-        <div className="w-full max-w-2xl mx-auto">
+        <div className="w-full max-w-2xl">
           <Card className="border-slate-200 shadow-sm">
             <CardHeader className="pb-1 pt-2 px-4">
               <CardTitle className="text-sm font-semibold text-slate-900">采购需求信息</CardTitle>
@@ -84,7 +75,7 @@ export default function NewRequestPage() {
                     placeholder="请输入产品名称"
                     value={formData.productName}
                     onChange={(e) => handleInputChange('productName', e.target.value)}
-                    className="h-9 bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm rounded-lg"
+                    className="h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                   />
                 </div>
 
@@ -98,7 +89,7 @@ export default function NewRequestPage() {
                     placeholder="请输入产品规格、型号等详细信息"
                     value={formData.specifications}
                     onChange={(e) => handleInputChange('specifications', e.target.value)}
-                    className="h-9 bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm rounded-lg"
+                    className="h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                   />
                 </div>
 
@@ -114,7 +105,7 @@ export default function NewRequestPage() {
                       placeholder="请输入数量"
                       value={formData.quantity}
                       onChange={(e) => handleInputChange('quantity', e.target.value)}
-                      className="h-9 bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm rounded-lg"
+                      className="h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                     />
                   </div>
 
@@ -128,7 +119,7 @@ export default function NewRequestPage() {
                       placeholder="请输入预算"
                       value={formData.budget}
                       onChange={(e) => handleInputChange('budget', e.target.value)}
-                      className="h-9 bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm rounded-lg"
+                      className="h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                     />
                   </div>
                 </div>
@@ -143,7 +134,7 @@ export default function NewRequestPage() {
                     type="date"
                     value={formData.deliveryDate}
                     onChange={(e) => handleInputChange('deliveryDate', e.target.value)}
-                    className="h-9 bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm rounded-lg"
+                    className="h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                   />
                 </div>
 
@@ -157,7 +148,7 @@ export default function NewRequestPage() {
                     placeholder="请输入其他需要说明的信息"
                     value={formData.remarks}
                     onChange={(e) => handleInputChange('remarks', e.target.value)}
-                    className="min-h-[100px] resize-none bg-white border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm leading-relaxed rounded-lg"
+                    className="min-h-[100px] resize-none bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                   />
                 </div>
               </div>
@@ -167,14 +158,14 @@ export default function NewRequestPage() {
                 variant="outline" 
                 onClick={() => router.push('/requests')}
                 disabled={isSubmitting}
-                className="flex-1 border-slate-200"
+                className="flex-1 border-slate-200 hover:border-slate-300 text-xs h-9"
               >
                 取消
               </Button>
               <Button 
                 onClick={handleSubmit}
                 disabled={isSubmitting || !formData.productName.trim() || !formData.quantity}
-                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-xs h-9"
               >
                 {isSubmitting ? (
                   <>
