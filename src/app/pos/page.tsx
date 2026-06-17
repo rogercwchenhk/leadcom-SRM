@@ -231,14 +231,14 @@ export default function POSPage() {
                     placeholder="搜索PO号、产品名称、供应商…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg"
+                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                     aria-label="搜索PO号、产品名称、供应商"
                   />
                 </div>
                 <div className="flex gap-2">
                   <label htmlFor="status-filter" className="sr-only">状态筛选</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger id="status-filter" className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg" aria-label="订单状态筛选">
+                    <SelectTrigger id="status-filter" className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs" aria-label="订单状态筛选">
                       <SelectValue placeholder="状态筛选" />
                     </SelectTrigger>
                     <SelectContent>
@@ -288,16 +288,16 @@ export default function POSPage() {
                         
                         return (
                           <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
-                            <TableCell className="font-medium text-slate-900">{po.id}</TableCell>
+                            <TableCell className="text-xs font-medium text-slate-900">{po.id}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Package className="w-4 h-4 text-slate-400" aria-hidden="true" />
-                                <span className="text-slate-900">{po.productName}</span>
+                                <span className="text-xs text-slate-900">{po.productName}</span>
                               </div>
                             </TableCell>
-                            <TableCell className="text-slate-500 text-sm">{po.supplier}</TableCell>
-                            <TableCell className="font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
-                            <TableCell className="text-slate-600">{po.deliveryDate}</TableCell>
+                            <TableCell className="text-xs text-slate-500">{po.supplier}</TableCell>
+                            <TableCell className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
+                            <TableCell className="text-xs text-slate-600">{po.deliveryDate}</TableCell>
                             <TableCell>
                               <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
                                 <IconComponent className={`w-3.5 h-3.5 ${config.color}`} aria-hidden="true" />
@@ -306,7 +306,7 @@ export default function POSPage() {
                                 </span>
                               </div>
                             </TableCell>
-                            <TableCell className="text-slate-500 text-sm">{formatDate(po.createdAt)}</TableCell>
+                            <TableCell className="text-xs text-slate-400">{formatDate(po.createdAt)}</TableCell>
                             <TableCell className="text-right">
                               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
                                 <Eye className="h-4 w-4 text-slate-600" />
@@ -337,8 +337,8 @@ export default function POSPage() {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <div className="font-medium text-slate-900">{po.id}</div>
-                        <div className="text-sm text-slate-500 mt-0.5">{po.productName}</div>
+                        <div className="text-xs font-medium text-slate-900">{po.id}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">{po.productName}</div>
                       </div>
                       <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${config.bg} border border-slate-200`}>
                         <IconComponent className={`w-3 h-3 ${config.color}`} aria-hidden="true" />
@@ -346,14 +346,14 @@ export default function POSPage() {
                       </div>
                     </div>
                     
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-xs">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">供应商</span>
                         <span className="text-slate-900">{po.supplier}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">金额</span>
-                        <span className="font-medium text-slate-900">{formatCurrency(po.totalAmount)}</span>
+                        <span className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">交货日期</span>
@@ -361,12 +361,12 @@ export default function POSPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">创建时间</span>
-                        <span className="text-slate-500">{formatDate(po.createdAt)}</span>
+                        <span className="text-slate-400">{formatDate(po.createdAt)}</span>
                       </div>
                     </div>
                     
                     <div className="mt-3 pt-3 border-t border-slate-100">
-                      <Button variant="ghost" size="sm" className="w-full justify-center gap-2 h-9" aria-label={`查看订单 ${po.id}`}>
+                      <Button variant="ghost" size="sm" className="w-full justify-center gap-2 h-9 text-xs" aria-label={`查看订单 ${po.id}`}>
                         <Eye className="w-4 h-4" />
                         <span>查看详情</span>
                       </Button>
