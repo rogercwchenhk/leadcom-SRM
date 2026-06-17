@@ -192,27 +192,24 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
   );
 }
 
-// 移动端汉堡菜单组件
-export function MobileNavTrigger() {
-  return (
-    <Button variant="ghost" size="sm" className="md:hidden h-10 w-10 p-0">
-      <Menu className="h-5 w-5" />
-    </Button>
-  );
-}
-
 // 移动端侧边栏抽屉
 export function MobileSidebarSheet({ initialRole }: { initialRole?: UserRole }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <MobileNavTrigger />
-      </SheetTrigger>
-      <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
-        <AppSidebar initialRole={initialRole} isMobile={true} onClose={() => setOpen(false)} />
-      </SheetContent>
-    </Sheet>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-10 w-10 p-0"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
+          <AppSidebar initialRole={initialRole} isMobile={true} onClose={() => setOpen(false)} />
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
