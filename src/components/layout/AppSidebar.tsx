@@ -206,7 +206,7 @@ export function MobileSidebarSheet({ initialRole }: { initialRole?: UserRole }) 
         <Menu className="h-5 w-5" />
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
+        <SheetContent side="left" className="w-72 p-0 border-r border-slate-200" hideClose>
           <SheetHeader className="sr-only">
             <SheetTitle>导航菜单</SheetTitle>
           </SheetHeader>
