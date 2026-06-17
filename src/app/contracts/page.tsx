@@ -17,6 +17,7 @@ import {
   FileJson
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 // 模拟合同数据
 const mockContracts = [
@@ -62,7 +63,8 @@ export default function ContractsPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -214,5 +216,6 @@ export default function ContractsPage() {
         </Card>
       </div>
     </div>
+    </AppLayout>
   );
 }

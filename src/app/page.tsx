@@ -21,6 +21,7 @@ import {
   Users
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -194,25 +195,26 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
-              采购管理系统
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Hermes Agent 智能驱动 · {currentTime}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg">
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" aria-hidden="true" />
-              <span className="text-sm font-medium text-orange-700">Hermes 在线</span>
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
+                采购管理系统
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Hermes Agent 智能驱动 · {currentTime}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" aria-hidden="true" />
+                <span className="text-sm font-medium text-orange-700">Hermes 在线</span>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* Desktop Layout */}
         <div className="hidden md:block">
@@ -423,5 +425,6 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }
