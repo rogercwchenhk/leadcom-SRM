@@ -72,7 +72,7 @@ export default function NewRequestPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-semibold text-slate-900 tracking-tight">
+              <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
                 新建采购需求
               </h1>
               <p className="text-sm text-slate-500 mt-1">
