@@ -26,12 +26,8 @@ import {
   ArrowRight,
   Upload,
   Eye,
-  Calendar,
   Building2,
   User,
-  MessageCircle,
-  Scan,
-  FileImage,
   CreditCard,
   History
 } from 'lucide-react';
