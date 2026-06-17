@@ -152,10 +152,10 @@ export function AIChatWindow() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA] px-2 py-1.5 text-white shadow-lg hover:from-[#7C3AED] hover:to-[#9333EA] transition-all hover:scale-105"
       >
-        <MessageSquare className="size-5" />
-        <span className="font-medium">AI助手</span>
+        <MessageSquare className="size-4" />
+        <span className="font-medium text-sm">AI助手</span>
       </button>
     );
   }
