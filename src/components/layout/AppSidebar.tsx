@@ -193,9 +193,9 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
 }
 
 // 移动端汉堡菜单组件
-export function MobileNavTrigger({ onOpen }: { onOpen: () => void }) {
+export function MobileNavTrigger() {
   return (
-    <Button variant="ghost" size="sm" onClick={onOpen} className="md:hidden h-10 w-10 p-0">
+    <Button variant="ghost" size="sm" className="md:hidden h-10 w-10 p-0">
       <Menu className="h-5 w-5" />
     </Button>
   );
@@ -208,7 +208,7 @@ export function MobileSidebarSheet({ initialRole }: { initialRole?: UserRole }) 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <MobileNavTrigger onOpen={() => setOpen(true)} />
+        <MobileNavTrigger />
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
         <AppSidebar initialRole={initialRole} isMobile={true} onClose={() => setOpen(false)} />
