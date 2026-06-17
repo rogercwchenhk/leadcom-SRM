@@ -97,6 +97,7 @@ interface NewSupplierForm {
 export default function SupplierPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
+  const [expandedSuppliers, setExpandedSuppliers] = useState<Set<string>>(new Set());
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAiQuerying, setIsAiQuerying] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
@@ -260,6 +261,17 @@ export default function SupplierPage() {
 
   const selectedSupplierData = suppliers.find(s => s.id === selectedSupplier);
   const selectedPOs = selectedSupplier ? supplierPOs[selectedSupplier] || [] : [];
+
+  const toggleSupplierExpand = (supplierId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newExpanded = new Set(expandedSuppliers);
+    if (newExpanded.has(supplierId)) {
+      newExpanded.delete(supplierId);
+    } else {
+      newExpanded.add(supplierId);
+    }
+    setExpandedSuppliers(newExpanded);
+  };
 
   const handleAddContact = () => {
     setNewSupplier(prev => ({
@@ -730,79 +742,216 @@ export default function SupplierPage() {
                     {filteredSuppliers.map((supplier) => (
                       <div 
                         key={supplier.id}
-                        onClick={() => setSelectedSupplier(supplier.id)}
-                        className={`p-2.5 rounded-lg border cursor-pointer transition-all duration-200 ${
+                        className={`rounded-lg border transition-all duration-200 overflow-hidden ${
                           selectedSupplier === supplier.id 
                             ? 'border-orange-300 bg-orange-50' 
-                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                            : 'border-slate-200 bg-white hover:border-slate-300'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
-                            }`}>
-                              <Building2 className={`w-4 h-4 ${
-                                selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
-                              }`} />
-                            </div>
-                            <div>
-                              <h3 className={`text-sm font-semibold ${
-                                selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
+                        {/* 卡片头部 - 可点击选中 */}
+                        <div 
+                          onClick={() => setSelectedSupplier(supplier.id)}
+                          className="p-2.5 cursor-pointer"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
                               }`}>
-                                {supplier.name}
-                              </h3>
-                              <p className="text-xs text-slate-500 mt-1">
-                                {supplier.categories.join(' · ')}
-                              </p>
+                                <Building2 className={`w-4 h-4 ${
+                                  selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
+                                }`} />
+                              </div>
+                              <div>
+                                <h3 className={`text-sm font-semibold ${
+                                  selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
+                                }`}>
+                                  {supplier.name}
+                                </h3>
+                                <p className="text-xs text-slate-500 mt-1">
+                                  {supplier.categories.join(' · ')}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center">
+                                <span className="text-xs font-medium text-yellow-600">★</span>
+                                <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
+                              </div>
+                              {/* 展开/收起按钮 */}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 hover:bg-slate-100"
+                                onClick={(e) => toggleSupplierExpand(supplier.id, e)}
+                              >
+                                <svg 
+                                  className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                                    expandedSuppliers.has(supplier.id) ? 'rotate-180' : ''
+                                  }`} 
+                                  fill="none" 
+                                  viewBox="0 0 24 24" 
+                                  stroke="currentColor"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-0.5">
-                            <div className="flex items-center">
-                              <span className="text-xs font-medium text-yellow-600">★</span>
-                              <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
+                          
+                          <div className="grid grid-cols-2 gap-1.5 text-xs">
+                            <div className="flex items-center gap-1 text-slate-600">
+                              <Users className="w-3 h-3" />
+                              <span>{supplier.contacts && supplier.contacts.length > 0 
+                                ? supplier.contacts.find(c => c.isPrimary)?.name || supplier.contacts[0].name 
+                                : supplier.contactPerson}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-slate-600">
+                              <Phone className="w-3 h-3" />
+                              <span className="truncate">{supplier.contacts && supplier.contacts.length > 0 
+                                ? supplier.contacts.find(c => c.isPrimary)?.phone || supplier.contacts[0].phone 
+                                : supplier.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-slate-600">
+                              <FileText className="w-3 h-3" />
+                              <span>合作 {supplier.historicalCooperationCount} 次</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-slate-600">
+                              <Clock className="w-3 h-3" />
+                              <span>平均 {supplier.averageDeliveryDays} 天</span>
                             </div>
                           </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-1.5 text-xs">
-                          <div className="flex items-center gap-1 text-slate-600">
-                            <Users className="w-3 h-3" />
-                            <span>{supplier.contacts && supplier.contacts.length > 0 
-                              ? supplier.contacts.find(c => c.isPrimary)?.name || supplier.contacts[0].name 
-                              : supplier.contactPerson}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-slate-600">
-                            <Phone className="w-3 h-3" />
-                            <span className="truncate">{supplier.contacts && supplier.contacts.length > 0 
-                              ? supplier.contacts.find(c => c.isPrimary)?.phone || supplier.contacts[0].phone 
-                              : supplier.phone}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-slate-600">
-                            <FileText className="w-3 h-3" />
-                            <span>合作 {supplier.historicalCooperationCount} 次</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-slate-600">
-                            <Clock className="w-3 h-3" />
-                            <span>平均 {supplier.averageDeliveryDays} 天</span>
-                          </div>
-                        </div>
-                        
-                        {supplier.aiVerified && (
-                          <div className="mt-1.5 flex items-center gap-1">
-                            <Badge className="h-4 px-1 text-[9px] bg-green-100 text-green-700 border-green-200">
-                              AI已验证
-                            </Badge>
-                          </div>
-                        )}
-
-                        {supplier.activePOCount > 0 && (
-                          <div className="mt-1.5 pt-1.5 border-t border-slate-200">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-slate-500">进行中订单</span>
-                              <Badge variant="secondary" className="text-[9px] h-4 px-1">
-                                {supplier.activePOCount} 个
+                          
+                          {supplier.aiVerified && (
+                            <div className="mt-1.5 flex items-center gap-1">
+                              <Badge className="h-4 px-1 text-[9px] bg-green-100 text-green-700 border-green-200">
+                                AI已验证
                               </Badge>
+                            </div>
+                          )}
+
+                          {supplier.activePOCount > 0 && (
+                            <div className="mt-1.5 pt-1.5 border-t border-slate-200">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] text-slate-500">进行中订单</span>
+                                <Badge variant="secondary" className="text-[9px] h-4 px-1">
+                                  {supplier.activePOCount} 个
+                                </Badge>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 展开详情区域 */}
+                        {expandedSuppliers.has(supplier.id) && (
+                          <div className="border-t border-slate-200 bg-slate-50">
+                            <div className="p-2.5 space-y-2.5">
+                              {/* 基本详情 */}
+                              <div className="space-y-1.5">
+                                <h4 className="text-xs font-semibold text-slate-700">联系信息</h4>
+                                <div className="grid grid-cols-1 gap-1.5 text-xs">
+                                  <div className="flex items-start gap-1.5">
+                                    <Mail className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                    <span className="text-slate-600">邮箱：</span>
+                                    <span className="text-slate-900 truncate flex-1">
+                                      {supplier.contacts && supplier.contacts.length > 0 
+                                        ? supplier.contacts.find(c => c.isPrimary)?.email || supplier.contacts[0].email || supplier.email
+                                        : supplier.email}
+                                    </span>
+                                  </div>
+                                  {supplier.address && (
+                                    <div className="flex items-start gap-1.5">
+                                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                      <span className="text-slate-600">地址：</span>
+                                      <span className="text-slate-900 text-xs leading-relaxed flex-1">
+                                        {supplier.address}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* 营业信息 */}
+                              {(supplier.businessLicenseNumber || supplier.registeredAddress || supplier.businessScope) && (
+                                <div className="space-y-1.5">
+                                  <h4 className="text-xs font-semibold text-slate-700">营业信息</h4>
+                                  <div className="bg-white p-2 rounded border border-slate-200 space-y-1.5">
+                                    {supplier.businessLicenseNumber && (
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <FileText className="w-3.5 h-3.5 text-slate-400" />
+                                        <span className="text-slate-600">营业执照：</span>
+                                        <span className="text-slate-900">{supplier.businessLicenseNumber}</span>
+                                      </div>
+                                    )}
+                                    {supplier.registeredAddress && (
+                                      <div className="flex items-start gap-1.5 text-xs">
+                                        <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                        <span className="text-slate-600">注册地址：</span>
+                                        <span className="text-slate-900 text-xs leading-relaxed flex-1">
+                                          {supplier.registeredAddress}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {supplier.businessScope && (
+                                      <div className="flex items-start gap-1.5 text-xs">
+                                        <List className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                        <span className="text-slate-600">经营范围：</span>
+                                        <span className="text-slate-900 text-xs leading-relaxed flex-1">
+                                          {supplier.businessScope}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* 统计数据 */}
+                              <div className="grid grid-cols-4 gap-1.5">
+                                <div className="bg-white p-1.5 rounded border border-slate-200 text-center">
+                                  <div className="text-sm font-bold text-slate-900">{supplier.historicalCooperationCount}</div>
+                                  <div className="text-[10px] text-slate-500">合作次数</div>
+                                </div>
+                                <div className="bg-white p-1.5 rounded border border-slate-200 text-center">
+                                  <div className="text-sm font-bold text-slate-900">{supplier.averageDeliveryDays}</div>
+                                  <div className="text-[10px] text-slate-500">平均货期</div>
+                                </div>
+                                <div className="bg-white p-1.5 rounded border border-slate-200 text-center">
+                                  <div className="text-sm font-bold text-slate-900">¥{(supplier.totalTransactionAmount / 1000).toFixed(0)}K</div>
+                                  <div className="text-[10px] text-slate-500">累计金额</div>
+                                </div>
+                                <div className="bg-white p-1.5 rounded border border-slate-200 text-center">
+                                  <div className="text-sm font-bold text-slate-900">{supplier.lastTransactionDate}</div>
+                                  <div className="text-[10px] text-slate-500">最后交易</div>
+                                </div>
+                              </div>
+
+                              {/* 联系人列表 */}
+                              {supplier.contacts && supplier.contacts.length > 1 && (
+                                <div className="space-y-1.5">
+                                  <h4 className="text-xs font-semibold text-slate-700">全部联系人 ({supplier.contacts.length})</h4>
+                                  <div className="space-y-1">
+                                    {supplier.contacts.map((contact, idx) => (
+                                      <div key={idx} className="bg-white p-1.5 rounded border border-slate-200">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                          <span className="text-xs font-medium text-slate-900">{contact.name}</span>
+                                          {contact.isPrimary && (
+                                            <Badge className="h-4 px-1 text-[9px] bg-orange-100 text-orange-700 border-orange-200">
+                                              主要
+                                            </Badge>
+                                          )}
+                                          {contact.position && (
+                                            <span className="text-[10px] text-slate-500">{contact.position}</span>
+                                          )}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-1 text-[10px] text-slate-600">
+                                          {contact.phone && <span>📱 {contact.phone}</span>}
+                                          {contact.email && <span className="truncate">📧 {contact.email}</span>}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
