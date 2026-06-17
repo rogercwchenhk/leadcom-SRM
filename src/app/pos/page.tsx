@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,13 +53,27 @@ export default function POSPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showStats, setShowStats] = useState(true);
+  const [expandedPOs, setExpandedPOs] = useState<Set<string>>(new Set());
+
+  const togglePOExpansion = (poId: string) => {
+    const newExpanded = new Set(expandedPOs);
+    if (newExpanded.has(poId)) {
+      newExpanded.delete(poId);
+    } else {
+      newExpanded.add(poId);
+    }
+    setExpandedPOs(newExpanded);
+  };
 
   const pos = [
     {
       id: 'PO-2024-0120-001',
       requestId: 'PR-2024-0120-001',
-      productName: '笔记本电脑',
       supplier: '联想供应商',
+      items: [
+        { productName: 'ThinkPad X1 Carbon 笔记本电脑', quantity: 2, unitPrice: 12000, totalPrice: 24000 },
+        { productName: 'ThinkPad 扩展坞', quantity: 2, unitPrice: 2250, totalPrice: 4500 }
+      ],
       totalAmount: 28500,
       status: 'pending_signature' as POStatus,
       createdAt: '2024-01-20 14:30:00',
@@ -67,8 +82,11 @@ export default function POSPage() {
     {
       id: 'PO-2024-0119-001',
       requestId: 'PR-2024-0119-002',
-      productName: '打印机',
       supplier: '惠普供应商',
+      items: [
+        { productName: 'HP LaserJet Pro MFP 打印机', quantity: 1, unitPrice: 6500, totalPrice: 6500 },
+        { productName: 'HP 原装硒鼓', quantity: 2, unitPrice: 650, totalPrice: 1300 }
+      ],
       totalAmount: 7800,
       status: 'shipped' as POStatus,
       createdAt: '2024-01-19 16:45:00',
@@ -78,8 +96,12 @@ export default function POSPage() {
     {
       id: 'PO-2024-0118-001',
       requestId: 'PR-2024-0118-003',
-      productName: '办公用纸',
       supplier: '得力文具',
+      items: [
+        { productName: 'A4复印纸 70g', quantity: 100, unitPrice: 25, totalPrice: 2500 },
+        { productName: 'A3复印纸 70g', quantity: 50, unitPrice: 35, totalPrice: 1750 },
+        { productName: '热敏收银纸', quantity: 10, unitPrice: 25, totalPrice: 250 }
+      ],
       totalAmount: 4500,
       status: 'paid' as POStatus,
       createdAt: '2024-01-18 10:20:00',
@@ -89,8 +111,10 @@ export default function POSPage() {
     {
       id: 'PO-2024-0117-001',
       requestId: 'PR-2024-0117-004',
-      productName: '显示器',
       supplier: '戴尔供应商',
+      items: [
+        { productName: 'Dell U2723QE 4K显示器', quantity: 2, unitPrice: 5600, totalPrice: 11200 }
+      ],
       totalAmount: 11200,
       status: 'invoiced' as POStatus,
       createdAt: '2024-01-17 11:30:00',
@@ -100,7 +124,7 @@ export default function POSPage() {
 
   const filteredPOs = pos.filter(po => {
     const matchesSearch = 
-      po.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      po.items.some(item => item.productName.toLowerCase().includes(searchQuery.toLowerCase())) ||
       po.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       po.supplier.toLowerCase().includes(searchQuery.toLowerCase());
     
@@ -274,9 +298,9 @@ export default function POSPage() {
                     <TableHeader>
                       <TableRow className="bg-slate-50 border-b border-slate-200">
                         <TableHead className="font-semibold text-slate-700">PO号</TableHead>
-                        <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
+                        <TableHead className="font-semibold text-slate-700">产品明细</TableHead>
                         <TableHead className="font-semibold text-slate-700">供应商</TableHead>
-                        <TableHead className="font-semibold text-slate-700">金额</TableHead>
+                        <TableHead className="font-semibold text-slate-700">总金额</TableHead>
                         <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
                         <TableHead className="font-semibold text-slate-700">状态</TableHead>
                         <TableHead className="font-semibold text-slate-700">创建时间</TableHead>
@@ -287,34 +311,67 @@ export default function POSPage() {
                       {filteredPOs.map((po) => {
                         const config = statusConfig[po.status];
                         const IconComponent = config.icon;
+                        const isExpanded = expandedPOs.has(po.id);
                         
                         return (
-                          <TableRow key={po.id} className="hover:bg-slate-50/50 transition-colors">
-                            <TableCell className="text-xs font-medium text-slate-900">{po.id}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Package className="w-4 h-4 text-slate-400" aria-hidden="true" />
-                                <span className="text-xs text-slate-900">{po.productName}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-xs text-slate-500">{po.supplier}</TableCell>
-                            <TableCell className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
-                            <TableCell className="text-xs text-slate-600">{po.deliveryDate}</TableCell>
-                            <TableCell>
-                              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
-                                <IconComponent className={`w-3.5 h-3.5 ${config.color}`} aria-hidden="true" />
-                                <span className={`text-xs font-medium ${config.color}`}>
-                                  {config.label}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-xs text-slate-400">{formatDate(po.createdAt)}</TableCell>
-                            <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
-                                <Eye className="h-4 w-4 text-slate-600" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
+                          <React.Fragment key={po.id}>
+                            <TableRow className="hover:bg-slate-50/50 transition-colors">
+                              <TableCell className="text-xs font-medium text-slate-900">{po.id}</TableCell>
+                              <TableCell>
+                                <Collapsible open={isExpanded} onOpenChange={() => togglePOExpansion(po.id)} className="w-full">
+                                  <div className="flex flex-col gap-1">
+                                    <CollapsibleTrigger asChild>
+                                      <button 
+                                        className="flex items-center gap-2 text-left hover:bg-slate-100 rounded px-1 py-0.5 -ml-1 transition-colors"
+                                        aria-label={isExpanded ? `收起产品明细 ${po.id}` : `展开产品明细 ${po.id}`}
+                                      >
+                                        <Package className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                                        <span className="text-xs text-slate-900 font-medium">
+                                          {po.items.length} 个产品
+                                        </span>
+                                        {isExpanded ? (
+                                          <ChevronUp className="w-3 h-3 text-slate-400" />
+                                        ) : (
+                                          <ChevronDown className="w-3 h-3 text-slate-400" />
+                                        )}
+                                      </button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                      <div className="mt-1 space-y-1 pl-6">
+                                        {po.items.map((item, index) => (
+                                          <div key={index} className="text-xs text-slate-600">
+                                            <div className="flex items-center justify-between gap-2">
+                                              <span className="truncate flex-1">{item.productName}</span>
+                                              <span className="text-slate-400 whitespace-nowrap">
+                                                {item.quantity} × {formatCurrency(item.unitPrice)}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </CollapsibleContent>
+                                  </div>
+                                </Collapsible>
+                              </TableCell>
+                              <TableCell className="text-xs text-slate-500">{po.supplier}</TableCell>
+                              <TableCell className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
+                              <TableCell className="text-xs text-slate-600">{po.deliveryDate}</TableCell>
+                              <TableCell>
+                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
+                                  <IconComponent className={`w-3.5 h-3.5 ${config.color}`} aria-hidden="true" />
+                                  <span className={`text-xs font-medium ${config.color}`}>
+                                    {config.label}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-xs text-slate-400">{formatDate(po.createdAt)}</TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
+                                  <Eye className="h-4 w-4 text-slate-600" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          </React.Fragment>
                         );
                       })}
                     </TableBody>
@@ -333,6 +390,7 @@ export default function POSPage() {
             {filteredPOs.map((po) => {
               const config = statusConfig[po.status];
               const IconComponent = config.icon;
+              const isExpanded = expandedPOs.has(po.id);
               
               return (
                 <Card key={po.id} className="border-slate-200 shadow-sm">
@@ -340,7 +398,7 @@ export default function POSPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="text-xs font-medium text-slate-900">{po.id}</div>
-                        <div className="text-xs text-slate-500 mt-0.5">{po.productName}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">{po.items.length} 个产品</div>
                       </div>
                       <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${config.bg} border border-slate-200`}>
                         <IconComponent className={`w-3 h-3 ${config.color}`} aria-hidden="true" />
@@ -348,24 +406,55 @@ export default function POSPage() {
                       </div>
                     </div>
                     
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">供应商</span>
-                        <span className="text-slate-900">{po.supplier}</span>
+                    <Collapsible open={isExpanded} onOpenChange={() => togglePOExpansion(po.id)} className="w-full">
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">供应商</span>
+                          <span className="text-slate-900">{po.supplier}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">总金额</span>
+                          <span className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">交货日期</span>
+                          <span className="text-slate-900">{po.deliveryDate}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">创建时间</span>
+                          <span className="text-slate-400">{formatDate(po.createdAt)}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">金额</span>
-                        <span className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">交货日期</span>
-                        <span className="text-slate-900">{po.deliveryDate}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">创建时间</span>
-                        <span className="text-slate-400">{formatDate(po.createdAt)}</span>
-                      </div>
-                    </div>
+                      
+                      <CollapsibleTrigger asChild>
+                        <button 
+                          className="w-full mt-2 flex items-center justify-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                          aria-label={isExpanded ? `收起产品明细 ${po.id}` : `展开产品明细 ${po.id}`}
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          ) : (
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          )}
+                          <span>{isExpanded ? '收起产品明细' : '查看产品明细'}</span>
+                        </button>
+                      </CollapsibleTrigger>
+                      
+                      <CollapsibleContent>
+                        <div className="mt-2 space-y-1.5 border-t border-slate-100 pt-2">
+                          {po.items.map((item, index) => (
+                            <div key={index} className="text-xs">
+                              <div className="text-slate-900">{item.productName}</div>
+                              <div className="flex items-center justify-between text-slate-500 mt-0.5">
+                                <span>数量: {item.quantity}</span>
+                                <span>单价: {formatCurrency(item.unitPrice)}</span>
+                                <span className="font-medium text-slate-700">{formatCurrency(item.totalPrice)}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                     
                     <div className="mt-3 pt-3 border-t border-slate-100">
                       <Button variant="ghost" size="sm" className="w-full justify-center gap-2 h-9 text-xs" aria-label={`查看订单 ${po.id}`}>

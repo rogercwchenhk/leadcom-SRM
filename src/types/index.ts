@@ -242,12 +242,27 @@ export type POStatus =
   | 'paid' 
   | 'exception';
 
+export interface POItem {
+  id: string;
+  purchaseOrderId: string;
+  productName: string;
+  specifications?: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  deliveryDate?: Date;
+  remarks?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface PurchaseOrder {
   id: string;
   purchaseRequestId: string;
   supplierId: string;
   poNumber: string;
   status: POStatus;
+  items: POItem[];
   totalAmount: number;
   confirmedAt?: Date;
   createdAt: Date;
