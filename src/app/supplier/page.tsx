@@ -33,7 +33,9 @@ import {
   Star,
   Globe,
   Scan,
-  Loader2
+  Loader2,
+  List,
+  MessageCircle
 } from 'lucide-react';
 import {
   Dialog,
@@ -44,9 +46,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
 import type { POStatus, Supplier, SupplierContact } from '@/types';
 
 const statusConfig: Record<POStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
@@ -80,10 +90,15 @@ interface SupplierPO {
 
 interface NewSupplierForm {
   name: string;
+  contactPerson: string;
+  phone: string;
+  email: string;
+  address: string;
+  categories: string;
+  // 新增字段
   registeredAddress: string;
   businessLicenseNumber: string;
   businessScope: string;
-  categories: string;
   contacts: Omit<SupplierContact, 'id'>[];
 }
 
@@ -93,13 +108,16 @@ export default function SupplierPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAiQuerying, setIsAiQuerying] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  
   const [newSupplier, setNewSupplier] = useState<NewSupplierForm>({
     name: '',
+    contactPerson: '',
+    phone: '',
+    email: '',
+    address: '',
+    categories: '',
     registeredAddress: '',
     businessLicenseNumber: '',
     businessScope: '',
-    categories: '',
     contacts: [{
       name: '',
       position: '',
@@ -109,34 +127,14 @@ export default function SupplierPage() {
       isPrimary: true
     }]
   });
-
   const [suppliers, setSuppliers] = useState<SupplierWithDetails[]>([
     {
       id: 'sup-001',
       name: '北京科技发展有限公司',
-      registeredAddress: '北京市海淀区中关村科技园区1号楼8层',
-      businessLicenseNumber: '91110000MA00ABC123',
-      businessScope: '技术开发、技术咨询、技术服务、技术转让；销售电子产品、计算机软硬件及辅助设备',
-      contacts: [
-        {
-          id: 'contact-001',
-          name: '张明',
-          position: '销售经理',
-          phone: '138-0013-8000',
-          wechat: 'zhangming_bjtech',
-          email: 'zhangming@bjtech.com',
-          isPrimary: true
-        },
-        {
-          id: 'contact-002',
-          name: '李娜',
-          position: '商务专员',
-          phone: '138-0013-8001',
-          wechat: 'lina_bjtech',
-          email: 'lina@bjtech.com',
-          isPrimary: false
-        }
-      ],
+      contactPerson: '张明',
+      phone: '138-0013-8000',
+      email: 'zhangming@bjtech.com',
+      address: '北京市海淀区中关村科技园区1号楼8层',
       categories: ['办公设备', '电子产品'],
       historicalCooperationCount: 45,
       averageDeliveryDays: 3.5,
@@ -144,29 +142,16 @@ export default function SupplierPage() {
       lastTransactionDate: '2024-01-20',
       activePOCount: 2,
       rating: 4.8,
-      aiVerified: true,
-      aiVerificationSource: '企查查',
-      aiVerifiedAt: new Date('2024-01-10'),
       createdAt: new Date('2023-01-15'),
       updatedAt: new Date('2024-01-20'),
     },
     {
       id: 'sup-002',
       name: '上海办公用品供应商',
-      registeredAddress: '上海市浦东新区张江高科技园区创业路288号',
-      businessLicenseNumber: '91310000MA00DEF456',
-      businessScope: '办公用品、文具用品、日用百货的销售；商务信息咨询',
-      contacts: [
-        {
-          id: 'contact-003',
-          name: '李华',
-          position: '总经理',
-          phone: '139-0013-9000',
-          wechat: 'lihua_shoffice',
-          email: 'lihua@shoffice.com',
-          isPrimary: true
-        }
-      ],
+      contactPerson: '李华',
+      phone: '139-0013-9000',
+      email: 'lihua@shoffice.com',
+      address: '上海市浦东新区张江高科技园区创业路288号',
       categories: ['办公用品', '文具'],
       historicalCooperationCount: 78,
       averageDeliveryDays: 2.0,
@@ -174,38 +159,16 @@ export default function SupplierPage() {
       lastTransactionDate: '2024-01-19',
       activePOCount: 1,
       rating: 4.9,
-      aiVerified: true,
-      aiVerificationSource: '企查查',
-      aiVerifiedAt: new Date('2024-01-05'),
       createdAt: new Date('2022-06-20'),
       updatedAt: new Date('2024-01-19'),
     },
     {
       id: 'sup-003',
       name: '深圳电子设备厂',
-      registeredAddress: '深圳市南山区科技园南区A座15层',
-      businessLicenseNumber: '91440300MA00GHI789',
-      businessScope: '电子设备、通讯设备的生产与销售；国内贸易；货物及技术进出口',
-      contacts: [
-        {
-          id: 'contact-004',
-          name: '王芳',
-          position: '销售总监',
-          phone: '137-0013-7000',
-          wechat: 'wangfang_szelec',
-          email: 'wangfang@szelec.com',
-          isPrimary: true
-        },
-        {
-          id: 'contact-005',
-          name: '陈强',
-          position: '技术支持',
-          phone: '137-0013-7001',
-          wechat: 'chenqiang_szelec',
-          email: 'chenqiang@szelec.com',
-          isPrimary: false
-        }
-      ],
+      contactPerson: '王芳',
+      phone: '137-0013-7000',
+      email: 'wangfang@szelec.com',
+      address: '深圳市南山区科技园南区A座15层',
       categories: ['电子设备', 'IT服务'],
       historicalCooperationCount: 32,
       averageDeliveryDays: 5.0,
@@ -213,7 +176,6 @@ export default function SupplierPage() {
       lastTransactionDate: '2024-01-18',
       activePOCount: 3,
       rating: 4.5,
-      aiVerified: false,
       createdAt: new Date('2023-03-10'),
       updatedAt: new Date('2024-01-18'),
     },
@@ -300,8 +262,8 @@ export default function SupplierPage() {
 
   const filteredSuppliers = suppliers.filter(supplier => 
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    supplier.contacts.some(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    supplier.contacts.some(c => c.email?.toLowerCase().includes(searchQuery.toLowerCase()))
+    supplier.contactPerson?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const selectedSupplierData = suppliers.find(s => s.id === selectedSupplier);
@@ -361,8 +323,31 @@ export default function SupplierPage() {
     }, 2000);
   };
 
+  const resetForm = () => {
+    setNewSupplier({
+      name: '',
+      contactPerson: '',
+      phone: '',
+      email: '',
+      address: '',
+      categories: '',
+      registeredAddress: '',
+      businessLicenseNumber: '',
+      businessScope: '',
+      contacts: [{
+        name: '',
+        position: '',
+        phone: '',
+        wechat: '',
+        email: '',
+        isPrimary: true
+      }]
+    });
+    setActiveTab('basic');
+  };
+
   const handleAddSupplier = () => {
-    if (!newSupplier.name) {
+    if (!newSupplier.name || !newSupplier.contactPerson) {
       return;
     }
 
@@ -371,6 +356,10 @@ export default function SupplierPage() {
     const supplier: SupplierWithDetails = {
       id: `sup-${String(suppliers.length + 1).padStart(3, '0')}`,
       name: newSupplier.name,
+      contactPerson: newSupplier.contactPerson,
+      phone: newSupplier.phone,
+      email: newSupplier.email,
+      address: newSupplier.address,
       registeredAddress: newSupplier.registeredAddress,
       businessLicenseNumber: newSupplier.businessLicenseNumber,
       businessScope: newSupplier.businessScope,
@@ -389,46 +378,13 @@ export default function SupplierPage() {
       updatedAt: new Date(),
     };
 
+    // 这里应该调用API添加供应商，现在先添加到本地数据
     setSuppliers([...suppliers, supplier]);
     
-    setNewSupplier({
-      name: '',
-      registeredAddress: '',
-      businessLicenseNumber: '',
-      businessScope: '',
-      categories: '',
-      contacts: [{
-        name: '',
-        position: '',
-        phone: '',
-        wechat: '',
-        email: '',
-        isPrimary: true
-      }]
-    });
+    // 重置表单并关闭对话框
+    resetForm();
     setIsAddDialogOpen(false);
   };
-
-  const resetForm = () => {
-    setNewSupplier({
-      name: '',
-      registeredAddress: '',
-      businessLicenseNumber: '',
-      businessScope: '',
-      categories: '',
-      contacts: [{
-        name: '',
-        position: '',
-        phone: '',
-        wechat: '',
-        email: '',
-        isPrimary: true
-      }]
-    });
-    setActiveTab('basic');
-  };
-
-  const primaryContact = selectedSupplierData?.contacts.find(c => c.isPrimary) || selectedSupplierData?.contacts[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -519,6 +475,40 @@ export default function SupplierPage() {
                               />
                             </div>
                             
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="grid gap-2">
+                                <Label htmlFor="contactPerson">
+                                  联系人 <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                  id="contactPerson"
+                                  value={newSupplier.contactPerson}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
+                                  placeholder="主要联系人姓名"
+                                />
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="phone">联系电话</Label>
+                                <Input
+                                  id="phone"
+                                  value={newSupplier.phone}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
+                                  placeholder="联系电话"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="grid gap-2">
+                              <Label htmlFor="email">电子邮箱</Label>
+                              <Input
+                                id="email"
+                                type="email"
+                                value={newSupplier.email}
+                                onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
+                                placeholder="example@company.com"
+                              />
+                            </div>
+                            
                             <div className="grid gap-2">
                               <Label htmlFor="businessLicenseNumber">
                                 营业执照号
@@ -527,7 +517,7 @@ export default function SupplierPage() {
                                 id="businessLicenseNumber"
                                 value={newSupplier.businessLicenseNumber}
                                 onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
-                                placeholder="请输入营业执照号（选填，用于AI查询）"
+                                placeholder="营业执照号（选填，用于AI查询）"
                               />
                             </div>
                             
@@ -539,7 +529,20 @@ export default function SupplierPage() {
                                 id="registeredAddress"
                                 value={newSupplier.registeredAddress}
                                 onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
-                                placeholder="供应商注册地址"
+                                placeholder="注册地址"
+                                rows={2}
+                              />
+                            </div>
+                            
+                            <div className="grid gap-2">
+                              <Label htmlFor="address">
+                                经营地址
+                              </Label>
+                              <Textarea
+                                id="address"
+                                value={newSupplier.address}
+                                onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
+                                placeholder="经营地址"
                                 rows={2}
                               />
                             </div>
@@ -591,7 +594,7 @@ export default function SupplierPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="text-xs font-medium text-slate-700">联系人 {index + 1}</span>
                                     {contact.isPrimary && (
-                                      <Badge variant="secondary" className="text-[10px] h-4">主要联系人</Badge>
+                                      <Badge variant="secondary" className="text-[9px] h-4">主要联系人</Badge>
                                     )}
                                   </div>
                                   {newSupplier.contacts.length > 1 && (
@@ -696,7 +699,7 @@ export default function SupplierPage() {
                           </Button>
                           <Button
                             onClick={handleAddSupplier}
-                            disabled={!newSupplier.name || !newSupplier.contacts.some(c => c.name)}
+                            disabled={!newSupplier.name || !newSupplier.contactPerson}
                             className="bg-orange-500 hover:bg-orange-600 text-white"
                           >
                             保存
@@ -720,91 +723,87 @@ export default function SupplierPage() {
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="space-y-1.5">
-                    {filteredSuppliers.map((supplier) => {
-                      const primaryContact = supplier.contacts.find(c => c.isPrimary) || supplier.contacts[0];
-                      return (
-                        <div 
-                          key={supplier.id}
-                          onClick={() => setSelectedSupplier(supplier.id)}
-                          className={`p-2.5 rounded-lg border cursor-pointer transition-all duration-200 ${
-                            selectedSupplier === supplier.id 
-                              ? 'border-orange-300 bg-orange-50' 
-                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between mb-1.5">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                                selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
+                    {filteredSuppliers.map((supplier) => (
+                      <div 
+                        key={supplier.id}
+                        onClick={() => setSelectedSupplier(supplier.id)}
+                        className={`p-2.5 rounded-lg border cursor-pointer transition-all duration-200 ${
+                          selectedSupplier === supplier.id 
+                            ? 'border-orange-300 bg-orange-50' 
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                              selectedSupplier === supplier.id ? 'bg-orange-200' : 'bg-slate-100'
+                            }`}>
+                              <Building2 className={`w-3.5 h-3.5 ${
+                                selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
+                              }`} />
+                            </div>
+                            <div>
+                              <h3 className={`text-xs font-semibold ${
+                                selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
                               }`}>
-                                <Building2 className={`w-3.5 h-3.5 ${
-                                  selectedSupplier === supplier.id ? 'text-orange-600' : 'text-slate-600'
-                                }`} />
-                              </div>
-                              <div>
-                                <h3 className={`text-xs font-semibold ${
-                                  selectedSupplier === supplier.id ? 'text-orange-900' : 'text-slate-900'
-                                }`}>
-                                  {supplier.name}
-                                </h3>
-                                <p className="text-[10px] text-slate-500">
-                                  {supplier.categories.join(' · ')}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-0.5">
-                              {supplier.aiVerified && (
-                                <Badge variant="outline" className="text-[9px] h-4 px-1 border-green-300 text-green-600 bg-green-50">
-                                  <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
-                                  已验证
-                                </Badge>
-                              )}
-                              <div className="flex items-center">
-                                <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                                <span className="text-[10px] text-slate-600 ml-0.5">{supplier.rating}</span>
-                              </div>
+                                {supplier.name}
+                              </h3>
+                              <p className="text-[10px] text-slate-500">
+                                {supplier.categories.join(' · ')}
+                              </p>
                             </div>
                           </div>
-                          
-                          <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                            {primaryContact && (
-                              <div className="flex items-center gap-1 text-slate-600">
-                                <Users className="w-2.5 h-2.5" />
-                                <span>{primaryContact.name}</span>
-                                {primaryContact.position && (
-                                  <span className="text-slate-400">· {primaryContact.position}</span>
-                                )}
-                              </div>
-                            )}
-                            {primaryContact?.phone && (
-                              <div className="flex items-center gap-1 text-slate-600">
-                                <Phone className="w-2.5 h-2.5" />
-                                <span className="truncate">{primaryContact.phone}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1 text-slate-600">
-                              <FileText className="w-2.5 h-2.5" />
-                              <span>合作 {supplier.historicalCooperationCount} 次</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-slate-600">
-                              <Clock className="w-2.5 h-2.5" />
-                              <span>平均 {supplier.averageDeliveryDays} 天</span>
+                          <div className="flex items-center gap-0.5">
+                            <div className="flex items-center">
+                              <span className="text-[10px] font-medium text-yellow-600">★</span>
+                              <span className="text-[10px] text-slate-600 ml-0.5">{supplier.rating}</span>
                             </div>
                           </div>
-
-                          {supplier.activePOCount > 0 && (
-                            <div className="mt-1.5 pt-1.5 border-t border-slate-200">
-                              <div className="flex items-center justify-between">
-                                <span className="text-[10px] text-slate-500">进行中订单</span>
-                                <Badge variant="secondary" className="text-[9px] h-4 px-1">
-                                  {supplier.activePOCount} 个
-                                </Badge>
-                              </div>
-                            </div>
-                          )}
                         </div>
-                      );
-                    })}
+                        
+                        <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Users className="w-2.5 h-2.5" />
+                            <span>{supplier.contacts && supplier.contacts.length > 0 
+                              ? supplier.contacts.find(c => c.isPrimary)?.name || supplier.contacts[0].name 
+                              : supplier.contactPerson}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Phone className="w-2.5 h-2.5" />
+                            <span className="truncate">{supplier.contacts && supplier.contacts.length > 0 
+                              ? supplier.contacts.find(c => c.isPrimary)?.phone || supplier.contacts[0].phone 
+                              : supplier.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <FileText className="w-2.5 h-2.5" />
+                            <span>合作 {supplier.historicalCooperationCount} 次</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-600">
+                            <Clock className="w-2.5 h-2.5" />
+                            <span>平均 {supplier.averageDeliveryDays} 天</span>
+                          </div>
+                        </div>
+                        
+                        {supplier.aiVerified && (
+                          <div className="mt-1.5 flex items-center gap-1">
+                            <Badge className="h-4 px-1 text-[9px] bg-green-100 text-green-700 border-green-200">
+                              AI已验证
+                            </Badge>
+                          </div>
+                        )}
+
+                        {supplier.activePOCount > 0 && (
+                          <div className="mt-1.5 pt-1.5 border-t border-slate-200">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] text-slate-500">进行中订单</span>
+                              <Badge variant="secondary" className="text-[9px] h-4 px-1">
+                                {supplier.activePOCount} 个
+                              </Badge>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -827,98 +826,139 @@ export default function SupplierPage() {
                         <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                           <div className="flex items-start justify-between mb-2.5">
                             <div>
-                              <h3 className="text-sm font-semibold text-slate-900">
-                                {selectedSupplierData.name}
-                              </h3>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-slate-900">
+                                  {selectedSupplierData.name}
+                                </h3>
+                                {selectedSupplierData.aiVerified && (
+                                  <Badge className="h-4 px-1 text-[9px] bg-green-100 text-green-700 border-green-200">
+                                    AI已验证
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-[10px] text-slate-500 mt-0.5">
                                 {selectedSupplierData.categories.join(' · ')}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              {selectedSupplierData.aiVerified && (
-                                <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-50 rounded-full border border-green-200">
-                                  <CheckCircle className="w-3 h-3 text-green-600" />
-                                  <span className="text-[10px] font-semibold text-green-700">
-                                    {selectedSupplierData.aiVerificationSource} 已验证
-                                  </span>
-                                </div>
-                              )}
                               <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-yellow-50 rounded-full">
-                                <Star className="w-3 h-3 text-yellow-600 fill-yellow-600" />
+                                <span className="text-[10px] font-medium text-yellow-600">★</span>
                                 <span className="text-[10px] font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
                               </div>
                             </div>
                           </div>
 
-                          {selectedSupplierData.businessLicenseNumber && (
-                            <div className="mb-2">
-                              <span className="text-[11px] text-slate-500">营业执照号：</span>
-                              <span className="text-[11px] font-medium text-slate-700 font-mono">
-                                {selectedSupplierData.businessLicenseNumber}
-                              </span>
-                            </div>
-                          )}
-
-                          {selectedSupplierData.registeredAddress && (
-                            <div className="mb-2 flex items-start gap-1.5 text-[11px]">
-                              <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
-                              <span className="text-slate-600">注册地址：</span>
-                              <span className="font-medium text-slate-900 text-[10px] leading-relaxed flex-1">
-                                {selectedSupplierData.registeredAddress}
-                              </span>
-                            </div>
-                          )}
-
-                          {selectedSupplierData.businessScope && (
-                            <div className="flex items-start gap-1.5 text-[11px]">
-                              <Globe className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
-                              <span className="text-slate-600">经营范围：</span>
-                              <span className="font-medium text-slate-900 text-[10px] leading-relaxed flex-1">
-                                {selectedSupplierData.businessScope}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Contacts */}
-                        <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                          <h4 className="text-xs font-semibold text-slate-900 mb-2">联系人信息</h4>
-                          <div className="space-y-2">
-                            {selectedSupplierData.contacts.map((contact, index) => (
-                              <div key={contact.id} className="p-2 rounded-lg bg-slate-50 border border-slate-100">
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium text-slate-900">{contact.name}</span>
-                                    {contact.isPrimary && (
-                                      <Badge variant="secondary" className="text-[9px] h-4">主要联系人</Badge>
-                                    )}
-                                  </div>
-                                  {contact.position && (
-                                    <span className="text-[10px] text-slate-500">{contact.position}</span>
-                                  )}
-                                </div>
-                                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                                  {contact.phone && (
-                                    <div className="flex items-center gap-1 text-slate-600">
-                                      <Phone className="w-2.5 h-2.5" />
-                                      <span>{contact.phone}</span>
+                          <div className="space-y-3">
+                            {/* 营业信息 */}
+                            {(selectedSupplierData.businessLicenseNumber || selectedSupplierData.registeredAddress || selectedSupplierData.businessScope) && (
+                              <div className="border-t border-slate-200 pt-2">
+                                <h4 className="text-[10px] font-semibold text-slate-700 mb-1.5">营业信息</h4>
+                                <div className="grid grid-cols-1 gap-1.5">
+                                  {selectedSupplierData.businessLicenseNumber && (
+                                    <div className="flex items-center gap-1.5 text-[11px]">
+                                      <FileText className="w-3.5 h-3.5 text-slate-400" />
+                                      <span className="text-slate-600">营业执照号：</span>
+                                      <span className="font-medium text-slate-900">{selectedSupplierData.businessLicenseNumber}</span>
                                     </div>
                                   )}
-                                  {contact.wechat && (
-                                    <div className="flex items-center gap-1 text-slate-600">
-                                      <Users className="w-2.5 h-2.5" />
-                                      <span>微信: {contact.wechat}</span>
+                                  {selectedSupplierData.registeredAddress && (
+                                    <div className="flex items-start gap-1.5 text-[11px]">
+                                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                      <span className="text-slate-600">注册地址：</span>
+                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                        {selectedSupplierData.registeredAddress}
+                                      </span>
                                     </div>
                                   )}
-                                  {contact.email && (
-                                    <div className="flex items-center gap-1 text-slate-600 col-span-2">
-                                      <Mail className="w-2.5 h-2.5" />
-                                      <span className="truncate">{contact.email}</span>
+                                  {selectedSupplierData.businessScope && (
+                                    <div className="flex items-start gap-1.5 text-[11px]">
+                                      <List className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                      <span className="text-slate-600">经营范围：</span>
+                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                        {selectedSupplierData.businessScope}
+                                      </span>
                                     </div>
                                   )}
                                 </div>
                               </div>
-                            ))}
+                            )}
+
+                            {/* 联系信息 - 支持多个联系人 */}
+                            <div className="border-t border-slate-200 pt-2">
+                              <h4 className="text-[10px] font-semibold text-slate-700 mb-1.5">联系人</h4>
+                              {selectedSupplierData.contacts && selectedSupplierData.contacts.length > 0 ? (
+                                <div className="space-y-2">
+                                  {selectedSupplierData.contacts.map((contact, index) => (
+                                    <div key={index} className="bg-white p-2 rounded border border-slate-200">
+                                      <div className="flex items-center gap-1.5 mb-1">
+                                        <Users className="w-3.5 h-3.5 text-slate-400" />
+                                        <span className="text-[11px] font-semibold text-slate-900">{contact.name}</span>
+                                        {contact.isPrimary && (
+                                          <Badge className="h-4 px-1 text-[9px] bg-orange-100 text-orange-700 border-orange-200">
+                                            主要
+                                          </Badge>
+                                        )}
+                                        {contact.position && (
+                                          <span className="text-[10px] text-slate-500">{contact.position}</span>
+                                        )}
+                                      </div>
+                                      <div className="grid grid-cols-1 gap-1 text-[10px]">
+                                        {contact.phone && (
+                                          <div className="flex items-center gap-1">
+                                            <Phone className="w-3 h-3 text-slate-400" />
+                                            <span className="text-slate-600">手机：</span>
+                                            <span className="text-slate-900">{contact.phone}</span>
+                                          </div>
+                                        )}
+                                        {contact.email && (
+                                          <div className="flex items-center gap-1">
+                                            <Mail className="w-3 h-3 text-slate-400" />
+                                            <span className="text-slate-600">邮箱：</span>
+                                            <span className="text-slate-900 truncate">{contact.email}</span>
+                                          </div>
+                                        )}
+                                        {contact.wechat && (
+                                          <div className="flex items-center gap-1">
+                                            <MessageCircle className="w-3 h-3 text-slate-400" />
+                                            <span className="text-slate-600">微信：</span>
+                                            <span className="text-slate-900">{contact.wechat}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-center gap-1.5 text-[11px]">
+                                      <Users className="w-3.5 h-3.5 text-slate-400" />
+                                      <span className="text-slate-600">联系人：</span>
+                                      <span className="font-medium text-slate-900">{selectedSupplierData.contactPerson}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-[11px]">
+                                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                      <span className="text-slate-600">电话：</span>
+                                      <span className="font-medium text-slate-900">{selectedSupplierData.phone}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-[11px]">
+                                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                      <span className="text-slate-600">邮箱：</span>
+                                      <span className="font-medium text-slate-900 text-[10px] truncate">{selectedSupplierData.email}</span>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-start gap-1.5 text-[11px]">
+                                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                                      <span className="text-slate-600">地址：</span>
+                                      <span className="font-medium text-slate-900 flex-1 text-[10px] leading-relaxed">
+                                        {selectedSupplierData.address}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -960,47 +1000,45 @@ export default function SupplierPage() {
                   {/* Historical POs */}
                   <Card className="border-slate-200 shadow-sm">
                     <CardHeader className="pb-1 pt-1.5 px-3 flex flex-row items-center justify-between">
-                      <CardTitle className="text-xs font-semibold text-slate-900">
-                        历史订单
-                      </CardTitle>
+                      <CardTitle className="text-xs font-semibold text-slate-900">历史订单</CardTitle>
+                      <Button variant="ghost" size="sm" className="text-[10px] text-slate-500 hover:text-slate-700 h-6">
+                        查看全部
+                      </Button>
                     </CardHeader>
                     <CardContent className="px-4 pb-4 pt-0">
-                      <div className="overflow-x-auto">
+                      <div className="rounded-lg border border-slate-200 overflow-hidden">
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead className="h-8 text-[10px]">订单号</TableHead>
-                              <TableHead className="h-8 text-[10px]">产品</TableHead>
-                              <TableHead className="h-8 text-[10px]">数量</TableHead>
-                              <TableHead className="h-8 text-[10px]">金额</TableHead>
-                              <TableHead className="h-8 text-[10px]">状态</TableHead>
-                              <TableHead className="h-8 text-[10px]">交期</TableHead>
+                            <TableRow className="bg-slate-50">
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">PO号</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">产品名称</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">数量</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">金额</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-[10px] font-medium">状态</TableHead>
+                              <TableHead className="py-1.5 px-2.5 text-right text-[10px] font-medium">交期</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {selectedPOs.map((po) => (
-                              <TableRow key={po.id}>
-                                <TableCell className="py-1.5 text-[10px] font-medium">
+                              <TableRow key={po.id} className="hover:bg-slate-50">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
                                   {po.poNumber}
                                 </TableCell>
-                                <TableCell className="py-1.5 text-[10px]">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-700">
                                   {po.productName}
                                 </TableCell>
-                                <TableCell className="py-1.5 text-[10px]">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] text-slate-600">
                                   {po.quantity}
                                 </TableCell>
-                                <TableCell className="py-1.5 text-[10px] font-medium">
+                                <TableCell className="py-1.5 px-2.5 text-[10px] font-medium text-slate-900">
                                   ¥{po.totalAmount.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="py-1.5">
-                                  <Badge 
-                                    variant={statusConfig[po.status].variant}
-                                    className="text-[9px] h-4"
-                                  >
+                                <TableCell className="py-1.5 px-2.5">
+                                  <Badge variant={statusConfig[po.status].variant} className="text-[9px] h-4 px-1">
                                     {statusConfig[po.status].label}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="py-1.5 text-[10px]">
+                                <TableCell className="py-1.5 px-2.5 text-right text-[10px] text-slate-600">
                                   {po.deliveryDate}
                                 </TableCell>
                               </TableRow>
@@ -1013,19 +1051,387 @@ export default function SupplierPage() {
                 </div>
               ) : (
                 <Card className="border-slate-200 shadow-sm">
-                  <CardContent className="px-4 py-8">
+                  <CardContent className="p-12">
                     <div className="text-center">
-                      <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                      <Building2 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                       <h3 className="text-sm font-medium text-slate-900 mb-1">选择供应商</h3>
-                      <p className="text-xs text-slate-500">
-                        从左侧列表选择一个供应商查看详情
-                      </p>
+                      <p className="text-xs text-slate-500">从左侧列表选择供应商查看详情</p>
                     </div>
                   </CardContent>
                 </Card>
               )}
             </div>
           </div>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="md:hidden space-y-4">
+          {/* Search and Add Button */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardHeader className="pb-1 pt-1.5 px-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-semibold text-slate-900">供应商管理</CardTitle>
+                <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+                  setIsAddDialogOpen(open);
+                  if (!open) resetForm();
+                }}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white h-7 px-2">
+                      <Plus className="w-3.5 h-3.5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>新增供应商</DialogTitle>
+                      <DialogDescription>
+                        添加新的供应商信息，带 * 号的为必填项
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="basic">基本信息</TabsTrigger>
+                        <TabsTrigger value="contacts">联系人</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="basic" className="space-y-4 py-4">
+                        <div className="grid gap-2">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="name-mobile">
+                              供应商名称 <span className="text-red-500">*</span>
+                            </Label>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={handleAiQuery}
+                              disabled={isAiQuerying || (!newSupplier.name && !newSupplier.businessLicenseNumber)}
+                              className="h-7 text-xs gap-1"
+                            >
+                              {isAiQuerying ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                  查询中...
+                                </>
+                              ) : (
+                                <>
+                                  <Scan className="w-3 h-3" />
+                                  AI查询企查查
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                          <Input
+                            id="name-mobile"
+                            value={newSupplier.name}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
+                            placeholder="请输入供应商名称"
+                          />
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                            <Label htmlFor="contactPerson-mobile">
+                              联系人 <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                              id="contactPerson-mobile"
+                              value={newSupplier.contactPerson}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
+                              placeholder="主要联系人姓名"
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="phone-mobile">联系电话</Label>
+                            <Input
+                              id="phone-mobile"
+                              value={newSupplier.phone}
+                              onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
+                              placeholder="联系电话"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="email-mobile">电子邮箱</Label>
+                          <Input
+                            id="email-mobile"
+                            type="email"
+                            value={newSupplier.email}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
+                            placeholder="example@company.com"
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="businessLicenseNumber-mobile">
+                            营业执照号
+                          </Label>
+                          <Input
+                            id="businessLicenseNumber-mobile"
+                            value={newSupplier.businessLicenseNumber}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
+                            placeholder="营业执照号（选填，用于AI查询）"
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="registeredAddress-mobile">
+                            注册地址
+                          </Label>
+                          <Textarea
+                            id="registeredAddress-mobile"
+                            value={newSupplier.registeredAddress}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
+                            placeholder="注册地址"
+                            rows={2}
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="address-mobile">
+                            经营地址
+                          </Label>
+                          <Textarea
+                            id="address-mobile"
+                            value={newSupplier.address}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
+                            placeholder="经营地址"
+                            rows={2}
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="businessScope-mobile">
+                            经营范围
+                          </Label>
+                          <Textarea
+                            id="businessScope-mobile"
+                            value={newSupplier.businessScope}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
+                            placeholder="经营范围"
+                            rows={3}
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="categories-mobile">
+                            经营类别 <span className="text-[10px] text-slate-500">(多个类别用逗号分隔)</span>
+                          </Label>
+                          <Input
+                            id="categories-mobile"
+                            value={newSupplier.categories}
+                            onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
+                            placeholder="例如：办公设备, 电子产品, 文具"
+                          />
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="contacts" className="space-y-4 py-4">
+                        <div className="flex items-center justify-between">
+                          <Label>联系人列表</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleAddContact}
+                            className="h-7 text-xs"
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            添加联系人
+                          </Button>
+                        </div>
+                        
+                        {newSupplier.contacts.map((contact, index) => (
+                          <div key={index} className="p-3 border rounded-lg bg-slate-50 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-medium text-slate-700">联系人 {index + 1}</span>
+                                {contact.isPrimary && (
+                                  <Badge variant="secondary" className="text-[9px] h-4">主要联系人</Badge>
+                                )}
+                              </div>
+                              {newSupplier.contacts.length > 1 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveContact(index)}
+                                  className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              )}
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="grid gap-1">
+                                <Label htmlFor={`contact-name-mobile-${index}`} className="text-xs">
+                                  姓名 <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                  id={`contact-name-mobile-${index}`}
+                                  value={contact.name}
+                                  onChange={(e) => handleUpdateContact(index, 'name', e.target.value)}
+                                  placeholder="联系人姓名"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
+                              <div className="grid gap-1">
+                                <Label htmlFor={`contact-position-mobile-${index}`} className="text-xs">职位</Label>
+                                <Input
+                                  id={`contact-position-mobile-${index}`}
+                                  value={contact.position}
+                                  onChange={(e) => handleUpdateContact(index, 'position', e.target.value)}
+                                  placeholder="职位"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="grid gap-1">
+                                <Label htmlFor={`contact-phone-mobile-${index}`} className="text-xs">手机</Label>
+                                <Input
+                                  id={`contact-phone-mobile-${index}`}
+                                  value={contact.phone}
+                                  onChange={(e) => handleUpdateContact(index, 'phone', e.target.value)}
+                                  placeholder="手机号码"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
+                              <div className="grid gap-1">
+                                <Label htmlFor={`contact-wechat-mobile-${index}`} className="text-xs">微信号</Label>
+                                <Input
+                                  id={`contact-wechat-mobile-${index}`}
+                                  value={contact.wechat}
+                                  onChange={(e) => handleUpdateContact(index, 'wechat', e.target.value)}
+                                  placeholder="微信号"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="grid gap-1">
+                              <Label htmlFor={`contact-email-mobile-${index}`} className="text-xs">电子邮箱</Label>
+                              <Input
+                                id={`contact-email-mobile-${index}`}
+                                type="email"
+                                value={contact.email}
+                                onChange={(e) => handleUpdateContact(index, 'email', e.target.value)}
+                                placeholder="example@company.com"
+                                className="h-8 text-xs"
+                              />
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                id={`contact-primary-mobile-${index}`}
+                                checked={contact.isPrimary}
+                                onChange={(e) => handleUpdateContact(index, 'isPrimary', e.target.checked)}
+                                className="rounded border-slate-300 text-orange-500 focus:ring-orange-500"
+                              />
+                              <Label htmlFor={`contact-primary-mobile-${index}`} className="text-xs cursor-pointer">
+                                设为主要联系人
+                              </Label>
+                            </div>
+                          </div>
+                        ))}
+                      </TabsContent>
+                    </Tabs>
+                    
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsAddDialogOpen(false);
+                          resetForm();
+                        }}
+                      >
+                        取消
+                      </Button>
+                      <Button
+                        onClick={handleAddSupplier}
+                        disabled={!newSupplier.name || !newSupplier.contactPerson}
+                        className="bg-orange-500 hover:bg-orange-600 text-white"
+                      >
+                        保存
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <div className="mt-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Input
+                    type="search"
+                    placeholder="搜索供应商..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 w-full"
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
+              <div className="space-y-1.5">
+                {filteredSuppliers.map((supplier) => (
+                  <div 
+                    key={supplier.id}
+                    className="p-2.5 rounded-lg border border-slate-200 bg-white"
+                  >
+                    <div className="flex items-start justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
+                          <Building2 className="w-3.5 h-3.5 text-slate-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-xs font-semibold text-slate-900">{supplier.name}</h3>
+                          <p className="text-[10px] text-slate-500">{supplier.categories.join(' · ')}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        <span className="text-[10px] font-medium text-yellow-600">★</span>
+                        <span className="text-[10px] text-slate-600">{supplier.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] mb-1.5">
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Users className="w-2.5 h-2.5" />
+                        <span>{supplier.contactPerson}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Phone className="w-2.5 h-2.5" />
+                        <span className="truncate">{supplier.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <FileText className="w-2.5 h-2.5" />
+                        <span>{supplier.historicalCooperationCount} 次合作</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <Clock className="w-2.5 h-2.5" />
+                        <span>{supplier.averageDeliveryDays} 天</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-200">
+                      <div className="text-[10px] text-slate-500">
+                        累计 ¥{(supplier.totalTransactionAmount / 1000).toFixed(0)}K
+                      </div>
+                      {supplier.activePOCount > 0 && (
+                        <Badge variant="secondary" className="text-[9px] h-4 px-1">
+                          {supplier.activePOCount} 个进行中
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

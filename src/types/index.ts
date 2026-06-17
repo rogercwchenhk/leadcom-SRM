@@ -105,17 +105,23 @@ export interface SupplierContact {
 export interface Supplier {
   id: string;
   name: string;
+  // 原有字段保持向后兼容
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  // 新增字段
   registeredAddress?: string;
   businessLicenseNumber?: string;
   businessScope?: string;
-  contacts: SupplierContact[];
-  categories: string[];
-  historicalCooperationCount: number;
-  averageDeliveryDays?: number;
-  // AI查询相关
+  contacts?: SupplierContact[];
+  // AI验证相关
   aiVerified?: boolean;
   aiVerificationSource?: string;
   aiVerifiedAt?: Date;
+  // 原有字段
+  categories: string[];
+  historicalCooperationCount: number;
+  averageDeliveryDays?: number;
   createdAt: Date;
   updatedAt: Date;
 }
