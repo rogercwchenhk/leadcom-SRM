@@ -15,7 +15,8 @@ import {
   UsersRound,
   Building2,
   Menu,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 import { 
   Select,
@@ -76,6 +77,11 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
       title: '权限管理',
       icon: Shield,
       href: '/permissions',
+    },
+    {
+      title: '供应商平台',
+      icon: ExternalLink,
+      href: '/supplier-portal',
     },
   ];
 

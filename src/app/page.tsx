@@ -18,7 +18,9 @@ import {
   Package,
   ClipboardList,
   BarChart3,
-  Users
+  Users,
+  ExternalLink,
+  Building2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -191,6 +193,13 @@ export default function DashboardPage() {
       icon: BarChart3,
       action: () => router.push('/analytics'),
       variant: 'outline' as const
+    },
+    { 
+      title: '供应商平台', 
+      description: '供应商门户', 
+      icon: Building2,
+      action: () => router.push('/supplier-portal'),
+      variant: 'default' as const
     }
   ];
 
@@ -255,18 +264,18 @@ export default function DashboardPage() {
                   <CardTitle className="text-sm font-semibold text-slate-900">快捷操作</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {quickActions.map((action, index) => (
                       <Button
                         key={index}
                         variant={action.variant}
                         onClick={action.action}
-                        className="h-auto py-3 flex-col items-start gap-1 text-left border-slate-200 hover:border-slate-300"
+                        className={`h-auto py-3 flex-col items-start gap-1 text-left border-slate-200 hover:border-slate-300 ${action.variant === 'default' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white border-emerald-500' : ''}`}
                         aria-label={action.title}
                       >
                         <action.icon className="w-5 h-5" aria-hidden="true" />
                         <span className="font-medium text-sm">{action.title}</span>
-                        <span className="text-xs text-slate-500">{action.description}</span>
+                        <span className={`text-xs ${action.variant === 'default' ? 'text-emerald-100' : 'text-slate-500'}`}>{action.description}</span>
                       </Button>
                     ))}
                   </div>
@@ -360,13 +369,13 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-semibold text-slate-900">快捷操作</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 pt-0">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {quickActions.map((action, index) => (
                   <Button
                     key={index}
                     variant={action.variant}
                     onClick={action.action}
-                    className="h-auto py-2.5 flex-col items-center gap-1 text-center border-slate-200 hover:border-slate-300"
+                    className={`h-auto py-2.5 flex-col items-center gap-1 text-center border-slate-200 hover:border-slate-300 ${action.variant === 'default' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white border-emerald-500' : ''}`}
                     aria-label={action.title}
                   >
                     <action.icon className="w-5 h-5" aria-hidden="true" />
