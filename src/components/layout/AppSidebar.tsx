@@ -11,7 +11,9 @@ import {
   Settings,
   Bot,
   Package,
-  Shield
+  Shield,
+  UsersRound,
+  Building2
 } from 'lucide-react';
 import { 
   Select,
@@ -21,15 +23,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { UserRole } from '@/types';
+import { ROLE_LABELS } from '@/types';
 
-const roleNames: Record<UserRole, string> = {
-  requester: '需求申请人',
-  request_confirmer: '需求确认人',
-  purchaser: '采购专员',
-  approver: '审批人员',
-  finance: '财务人员',
-  supplier: '供应商',
-};
+const roleNames: Record<UserRole, string> = ROLE_LABELS;
 
 interface AppSidebarProps {
   initialRole?: UserRole;
@@ -47,19 +43,29 @@ export function AppSidebar({ initialRole = 'purchaser' }: AppSidebarProps) {
       href: '/',
     },
     {
+      title: '合同管理',
+      icon: FileText,
+      href: '/contracts',
+    },
+    {
       title: '采购需求',
       icon: ShoppingCart,
       href: '/requests',
     },
     {
       title: '采购订单',
-      icon: FileText,
+      icon: Package,
       href: '/pos',
     },
     {
       title: '供应商管理',
-      icon: Users,
-      href: '/suppliers',
+      icon: Building2,
+      href: '/supplier',
+    },
+    {
+      title: '团队管理',
+      icon: UsersRound,
+      href: '/team',
     },
     {
       title: '权限管理',
