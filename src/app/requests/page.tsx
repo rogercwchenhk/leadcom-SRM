@@ -170,7 +170,7 @@ export default function RequestsPage() {
                     placeholder="搜索需求ID、产品名称、申请人..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg"
+                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
                   />
                 </div>
                 <div className="flex gap-2">
