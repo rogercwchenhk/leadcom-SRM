@@ -225,22 +225,22 @@ export default function RequestsPage() {
                   <TableBody>
                     {filteredRequests.map((request) => (
                       <TableRow key={request.id} className="hover:bg-slate-50/50 transition-colors">
-                        <TableCell className="font-medium text-slate-900">{request.id}</TableCell>
+                        <TableCell className="text-xs font-medium text-slate-900">{request.id}</TableCell>
                         <TableCell>
                           <div>
-                            <p className="font-medium text-slate-900">{request.productName}</p>
-                            <p className="text-sm text-slate-500">{request.specifications}</p>
+                            <p className="text-sm text-slate-600 font-medium">{request.productName}</p>
+                            <p className="text-xs text-slate-400 mt-0.5">{request.specifications}</p>
                           </div>
                         </TableCell>
-                        <TableCell className="text-slate-600">{request.quantity}</TableCell>
-                        <TableCell className="text-slate-600">{request.requester}</TableCell>
+                        <TableCell className="text-xs text-slate-600">{request.quantity}</TableCell>
+                        <TableCell className="text-xs text-slate-600">{request.requester}</TableCell>
                         <TableCell>
                           <Badge variant={statusConfig[request.status].variant} className="flex items-center gap-1">
                             {statusIcons[request.status]}
                             {statusConfig[request.status].label}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-slate-500">{request.createdAt}</TableCell>
+                        <TableCell className="text-xs text-slate-400">{request.createdAt}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-slate-100">
                             <Eye className="h-4 w-4" />
