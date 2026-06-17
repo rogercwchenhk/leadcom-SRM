@@ -248,7 +248,7 @@ export function AIChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="输入你的需求..."
             disabled={isLoading}
-            className="flex-1 bg-background text-sm"
+            className="flex-1 bg-background text-xs"
           />
           <Button
             type="submit"
