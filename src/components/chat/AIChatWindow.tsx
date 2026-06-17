@@ -216,7 +216,10 @@ export function AIChatWindow() {
                     : 'bg-muted rounded-tl-sm'
                 )}
               >
-                <p className="whitespace-pre-wrap text-[11px] leading-relaxed">
+                <p className={cn(
+                  'whitespace-pre-wrap leading-relaxed',
+                  message.role === 'user' ? 'text-xs' : 'text-[10px]'
+                )}>
                   {message.content}
                 </p>
                 {message.isStreaming && (
