@@ -89,7 +89,7 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
   const SidebarContent = (
     <div className={`flex flex-col h-full ${isMobile ? 'bg-white' : 'bg-slate-50/50'}`}>
       {isMobile && (
-        <div className="flex items-center justify-between p-4 border-b border-slate-200">
+        <div className="flex items-center p-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-sm">
               <Bot className="h-5 w-5 text-white" />
@@ -99,11 +99,6 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
               <p className="text-xs text-slate-500">智能采购管理系统</p>
             </div>
           </div>
-          {onClose && (
-            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-              <X className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       )}
 
@@ -206,7 +201,7 @@ export function MobileSidebarSheet({ initialRole }: { initialRole?: UserRole }) 
         <Menu className="h-5 w-5" />
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 p-0 border-r border-slate-200" hideClose>
+        <SheetContent side="left" className="w-72 p-0 border-r border-slate-200">
           <SheetHeader className="sr-only">
             <SheetTitle>导航菜单</SheetTitle>
           </SheetHeader>
