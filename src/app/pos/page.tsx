@@ -185,25 +185,14 @@ export default function POSPage() {
 
         {/* Stats Grid - Top */}
         <Card className="border-slate-200 shadow-sm overflow-hidden">
-          <div 
-            className="pb-1 pt-2 px-4 flex flex-row items-center justify-between cursor-pointer select-none"
-            onClick={() => setShowStats(!showStats)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setShowStats(!showStats);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-          >
-            <div className="flex items-center gap-2">
+          <CardHeader className="pb-1 pt-2 px-4">
+            <div className="flex flex-row items-center justify-between">
               <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
+              <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100" aria-label={showStats ? "收起指标" : "展开指标"} onClick={() => setShowStats(!showStats)}>
+                {showStats ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+              </Button>
             </div>
-            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100" aria-label={showStats ? "收起指标" : "展开指标"}>
-              {showStats ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
-            </Button>
-          </div>
+          </CardHeader>
           {showStats && (
             <CardContent className="px-4 pb-4 pt-0">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -228,10 +217,13 @@ export default function POSPage() {
         <div className="space-y-4">
           {/* Filters */}
           <Card className="border-slate-200 shadow-sm">
-            <CardContent className="pt-3 px-4 pb-3">
+            <CardHeader className="pb-1 pt-2 px-4">
+              <CardTitle className="text-sm font-semibold text-slate-900">筛选条件</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
               <div className="flex flex-col gap-4 md:flex-row md:items-center">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
                   <label htmlFor="po-search" className="sr-only">搜索采购订单</label>
                   <Input
                     id="po-search"
@@ -239,14 +231,14 @@ export default function POSPage() {
                     placeholder="搜索PO号、产品名称、供应商…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-10 bg-white border-slate-200"
+                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg"
                     aria-label="搜索PO号、产品名称、供应商"
                   />
                 </div>
                 <div className="flex gap-2">
                   <label htmlFor="status-filter" className="sr-only">状态筛选</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger id="status-filter" className="w-[180px] h-10 bg-white border-slate-200" aria-label="订单状态筛选">
+                    <SelectTrigger id="status-filter" className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg" aria-label="订单状态筛选">
                       <SelectValue placeholder="状态筛选" />
                     </SelectTrigger>
                     <SelectContent>
@@ -268,27 +260,25 @@ export default function POSPage() {
           {/* Desktop Table */}
           <div className="hidden md:block">
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-1 pt-2 px-4 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 mt-1">
-                    共 {filteredPOs.length} 个采购订单
-                  </CardDescription>
-                </div>
+              <CardHeader className="pb-1 pt-2 px-4">
+                <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
+                <CardDescription className="text-xs text-slate-500 mt-1">
+                  共 {filteredPOs.length} 个采购订单
+                </CardDescription>
               </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <div className="rounded-xl border border-slate-200 overflow-hidden">
+              <CardContent className="px-4 pt-0 pb-4">
+                <div className="rounded-lg border border-slate-200 overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-slate-50 border-b border-slate-200">
                         <TableHead className="font-semibold text-slate-700">PO号</TableHead>
                         <TableHead className="font-semibold text-slate-700">产品名称</TableHead>
-                        <TableHead className="font-semibold text-slate-700 text-slate-500">供应商</TableHead>
+                        <TableHead className="font-semibold text-slate-700">供应商</TableHead>
                         <TableHead className="font-semibold text-slate-700">金额</TableHead>
                         <TableHead className="font-semibold text-slate-700">交货日期</TableHead>
                         <TableHead className="font-semibold text-slate-700">状态</TableHead>
-                        <TableHead className="font-semibold text-slate-700 text-slate-500">创建时间</TableHead>
-                        <TableHead className="text-right font-semibold text-slate-700">操作</TableHead>
+                        <TableHead className="font-semibold text-slate-700">创建时间</TableHead>
+                        <TableHead className="font-semibold text-slate-700 text-right">操作</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
