@@ -823,11 +823,11 @@ export default function SupplierPage() {
                     <CardContent className="px-4 pb-4 pt-0">
                       <div className="space-y-3">
                         {/* Basic Info */}
-                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                          <div className="flex items-start justify-between mb-2">
+                        <div className="bg-white p-2.5 rounded border border-slate-200">
+                          <div className="flex items-start justify-between mb-1.5">
                             <div>
                               <div className="flex items-center gap-2">
-                                <h3 className="text-lg font-bold text-slate-900 leading-none">
+                                <h3 className="text-xs font-semibold text-slate-900">
                                   {selectedSupplierData.name}
                                 </h3>
                                 {selectedSupplierData.aiVerified && (
@@ -836,14 +836,14 @@ export default function SupplierPage() {
                                   </Badge>
                                 )}
                               </div>
-                              <p className="text-xs text-slate-500 mt-1">
+                              <p className="text-[10px] text-slate-500 mt-1">
                                 {selectedSupplierData.categories.join(' · ')}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <div className="flex items-center gap-0.5 px-2 py-1 bg-yellow-50 rounded-full">
-                                <span className="text-xs font-medium text-yellow-600">★</span>
-                                <span className="text-xs font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
+                              <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-yellow-50 rounded-full">
+                                <span className="text-[10px] font-medium text-yellow-600">★</span>
+                                <span className="text-[10px] font-semibold text-yellow-700">{selectedSupplierData.rating}</span>
                               </div>
                             </div>
                           </div>
