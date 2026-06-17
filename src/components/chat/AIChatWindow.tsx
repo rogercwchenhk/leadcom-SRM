@@ -216,7 +216,7 @@ export function AIChatWindow() {
                     : 'bg-muted rounded-tl-sm'
                 )}
               >
-                <p className="whitespace-pre-wrap text-xs leading-relaxed">
+                <p className="whitespace-pre-wrap text-[11px] leading-relaxed">
                   {message.content}
                 </p>
                 {message.isStreaming && (
