@@ -27,21 +27,25 @@ export function SupplierLayout({ children }: SupplierLayoutProps) {
 
   const menuItems = [
     {
+      id: 'home',
       title: '首页',
       icon: Home,
       href: '/supplier-portal',
     },
     {
+      id: 'orders',
       title: '订单管理',
       icon: Package,
       href: '/supplier-portal',
     },
     {
+      id: 'history',
       title: '历史订单',
       icon: History,
       href: '/supplier-portal',
     },
     {
+      id: 'payment',
       title: '付款查询',
       icon: CreditCard,
       href: '/supplier-portal',
@@ -75,7 +79,7 @@ export function SupplierLayout({ children }: SupplierLayoutProps) {
             const isActive = pathname === item.href;
             return (
               <Button
-                key={item.href}
+                key={item.id}
                 variant={isActive ? 'secondary' : 'ghost'}
                 className={`w-full justify-start gap-3 h-9 ${
                   isActive ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'text-slate-600 hover:text-slate-900'
