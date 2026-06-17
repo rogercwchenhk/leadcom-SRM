@@ -441,135 +441,146 @@ export default function SupplierPage() {
                           </TabsList>
                           
                           <TabsContent value="basic" className="space-y-4 py-4">
-                            <div className="grid gap-2">
-                              <div className="flex items-center justify-between">
-                                <Label htmlFor="name">
-                                  供应商名称 <span className="text-red-500">*</span>
-                                </Label>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={handleAiQuery}
-                                  disabled={isAiQuerying || (!newSupplier.name && !newSupplier.businessLicenseNumber)}
-                                  className="h-7 text-xs gap-1"
-                                >
-                                  {isAiQuerying ? (
-                                    <>
-                                      <Loader2 className="w-3 h-3 animate-spin" />
-                                      查询中...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Scan className="w-3 h-3" />
-                                      AI查询企查查
-                                    </>
-                                  )}
-                                </Button>
-                              </div>
-                              <Input
-                                id="name"
-                                value={newSupplier.name}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
-                                placeholder="请输入供应商名称"
-                              />
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="grid gap-2">
-                                <Label htmlFor="contactPerson">
-                                  联系人 <span className="text-red-500">*</span>
-                                </Label>
+                            <div className="p-3 border rounded-lg bg-slate-50 space-y-3">
+                              <div className="grid gap-1">
+                                <div className="flex items-center justify-between">
+                                  <Label htmlFor="name" className="text-xs">
+                                    供应商名称 <span className="text-red-500">*</span>
+                                  </Label>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleAiQuery}
+                                    disabled={isAiQuerying || (!newSupplier.name && !newSupplier.businessLicenseNumber)}
+                                    className="h-7 text-xs gap-1"
+                                  >
+                                    {isAiQuerying ? (
+                                      <>
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                        查询中...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Scan className="w-3 h-3" />
+                                        AI查询企查查
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
                                 <Input
-                                  id="contactPerson"
-                                  value={newSupplier.contactPerson}
-                                  onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
-                                  placeholder="主要联系人姓名"
+                                  id="name"
+                                  value={newSupplier.name}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
+                                  placeholder="请输入供应商名称"
+                                  className="h-8 text-xs"
                                 />
                               </div>
-                              <div className="grid gap-2">
-                                <Label htmlFor="phone">联系电话</Label>
+                              
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="grid gap-1">
+                                  <Label htmlFor="contactPerson" className="text-xs">
+                                    联系人 <span className="text-red-500">*</span>
+                                  </Label>
+                                  <Input
+                                    id="contactPerson"
+                                    value={newSupplier.contactPerson}
+                                    onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
+                                    placeholder="主要联系人姓名"
+                                    className="h-8 text-xs"
+                                  />
+                                </div>
+                                <div className="grid gap-1">
+                                  <Label htmlFor="phone" className="text-xs">联系电话</Label>
+                                  <Input
+                                    id="phone"
+                                    value={newSupplier.phone}
+                                    onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
+                                    placeholder="联系电话"
+                                    className="h-8 text-xs"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="email" className="text-xs">电子邮箱</Label>
                                 <Input
-                                  id="phone"
-                                  value={newSupplier.phone}
-                                  onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
-                                  placeholder="联系电话"
+                                  id="email"
+                                  type="email"
+                                  value={newSupplier.email}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
+                                  placeholder="example@company.com"
+                                  className="h-8 text-xs"
                                 />
                               </div>
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="email">电子邮箱</Label>
-                              <Input
-                                id="email"
-                                type="email"
-                                value={newSupplier.email}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
-                                placeholder="example@company.com"
-                              />
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="businessLicenseNumber">
-                                营业执照号
-                              </Label>
-                              <Input
-                                id="businessLicenseNumber"
-                                value={newSupplier.businessLicenseNumber}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
-                                placeholder="营业执照号（选填，用于AI查询）"
-                              />
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="registeredAddress">
-                                注册地址
-                              </Label>
-                              <Textarea
-                                id="registeredAddress"
-                                value={newSupplier.registeredAddress}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
-                                placeholder="注册地址"
-                                rows={2}
-                              />
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="address">
-                                经营地址
-                              </Label>
-                              <Textarea
-                                id="address"
-                                value={newSupplier.address}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
-                                placeholder="经营地址"
-                                rows={2}
-                              />
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="businessScope">
-                                经营范围
-                              </Label>
-                              <Textarea
-                                id="businessScope"
-                                value={newSupplier.businessScope}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
-                                placeholder="经营范围"
-                                rows={3}
-                              />
-                            </div>
-                            
-                            <div className="grid gap-2">
-                              <Label htmlFor="categories">
-                                经营类别 <span className="text-[10px] text-slate-500">(多个类别用逗号分隔)</span>
-                              </Label>
-                              <Input
-                                id="categories"
-                                value={newSupplier.categories}
-                                onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
-                                placeholder="例如：办公设备, 电子产品, 文具"
-                              />
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="businessLicenseNumber" className="text-xs">
+                                  营业执照号
+                                </Label>
+                                <Input
+                                  id="businessLicenseNumber"
+                                  value={newSupplier.businessLicenseNumber}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
+                                  placeholder="营业执照号（选填，用于AI查询）"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="registeredAddress" className="text-xs">
+                                  注册地址
+                                </Label>
+                                <Textarea
+                                  id="registeredAddress"
+                                  value={newSupplier.registeredAddress}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
+                                  placeholder="注册地址"
+                                  rows={2}
+                                  className="text-xs"
+                                />
+                              </div>
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="address" className="text-xs">
+                                  经营地址
+                                </Label>
+                                <Textarea
+                                  id="address"
+                                  value={newSupplier.address}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
+                                  placeholder="经营地址"
+                                  rows={2}
+                                  className="text-xs"
+                                />
+                              </div>
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="businessScope" className="text-xs">
+                                  经营范围
+                                </Label>
+                                <Textarea
+                                  id="businessScope"
+                                  value={newSupplier.businessScope}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
+                                  placeholder="经营范围"
+                                  rows={3}
+                                  className="text-xs"
+                                />
+                              </div>
+                              
+                              <div className="grid gap-1">
+                                <Label htmlFor="categories" className="text-xs">
+                                  经营类别 <span className="text-[10px] text-slate-500">(多个类别用逗号分隔)</span>
+                                </Label>
+                                <Input
+                                  id="categories"
+                                  value={newSupplier.categories}
+                                  onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
+                                  placeholder="例如：办公设备, 电子产品, 文具"
+                                  className="h-8 text-xs"
+                                />
+                              </div>
                             </div>
                           </TabsContent>
                           
