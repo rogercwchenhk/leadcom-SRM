@@ -444,7 +444,7 @@ export default function SupplierPage() {
                             <div className="p-3 border rounded-lg bg-slate-50 space-y-3">
                               <div className="grid gap-1">
                                 <div className="flex items-center justify-between">
-                                  <Label htmlFor="name" className="text-xs">
+                                  <Label htmlFor="name" className="text-xs!">
                                     供应商名称 <span className="text-red-500">*</span>
                                   </Label>
                                   <Button
@@ -453,7 +453,7 @@ export default function SupplierPage() {
                                     size="sm"
                                     onClick={handleAiQuery}
                                     disabled={isAiQuerying || (!newSupplier.name && !newSupplier.businessLicenseNumber)}
-                                    className="h-7 text-xs gap-1"
+                                    className="h-7 text-xs! gap-1"
                                   >
                                     {isAiQuerying ? (
                                       <>
@@ -473,13 +473,13 @@ export default function SupplierPage() {
                                   value={newSupplier.name}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
                                   placeholder="请输入供应商名称"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-xs!"
                                 />
                               </div>
                               
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="grid gap-1">
-                                  <Label htmlFor="contactPerson" className="text-xs">
+                                  <Label htmlFor="contactPerson" className="text-xs!">
                                     联系人 <span className="text-red-500">*</span>
                                   </Label>
                                   <Input
@@ -487,35 +487,35 @@ export default function SupplierPage() {
                                     value={newSupplier.contactPerson}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, contactPerson: e.target.value })}
                                     placeholder="主要联系人姓名"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-xs!"
                                   />
                                 </div>
                                 <div className="grid gap-1">
-                                  <Label htmlFor="phone" className="text-xs">联系电话</Label>
+                                  <Label htmlFor="phone" className="text-xs!">联系电话</Label>
                                   <Input
                                     id="phone"
                                     value={newSupplier.phone}
                                     onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
                                     placeholder="联系电话"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-xs!"
                                   />
                                 </div>
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="email" className="text-xs">电子邮箱</Label>
+                                <Label htmlFor="email" className="text-xs!">电子邮箱</Label>
                                 <Input
                                   id="email"
                                   type="email"
                                   value={newSupplier.email}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
                                   placeholder="example@company.com"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-xs!"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="businessLicenseNumber" className="text-xs">
+                                <Label htmlFor="businessLicenseNumber" className="text-xs!">
                                   营业执照号
                                 </Label>
                                 <Input
@@ -523,12 +523,12 @@ export default function SupplierPage() {
                                   value={newSupplier.businessLicenseNumber}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessLicenseNumber: e.target.value })}
                                   placeholder="营业执照号（选填，用于AI查询）"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-xs!"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="registeredAddress" className="text-xs">
+                                <Label htmlFor="registeredAddress" className="text-xs!">
                                   注册地址
                                 </Label>
                                 <Textarea
@@ -537,12 +537,12 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, registeredAddress: e.target.value })}
                                   placeholder="注册地址"
                                   rows={2}
-                                  className="text-xs"
+                                  className="text-xs!"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="address" className="text-xs">
+                                <Label htmlFor="address" className="text-xs!">
                                   经营地址
                                 </Label>
                                 <Textarea
@@ -551,12 +551,12 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
                                   placeholder="经营地址"
                                   rows={2}
-                                  className="text-xs"
+                                  className="text-xs!"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="businessScope" className="text-xs">
+                                <Label htmlFor="businessScope" className="text-xs!">
                                   经营范围
                                 </Label>
                                 <Textarea
@@ -565,20 +565,20 @@ export default function SupplierPage() {
                                   onChange={(e) => setNewSupplier({ ...newSupplier, businessScope: e.target.value })}
                                   placeholder="经营范围"
                                   rows={3}
-                                  className="text-xs"
+                                  className="text-xs!"
                                 />
                               </div>
                               
                               <div className="grid gap-1">
-                                <Label htmlFor="categories" className="text-xs">
-                                  经营类别 <span className="text-xs text-slate-500">(多个类别用逗号分隔)</span>
+                                <Label htmlFor="categories" className="text-xs!">
+                                  经营类别 <span className="text-xs! text-slate-500">(多个类别用逗号分隔)</span>
                                 </Label>
                                 <Input
                                   id="categories"
                                   value={newSupplier.categories}
                                   onChange={(e) => setNewSupplier({ ...newSupplier, categories: e.target.value })}
                                   placeholder="例如：办公设备, 电子产品, 文具"
-                                  className="h-8 text-xs"
+                                  className="h-8 text-xs!"
                                 />
                               </div>
                             </div>
@@ -586,13 +586,13 @@ export default function SupplierPage() {
                           
                           <TabsContent value="contacts" className="space-y-4 py-4">
                             <div className="flex items-center justify-between">
-                              <Label>联系人列表</Label>
+                              <Label className="text-xs!">联系人列表</Label>
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
                                 onClick={handleAddContact}
-                                className="h-7 text-xs"
+                                className="h-7 text-xs!"
                               >
                                 <Plus className="w-3 h-3 mr-1" />
                                 添加联系人
@@ -603,9 +603,9 @@ export default function SupplierPage() {
                               <div key={index} className="p-3 border rounded-lg bg-slate-50 space-y-3">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium text-slate-700">联系人 {index + 1}</span>
+                                    <span className="text-xs! font-medium text-slate-700">联系人 {index + 1}</span>
                                     {contact.isPrimary && (
-                                      <Badge variant="secondary" className="text-[9px] h-4">主要联系人</Badge>
+                                      <Badge variant="secondary" className="text-xs! h-4">主要联系人</Badge>
                                     )}
                                   </div>
                                   {newSupplier.contacts.length > 1 && (
@@ -623,7 +623,7 @@ export default function SupplierPage() {
                                 
                                 <div className="grid grid-cols-2 gap-2">
                                   <div className="grid gap-1">
-                                    <Label htmlFor={`contact-name-${index}`} className="text-xs">
+                                    <Label htmlFor={`contact-name-${index}`} className="text-xs!">
                                       姓名 <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
@@ -631,53 +631,53 @@ export default function SupplierPage() {
                                       value={contact.name}
                                       onChange={(e) => handleUpdateContact(index, 'name', e.target.value)}
                                       placeholder="联系人姓名"
-                                      className="h-8 text-xs"
+                                      className="h-8 text-xs!"
                                     />
                                   </div>
                                   <div className="grid gap-1">
-                                    <Label htmlFor={`contact-position-${index}`} className="text-xs">职位</Label>
+                                    <Label htmlFor={`contact-position-${index}`} className="text-xs!">职位</Label>
                                     <Input
                                       id={`contact-position-${index}`}
                                       value={contact.position}
                                       onChange={(e) => handleUpdateContact(index, 'position', e.target.value)}
                                       placeholder="职位"
-                                      className="h-8 text-xs"
+                                      className="h-8 text-xs!"
                                     />
                                   </div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-2">
                                   <div className="grid gap-1">
-                                    <Label htmlFor={`contact-phone-${index}`} className="text-xs">手机</Label>
+                                    <Label htmlFor={`contact-phone-${index}`} className="text-xs!">手机</Label>
                                     <Input
                                       id={`contact-phone-${index}`}
                                       value={contact.phone}
                                       onChange={(e) => handleUpdateContact(index, 'phone', e.target.value)}
                                       placeholder="手机号码"
-                                      className="h-8 text-xs"
+                                      className="h-8 text-xs!"
                                     />
                                   </div>
                                   <div className="grid gap-1">
-                                    <Label htmlFor={`contact-wechat-${index}`} className="text-xs">微信号</Label>
+                                    <Label htmlFor={`contact-wechat-${index}`} className="text-xs!">微信号</Label>
                                     <Input
                                       id={`contact-wechat-${index}`}
                                       value={contact.wechat}
                                       onChange={(e) => handleUpdateContact(index, 'wechat', e.target.value)}
                                       placeholder="微信号"
-                                      className="h-8 text-xs"
+                                      className="h-8 text-xs!"
                                     />
                                   </div>
                                 </div>
                                 
                                 <div className="grid gap-1">
-                                  <Label htmlFor={`contact-email-${index}`} className="text-xs">电子邮箱</Label>
+                                  <Label htmlFor={`contact-email-${index}`} className="text-xs!">电子邮箱</Label>
                                   <Input
                                     id={`contact-email-${index}`}
                                     type="email"
                                     value={contact.email}
                                     onChange={(e) => handleUpdateContact(index, 'email', e.target.value)}
                                     placeholder="example@company.com"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-xs!"
                                   />
                                 </div>
                                 
@@ -689,7 +689,7 @@ export default function SupplierPage() {
                                     onChange={(e) => handleUpdateContact(index, 'isPrimary', e.target.checked)}
                                     className="rounded border-slate-300 text-orange-500 focus:ring-orange-500"
                                   />
-                                  <Label htmlFor={`contact-primary-${index}`} className="text-xs cursor-pointer">
+                                  <Label htmlFor={`contact-primary-${index}`} className="text-xs! cursor-pointer">
                                     设为主要联系人
                                   </Label>
                                 </div>
