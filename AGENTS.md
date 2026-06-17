@@ -19,7 +19,13 @@
 │   └── start.sh            # 生产环境启动脚本
 ├── src/
 │   ├── app/                # 页面路由与布局
-│   ├── components/ui/      # Shadcn UI 组件库
+│   │   └── api/hermes/    # Hermes Agent API路由
+│   │       └── chat/route.ts  # AI聊天API
+│   ├── components/        # 自定义组件
+│   │   ├── chat/          # AI聊天组件
+│   │   │   └── AIChatWindow.tsx  # AI聊天窗口组件
+│   │   ├── layout/        # 布局组件
+│   │   └── ui/            # Shadcn UI 组件库
 │   ├── hooks/              # 自定义 Hooks
 │   ├── lib/                # 工具库
 │   │   └── utils.ts        # 通用工具函数 (cn)
@@ -63,3 +69,29 @@
 
 - 模板默认预装核心组件库 `shadcn/ui`，位于`src/components/ui/`目录下
 - Next.js 项目**必须默认**采用 shadcn/ui 组件、风格和规范，**除非用户指定用其他的组件和规范。**
+
+## AI聊天功能
+
+### 功能概述
+- 在每个页面底部都有一个可展开的AI聊天窗口
+- 用户可以通过自然语言与Hermes Agent交互来操作软件
+- 支持流式输出，提供打字机效果的实时响应
+
+### 组件位置
+- **聊天窗口组件**: `src/components/chat/AIChatWindow.tsx`
+- **API路由**: `src/app/api/hermes/chat/route.ts`
+
+### 核心特性
+1. **可折叠窗口**: 点击右下角的"AI助手"按钮展开/收起聊天窗口
+2. **消息历史**: 保持对话历史记录
+3. **流式输出**: 使用SSE协议实现实时打字机效果
+4. **专业界面**: 采用与系统一致的设计风格
+
+### 使用方式
+- 用户可以用自然语言描述需求，如："帮我创建一个采购需求"、"查询供应商信息"等
+- AI助手会理解用户意图并协助完成相应的系统操作
+
+### Hermes Agent集成
+- API路由设计为可对接真实的Hermes Agent gateway/api
+- 当前使用模拟响应演示功能
+- 在生产环境中需要配置环境变量和真实的API端点
