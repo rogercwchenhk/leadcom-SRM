@@ -195,20 +195,20 @@ export default function POSPage() {
   return (
     <AppLayout initialRole="purchaser">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        <div className="max-w-7xl mx-auto px-4 py-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
+            <h1 className="text-base font-semibold text-slate-900 tracking-tight">
               采购订单
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-0.5">
               管理所有采购订单，跟踪发货和付款
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2 h-10 border-slate-200 hover:border-slate-300 whitespace-nowrap">
-              <FileSpreadsheet className="w-4 h-4" aria-hidden="true" />
+            <Button variant="outline" className="gap-1.5 h-8 border-slate-200 hover:border-slate-300 whitespace-nowrap text-xs">
+              <FileSpreadsheet className="w-3.5 h-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">导出报表</span>
               <span className="sm:hidden">导出</span>
             </Button>
@@ -217,27 +217,27 @@ export default function POSPage() {
 
         {/* Stats Grid - Top */}
         <Card className="border-slate-200 shadow-sm overflow-hidden">
-          <CardHeader className="pb-1 pt-2 px-4">
+          <CardHeader className="pb-1 pt-1.5 px-3">
             <div className="flex flex-row items-center justify-between">
               <CardTitle className="text-sm font-semibold text-slate-900">实时指标</CardTitle>
-              <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100" aria-label={showStats ? "收起指标" : "展开指标"} onClick={() => setShowStats(!showStats)}>
-                {showStats ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+              <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-slate-100" aria-label={showStats ? "收起指标" : "展开指标"} onClick={() => setShowStats(!showStats)}>
+                {showStats ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
               </Button>
             </div>
           </CardHeader>
           {showStats && (
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <CardContent className="px-3 pb-3 pt-0">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5">
                 {stats.map((stat, index) => (
                   <div 
                     key={index} 
-                    className={`p-2.5 rounded-lg border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
+                    className={`p-2 rounded-lg border ${stat.bg} border-slate-200 hover:border-slate-300 transition-all duration-200`}
                   >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                      <span className="text-xs text-slate-500">{stat.label}</span>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
+                      <span className="text-[11px] text-slate-500">{stat.label}</span>
                     </div>
-                    <div className="text-base font-bold text-slate-900 leading-tight">{stat.value}</div>
+                    <div className="text-sm font-bold text-slate-900 leading-tight">{stat.value}</div>
                   </div>
                 ))}
               </div>
@@ -249,13 +249,13 @@ export default function POSPage() {
         <div className="space-y-4">
           {/* Filters */}
           <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
+            <CardHeader className="pb-1 pt-1.5 px-3">
               <CardTitle className="text-sm font-semibold text-slate-900">筛选条件</CardTitle>
             </CardHeader>
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <CardContent className="px-3 pb-3 pt-0">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" aria-hidden="true" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" aria-hidden="true" />
                   <label htmlFor="po-search" className="sr-only">搜索采购订单</label>
                   <Input
                     id="po-search"
@@ -263,14 +263,14 @@ export default function POSPage() {
                     placeholder="搜索PO号、供应商、产品名称…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs"
-                    aria-label="搜索PO号、产品名称、供应商"
+                    className="pl-9 h-8 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-md text-xs"
+                    aria-label="搜索PO号、供应商、产品名称"
                   />
                 </div>
                 <div className="flex gap-2">
                   <label htmlFor="status-filter" className="sr-only">状态筛选</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger id="status-filter" className="w-[180px] h-9 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-xs" aria-label="订单状态筛选">
+                    <SelectTrigger id="status-filter" className="w-[160px] h-8 bg-slate-50 border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-md text-xs" aria-label="订单状态筛选">
                       <SelectValue placeholder="状态筛选" />
                     </SelectTrigger>
                     <SelectContent>
@@ -292,22 +292,22 @@ export default function POSPage() {
           {/* Desktop Table */}
           <div className="hidden md:block">
             <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="pb-1 pt-2 px-4">
+              <CardHeader className="pb-1 pt-2 px-3">
                 <CardTitle className="text-sm font-semibold text-slate-900">订单列表</CardTitle>
-                <CardDescription className="text-xs text-slate-500 mt-1">
+                <CardDescription className="text-xs text-slate-500 mt-0.5">
                   共 {filteredPOs.length} 个采购订单
                 </CardDescription>
               </CardHeader>
-              <CardContent className="px-4 pt-0 pb-4">
+              <CardContent className="px-3 pt-0 pb-3">
                 <div className="rounded-lg border border-slate-200 overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-slate-50 border-b border-slate-200">
-                        <TableHead className="font-semibold text-slate-700">PO号</TableHead>
-                        <TableHead className="font-semibold text-slate-700">供应商</TableHead>
-                        <TableHead className="font-semibold text-slate-700">总金额</TableHead>
-                        <TableHead className="font-semibold text-slate-700">状态</TableHead>
-                        <TableHead className="font-semibold text-slate-700 text-right">操作</TableHead>
+                        <TableHead className="font-semibold text-slate-700 py-2">PO号</TableHead>
+                        <TableHead className="font-semibold text-slate-700 py-2">供应商</TableHead>
+                        <TableHead className="font-semibold text-slate-700 py-2">总金额</TableHead>
+                        <TableHead className="font-semibold text-slate-700 py-2">状态</TableHead>
+                        <TableHead className="font-semibold text-slate-700 text-right py-2">操作</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -319,16 +319,16 @@ export default function POSPage() {
                         return (
                           <React.Fragment key={po.id}>
                             <TableRow className="hover:bg-slate-50/50 transition-colors">
-                              <TableCell>
+                              <TableCell className="py-2">
                                 <Collapsible open={isExpanded} onOpenChange={() => togglePOExpansion(po.id)} className="w-full">
                                   <div className="flex flex-col">
                                     <CollapsibleTrigger asChild>
                                       <button 
-                                        className="flex items-center gap-2 text-left hover:bg-slate-100 rounded px-1 py-0.5 -ml-1 transition-colors"
+                                        className="flex items-center gap-1.5 text-left hover:bg-slate-100 rounded px-1 py-0.5 -ml-1 transition-colors"
                                         aria-label={isExpanded ? `收起产品明细 ${po.id}` : `展开产品明细 ${po.id}`}
                                         title={po.id}
                                       >
-                                        <Package className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                                        <Package className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
                                         <span className="text-xs text-slate-900 font-medium">
                                           {formatPONumber(po.id)}
                                         </span>
@@ -342,19 +342,19 @@ export default function POSPage() {
                                   </div>
                                 </Collapsible>
                               </TableCell>
-                              <TableCell className="text-xs text-slate-500">{po.supplier}</TableCell>
-                              <TableCell className="text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
-                              <TableCell>
-                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg} border border-slate-200`}>
-                                  <IconComponent className={`w-3.5 h-3.5 ${config.color}`} aria-hidden="true" />
+                              <TableCell className="py-2 text-xs text-slate-500">{po.supplier}</TableCell>
+                              <TableCell className="py-2 text-xs font-medium text-slate-900">{formatCurrency(po.totalAmount)}</TableCell>
+                              <TableCell className="py-2">
+                                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${config.bg} border border-slate-200`}>
+                                  <IconComponent className={`w-3 h-3 ${config.color}`} aria-hidden="true" />
                                   <span className={`text-xs font-medium ${config.color}`}>
                                     {config.label}
                                   </span>
                                 </div>
                               </TableCell>
-                              <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
-                                  <Eye className="h-4 w-4 text-slate-600" />
+                              <TableCell className="py-2 text-right">
+                                <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-slate-100" aria-label={`查看订单 ${po.id}`}>
+                                  <Eye className="w-3.5 h-3.5 text-slate-600" />
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -362,13 +362,13 @@ export default function POSPage() {
                               <TableCell colSpan={5} className="p-0">
                                 <Collapsible open={isExpanded} onOpenChange={() => {}}>
                                   <CollapsibleContent>
-                                    <div className="bg-slate-50/30 px-6 py-4">
-                                      <div className="pl-6 space-y-3">
+                                    <div className="bg-slate-50/30 px-4 py-2.5">
+                                      <div className="pl-5 space-y-1.5">
                                         <div className="text-xs text-slate-500">
                                           <span className="font-medium text-slate-700">完整PO号：</span>
                                           {po.id}
                                         </div>
-                                        <div className="space-y-1.5">
+                                        <div className="space-y-1">
                                           {po.items.map((item, index) => (
                                             <div key={index} className="text-xs text-slate-600">
                                               <div className="flex items-center justify-between gap-2">
@@ -397,8 +397,8 @@ export default function POSPage() {
           </div>
 
           {/* Mobile Cards */}
-          <div className="md:hidden space-y-3">
-            <div className="flex items-center justify-between mb-2">
+          <div className="md:hidden space-y-2">
+            <div className="flex items-center justify-between mb-1.5">
               <h3 className="text-sm font-semibold text-slate-900">订单列表</h3>
               <span className="text-xs text-slate-500">共 {filteredPOs.length} 个</span>
             </div>
@@ -409,21 +409,21 @@ export default function POSPage() {
               
               return (
                 <Card key={po.id} className="border-slate-200 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
+                  <CardContent className="p-3">
+                    <div className="flex items-start justify-between mb-2">
                       <div>
                         <div className="text-xs font-medium text-slate-900">{formatPONumber(po.id)}</div>
                       </div>
-                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${config.bg} border border-slate-200`}>
-                        <IconComponent className={`w-3 h-3 ${config.color}`} aria-hidden="true" />
-                        <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
+                      <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full ${config.bg} border border-slate-200`}>
+                        <IconComponent className={`w-2.5 h-2.5 ${config.color}`} aria-hidden="true" />
+                        <span className={`text-[11px] font-medium ${config.color}`}>{config.label}</span>
                       </div>
                     </div>
                     
-                    <div className="space-y-2 text-xs mb-3">
+                    <div className="space-y-1 text-xs mb-2">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">供应商</span>
-                        <span className="text-slate-900">{po.supplier}</span>
+                        <span className="text-slate-900 text-xs">{po.supplier}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-500">总金额</span>
@@ -434,26 +434,26 @@ export default function POSPage() {
                     <Collapsible open={isExpanded} onOpenChange={() => togglePOExpansion(po.id)} className="w-full">
                       <CollapsibleTrigger asChild>
                         <button 
-                          className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                          className="w-full flex items-center justify-center gap-1 text-xs text-slate-600 hover:text-slate-900 py-1 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors"
                           aria-label={isExpanded ? `收起产品明细 ${po.id}` : `展开产品明细 ${po.id}`}
                         >
                           {isExpanded ? (
-                            <ChevronUp className="w-3.5 h-3.5" />
+                            <ChevronUp className="w-3 h-3" />
                           ) : (
-                            <ChevronDown className="w-3.5 h-3.5" />
+                            <ChevronDown className="w-3 h-3" />
                           )}
-                          <span>{isExpanded ? '收起产品明细' : '查看产品明细'}</span>
+                          <span className="text-[11px]">{isExpanded ? '收起' : '查看明细'}</span>
                         </button>
                       </CollapsibleTrigger>
                       
                       <CollapsibleContent>
-                        <div className="mt-3 space-y-2 border-t border-slate-100 pt-3">
-                          <div className="text-xs text-slate-500">
+                        <div className="mt-2 space-y-1.5 border-t border-slate-100 pt-2">
+                          <div className="text-[11px] text-slate-500">
                             <span className="font-medium text-slate-700">完整PO号：</span>
                             {po.id}
                           </div>
                           {po.items.map((item, index) => (
-                            <div key={index} className="text-xs">
+                            <div key={index} className="text-[11px]">
                               <div className="text-slate-900">{item.productName}</div>
                               <div className="flex items-center justify-between text-slate-500 mt-0.5">
                                 <span>数量: {item.quantity}</span>
