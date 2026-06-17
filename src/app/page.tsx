@@ -17,7 +17,8 @@ import {
   ArrowRight,
   Package,
   ClipboardList,
-  BarChart3
+  BarChart3,
+  Users
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -156,15 +157,15 @@ export default function DashboardPage() {
 
   const quickActions = [
     { 
-      title: '新建需求', 
-      description: 'AI智能分析', 
-      icon: ShoppingCart,
-      action: () => router.push('/requests/new'),
+      title: '合同管理', 
+      description: '销售合同', 
+      icon: FileText,
+      action: () => router.push('/contracts'),
       variant: 'outline' as const
     },
     { 
-      title: '查看需求', 
-      description: '全部采购需求', 
+      title: '需求管理', 
+      description: '采购需求', 
       icon: ClipboardList,
       action: () => router.push('/requests'),
       variant: 'outline' as const
@@ -172,15 +173,22 @@ export default function DashboardPage() {
     { 
       title: 'PO管理', 
       description: '采购订单', 
-      icon: FileText,
+      icon: ShoppingCart,
       action: () => router.push('/pos'),
+      variant: 'outline' as const
+    },
+    { 
+      title: '供应商管理', 
+      description: '供应商信息', 
+      icon: Users,
+      action: () => router.push('/supplier'),
       variant: 'outline' as const
     },
     { 
       title: '数据分析', 
       description: '采购数据', 
       icon: BarChart3,
-      action: () => {},
+      action: () => router.push('/analytics'),
       variant: 'outline' as const
     }
   ];
@@ -245,7 +253,7 @@ export default function DashboardPage() {
                   <CardTitle className="text-sm font-semibold text-slate-900">快捷操作</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     {quickActions.map((action, index) => (
                       <Button
                         key={index}
@@ -350,7 +358,7 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-semibold text-slate-900">快捷操作</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 pt-0">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {quickActions.map((action, index) => (
                   <Button
                     key={index}

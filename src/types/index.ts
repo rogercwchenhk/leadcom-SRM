@@ -2,6 +2,87 @@
 
 export type UserRole = 'requester' | 'request_confirmer' | 'purchaser' | 'approver' | 'finance' | 'supplier';
 
+// ========== 销售合同相关类型 ==========
+
+export type ContractStatus = 'draft' | 'uploaded' | 'processing' | 'summarized' | 'linked' | 'archived';
+
+export type ContractType = 'sales' | 'purchase' | 'other';
+
+export interface ContractItem {
+  id: string;
+  productName: string;
+  specifications?: string;
+  quantity: number;
+  unitPrice?: number;
+  totalPrice?: number;
+  deliveryDate?: Date;
+  remarks?: string;
+}
+
+export interface ContractSummary {
+  id: string;
+  contractId: string;
+  summary: string;
+  keyPoints: string[];
+  extractedItems: ContractItem[];
+  totalAmount?: number;
+  customerName?: string;
+  contractDate?: Date;
+  deliveryDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SalesContract {
+  id: string;
+  contractNumber: string;
+  contractType: ContractType;
+  status: ContractStatus;
+  customerName: string;
+  customerContact?: string;
+  contractDate?: Date;
+  totalAmount?: number;
+  currency?: string;
+  pdfUrl?: string;
+  pdfFileName?: string;
+  summaryId?: string;
+  summary?: ContractSummary;
+  linkedRequestIds?: string[];
+  uploadedBy: string;
+  uploadedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ========== 需求管理扩展类型 ==========
+
+export type RequestSource = 'sales_contract' | 'manual';
+
+export type RequestType = 'determined' | 'undetermined';
+
+export interface ExternalInquiry {
+  id: string;
+  purchaseRequestId: string;
+  supplierName?: string;
+  quotedPrice?: number;
+  deliveryDays?: number;
+  currency?: string;
+  quotedAt?: Date;
+  remarks?: string;
+  createdAt: Date;
+}
+
+export interface ExportPriceReference {
+  id: string;
+  purchaseRequestId: string;
+  referencePrice: number;
+  currency: string;
+  priceSource: string;
+  confidence: number;
+  generatedAt: Date;
+  createdAt: Date;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -42,6 +123,8 @@ export type PurchaseRequestStatus =
 export interface PurchaseRequest {
   id: string;
   status: PurchaseRequestStatus;
+  requestSource: RequestSource;
+  requestType: RequestType;
   requesterId: string;
   confirmerId?: string;
   naturalLanguageInput?: string;
@@ -52,6 +135,13 @@ export interface PurchaseRequest {
   budget?: number;
   aiAnalysisResult?: Record<string, any>;
   confirmedAt?: Date;
+  // 关联销售合同
+  salesContractId?: string;
+  salesContract?: SalesContract;
+  contractItemId?: string;
+  // 非确定需求相关
+  externalInquiries?: ExternalInquiry[];
+  exportPriceReference?: ExportPriceReference;
   createdAt: Date;
   updatedAt: Date;
 }

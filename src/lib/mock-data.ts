@@ -112,6 +112,8 @@ export const mockPurchaseRequests: PurchaseRequest[] = [
   {
     id: 'pr-1',
     status: 'draft',
+    requestSource: 'manual',
+    requestType: 'undetermined',
     requesterId: 'user-1',
     naturalLanguageInput: '我需要采购5台联想笔记本电脑，用于新员工入职，预算大概3万元，希望一周内能到货',
     createdAt: new Date('2024-01-20'),
