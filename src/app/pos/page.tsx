@@ -34,6 +34,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import type { POStatus } from '@/types';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 type ActivityStatus = 'success' | 'warning' | 'info';
 
@@ -162,8 +163,9 @@ export default function POSPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -379,5 +381,6 @@ export default function POSPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

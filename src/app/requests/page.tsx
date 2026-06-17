@@ -29,15 +29,15 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  ArrowLeft,
   FileText,
   Link2,
   TrendingUp,
   DollarSign
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { PurchaseRequestStatus, RequestType, RequestSource } from '@/types';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 const statusConfig: Record<PurchaseRequestStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
   draft: { label: '草稿', variant: 'outline' },
@@ -177,16 +177,11 @@ export default function RequestsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg hover:bg-slate-100" aria-label="返回首页">
-                <ArrowLeft className="h-5 w-5 text-slate-600" aria-hidden="true" />
-              </Button>
-            </Link>
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
                 需求管理
@@ -195,7 +190,6 @@ export default function RequestsPage() {
                 管理确定需求和非确定需求，支持外部询价
               </p>
             </div>
-          </div>
           <div className="flex gap-3">
             <Link href="/requests/new">
               <Button variant="outline" className="gap-2 h-10 px-6 rounded-lg">
@@ -571,5 +565,6 @@ export default function RequestsPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

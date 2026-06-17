@@ -36,6 +36,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 // 模拟数据
 const contractData = [
@@ -90,8 +91,9 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -332,5 +334,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

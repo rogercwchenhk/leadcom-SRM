@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 // 模拟需求详情数据
 const mockRequestDetail = {
@@ -100,8 +101,9 @@ export default function RequestDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-5xl mx-auto px-6 py-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-5xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -354,5 +356,6 @@ export default function RequestDetailPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

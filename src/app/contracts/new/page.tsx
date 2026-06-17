@@ -17,6 +17,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export default function NewContractPage() {
   const router = useRouter();
@@ -100,8 +101,9 @@ export default function NewContractPage() {
   }, [file, uploadComplete, simulateUpload, startProcessing]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-3xl mx-auto px-6 py-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-3xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
@@ -291,5 +293,6 @@ export default function NewContractPage() {
         </form>
       </div>
     </div>
+    </AppLayout>
   );
 }

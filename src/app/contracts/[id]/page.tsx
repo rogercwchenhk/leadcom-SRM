@@ -16,6 +16,7 @@ import {
   Link2
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 // 模拟合同详情数据
 const mockContractDetail = {
@@ -84,8 +85,9 @@ export default function ContractDetailPage() {
   const status = statusConfig[contract.status];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-6xl mx-auto px-6 py-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-6xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -314,5 +316,6 @@ export default function ContractDetailPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

@@ -58,6 +58,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { POStatus, Supplier, SupplierContact } from '@/types';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 const statusConfig: Record<POStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
   pending_signature: { label: '待确认', variant: 'secondary' },
@@ -387,8 +388,9 @@ export default function SupplierPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -1458,5 +1460,6 @@ export default function SupplierPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

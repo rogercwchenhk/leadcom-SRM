@@ -26,6 +26,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 // 模拟合同列表
 const mockContracts = [
@@ -147,8 +148,9 @@ export default function NewRequestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
+    <AppLayout initialRole="purchaser">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link href="/requests">
@@ -419,5 +421,6 @@ export default function NewRequestPage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }
