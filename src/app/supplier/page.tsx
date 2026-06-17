@@ -779,23 +779,24 @@ export default function SupplierPage() {
                                 <span className="text-xs text-slate-600 ml-0.5">{supplier.rating}</span>
                               </div>
                               {/* 展开/收起按钮 */}
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-6 w-6 p-0 hover:bg-slate-100"
+                              <button
+                                type="button"
+                                className="flex items-center justify-center h-7 w-7 rounded-md hover:bg-slate-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1"
                                 onClick={(e) => toggleSupplierExpand(supplier.id, e)}
+                                aria-label={expandedSuppliers.has(supplier.id) ? "收起详情" : "展开详情"}
                               >
                                 <svg 
-                                  className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                                  className={`w-5 h-5 text-slate-600 transition-transform duration-200 ${
                                     expandedSuppliers.has(supplier.id) ? 'rotate-180' : ''
                                   }`} 
                                   fill="none" 
                                   viewBox="0 0 24 24" 
                                   stroke="currentColor"
+                                  strokeWidth={2.5}
                                 >
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
-                              </Button>
+                              </button>
                             </div>
                           </div>
                           
