@@ -160,7 +160,7 @@ export default function DashboardPage() {
       description: 'AI智能分析', 
       icon: ShoppingCart,
       action: () => router.push('/requests/new'),
-      variant: 'default' as const
+      variant: 'outline' as const
     },
     { 
       title: '查看需求', 
