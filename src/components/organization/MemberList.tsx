@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Edit, Trash2, Plus, Mail, Phone, Briefcase } from 'lucide-react';
+import { Edit, Trash2, Plus, Mail, Phone, Briefcase, Shield, UserCheck, UserX } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TeamMember, ROLE_LABELS, ROLE_COLORS } from '@/types';
 
 interface MemberListProps {
@@ -57,6 +58,22 @@ function TeamMemberCard({
               {!member.isActive && (
                 <Badge variant="secondary" className="text-[10px]">已离职</Badge>
               )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {member.hasSystemAccess ? (
+                      <UserCheck className="w-3 h-3 text-green-600" />
+                    ) : (
+                      <UserX className="w-3 h-3 text-slate-400" />
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-[10px]">
+                      {member.hasSystemAccess ? '已授权登录系统' : '未授权登录系统'}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             
             <div className="flex flex-wrap gap-1 mb-2">
@@ -120,6 +137,18 @@ function TeamMemberCard({
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <span className="w-3 h-3 flex items-center justify-center text-slate-400 flex-shrink-0">👤</span>
               <span className="truncate">上级: {supervisor.name}</span>
+            </div>
+          )}
+          {member.hasSystemAccess && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <Shield className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">系统账号: {member.systemUsername}</span>
+            </div>
+          )}
+          {member.lastLoginAt && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <span className="w-3 h-3 flex items-center justify-center text-slate-400 flex-shrink-0">🕐</span>
+              <span className="truncate">最后登录: {member.lastLoginAt.toLocaleDateString()}</span>
             </div>
           )}
         </div>

@@ -23,6 +23,8 @@ import {
   Checkbox
 } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Department, TeamMember, UserRole, ROLE_LABELS } from '@/types';
 
 interface MemberDialogProps {
@@ -63,7 +65,11 @@ export function MemberDialog({
     department: '',
     isActive: true,
     supervisorId: undefined as string | undefined,
-    avatar: ''
+    avatar: '',
+    // 系统用户授权相关
+    hasSystemAccess: false,
+    systemUsername: '',
+    tempPassword: ''
   });
 
   useEffect(() => {
@@ -76,7 +82,10 @@ export function MemberDialog({
         department: editingMember.department || '',
         isActive: editingMember.isActive,
         supervisorId: editingMember.supervisorId,
-        avatar: editingMember.avatar || ''
+        avatar: editingMember.avatar || '',
+        hasSystemAccess: editingMember.hasSystemAccess || false,
+        systemUsername: editingMember.systemUsername || editingMember.email,
+        tempPassword: ''
       });
     } else {
       setFormData({
@@ -87,7 +96,10 @@ export function MemberDialog({
         department: '',
         isActive: true,
         supervisorId: undefined,
-        avatar: ''
+        avatar: '',
+        hasSystemAccess: false,
+        systemUsername: '',
+        tempPassword: ''
       });
     }
   }, [editingMember]);
@@ -111,6 +123,23 @@ export function MemberDialog({
       return m.isActive;
     });
   }, [teamMembers, editingMember]);
+
+  // 生成随机临时密码
+  const generateTempPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData(prev => ({ ...prev, tempPassword: password }));
+  };
+
+  // 当邮箱变化时自动填充系统用户名
+  useEffect(() => {
+    if (formData.email && !formData.systemUsername) {
+      setFormData(prev => ({ ...prev, systemUsername: prev.email }));
+    }
+  }, [formData.email]);
 
   const handleRoleToggle = (role: UserRole) => {
     setFormData(prev => ({
@@ -266,6 +295,80 @@ export function MemberDialog({
               checked={formData.isActive}
               onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
             />
+          </div>
+
+          {/* 系统用户授权 */}
+          <div className="border-t border-slate-200 pt-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-medium">系统授权</Label>
+                <p className="text-[10px] text-slate-500">
+                  开启后该成员可以登录系统
+                </p>
+              </div>
+              <Switch
+                checked={formData.hasSystemAccess}
+                onCheckedChange={(checked) => setFormData({ 
+                  ...formData, 
+                  hasSystemAccess: checked,
+                  systemUsername: checked ? (formData.systemUsername || formData.email) : ''
+                })}
+              />
+            </div>
+
+            {formData.hasSystemAccess && (
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="system-username" className="text-xs font-medium">系统用户名（邮箱）</Label>
+                  <Input
+                    id="system-username"
+                    type="email"
+                    value={formData.systemUsername}
+                    onChange={(e) => setFormData({ ...formData, systemUsername: e.target.value })}
+                    placeholder="请输入系统用户名（邮箱）"
+                    className="text-xs"
+                  />
+                </div>
+
+                <Card className="bg-orange-50 border-orange-200">
+                  <CardHeader className="pb-2 px-3 pt-3">
+                    <CardTitle className="text-xs font-medium text-orange-900">初始密码</CardTitle>
+                    <CardDescription className="text-[10px] text-orange-700">
+                      生成临时密码后可通过邮箱发送给员工
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="px-3 pb-3">
+                    <div className="flex gap-2">
+                      <Input
+                        value={formData.tempPassword}
+                        onChange={(e) => setFormData({ ...formData, tempPassword: e.target.value })}
+                        placeholder="点击生成临时密码"
+                        className="text-xs font-mono"
+                        readOnly
+                      />
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        onClick={generateTempPassword}
+                        className="text-xs whitespace-nowrap"
+                      >
+                        生成密码
+                      </Button>
+                    </div>
+                    {formData.tempPassword && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Badge variant="secondary" className="text-[10px] bg-green-100 text-green-700">
+                          密码已生成
+                        </Badge>
+                        <span className="text-[10px] text-slate-500">
+                          请通过邮箱发送给员工
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </div>
         

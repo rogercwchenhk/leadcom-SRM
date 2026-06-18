@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UsersRound, Shield, UserPlus, UserMinus, Plus, Trash2, Edit, ArrowRightLeft } from 'lucide-react';
+import { Users, UsersRound, Shield, UserPlus, UserMinus, Plus, Trash2, Edit, ArrowRightLeft, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserManagement } from '@/components/permissions/UserManagement';
 import { GroupManagement } from '@/components/permissions/GroupManagement';
 import { PermissionTree } from '@/components/permissions/PermissionTree';
+import { RolePermissionConfig } from '@/components/permissions/RolePermissionConfig';
 
 import { TeamPermissionSync } from '@/components/permissions/TeamPermissionSync';
 
@@ -32,7 +33,7 @@ export function PermissionSettings() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             {/* 移动端使用可滚动标签，桌面端使用网格 */}
             <div className="mb-6 overflow-x-auto -mx-2 sm:mx-0 pb-2">
-              <TabsList className="grid-cols-2 sm:grid-cols-3 w-full min-w-max sm:w-auto">
+              <TabsList className="grid-cols-2 sm:grid-cols-4 w-full min-w-max sm:w-auto">
                 <TabsTrigger value="users" className="gap-1 sm:gap-2 text-xs sm:text-sm">
                   <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">用户管理</span>
@@ -46,7 +47,12 @@ export function PermissionSettings() {
                 <TabsTrigger value="permissions" className="gap-1 sm:gap-2 text-xs sm:text-sm">
                   <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">权限分配</span>
-                  <span className="sm:hidden">权限</span>
+                  <span className="sm:hidden">分配</span>
+                </TabsTrigger>
+                <TabsTrigger value="roles" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <LockKeyhole className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">角色权限</span>
+                  <span className="sm:hidden">角色</span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -61,6 +67,10 @@ export function PermissionSettings() {
 
             <TabsContent value="permissions">
               <PermissionTree />
+            </TabsContent>
+
+            <TabsContent value="roles">
+              <RolePermissionConfig />
             </TabsContent>
           </Tabs>
         </CardContent>
