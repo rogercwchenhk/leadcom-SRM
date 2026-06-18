@@ -79,18 +79,19 @@ export async function PUT(request: NextRequest) {
       updatedAt: member.updatedAt.toISOString()
     }));
 
-    // 生成 YAML 内容
+    // 生成 YAML 内容 - 分别生成两个文档
+    const deptDoc = { departments: departmentsForYaml };
+    const memberDoc = { teamMembers: teamMembersForYaml };
+    
+    // 生成完整的 YAML 内容，包含文件头注释
     const yamlContent = `# 组织架构配置文件
 # 用途：存储公司组织架构、部门和人员信息
 # 说明：此文件由系统自动管理，也可手动编辑
 # AI 友好格式：清晰的注释、结构化数据、有意义的字段名
 
 ---
-# 部门配置
-departments: ${yaml.dump(departmentsForYaml, { indent: 2 })}
----
-# 团队成员配置
-teamMembers: ${yaml.dump(teamMembersForYaml, { indent: 2 })}`;
+${yaml.dump(deptDoc, { indent: 2 })}---
+${yaml.dump(memberDoc, { indent: 2 })}`;
 
     // 确保目录存在
     const dir = path.dirname(CONFIG_FILE_PATH);

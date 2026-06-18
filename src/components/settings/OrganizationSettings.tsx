@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Download, Upload, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,7 +19,10 @@ import {
   Trash2,
   Users,
   Layout,
-  X
+  X,
+  Save,
+  Download,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -122,6 +124,7 @@ export function OrganizationSettings() {
   // 保存数据到 API
   const saveToAPI = async () => {
     try {
+      console.log('正在保存数据到 YAML 文件...');
       const response = await fetch('/api/organization', {
         method: 'PUT',
         headers: {
@@ -133,19 +136,31 @@ export function OrganizationSettings() {
       if (response.ok) {
         console.log('数据保存到 YAML 文件成功');
       } else {
-        console.error('保存数据失败');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('保存数据失败:', errorData);
       }
     } catch (error) {
       console.error('保存数据失败:', error);
     }
   };
 
-  // 当数据变化时保存到 API
+  // 使用防抖保存，避免频繁写入文件
+  const debouncedSave = React.useMemo(() => {
+    let timeoutId: NodeJS.Timeout;
+    return () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        saveToAPI();
+      }, 1000); // 1秒防抖
+    };
+  }, [departments, teamMembers]);
+
+  // 当数据变化时，延迟保存
   useEffect(() => {
     if (!isLoading && (departments.length > 0 || teamMembers.length > 0)) {
-      saveToAPI();
+      debouncedSave();
     }
-  }, [departments, teamMembers, isLoading]);
+  }, [departments, teamMembers, isLoading, debouncedSave]);
 
   // 导出 YAML 功能
   const handleExportYAML = async () => {
@@ -451,6 +466,14 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             刷新
+          </Button>
+          <Button 
+            size="sm" 
+            className="h-9 gap-1" 
+            onClick={saveToAPI}
+          >
+            <Save className="w-4 h-4" />
+            保存
           </Button>
           <Button 
             variant="outline" 
