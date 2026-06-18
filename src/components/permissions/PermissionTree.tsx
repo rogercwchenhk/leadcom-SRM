@@ -270,62 +270,64 @@ export function PermissionTree() {
               <CardTitle className="text-xs">选择分配目标</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5 px-3 pb-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-slate-500">目标类型</label>
-                <Select
-                  value={targetType}
-                  onValueChange={(value: 'user' | 'group') => {
-                    setTargetType(value);
-                    setSelectedTargetId('');
-                    setSelectedPermissionIds([]);
-                  }}
-                >
-                  <SelectTrigger className="text-xs h-7">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="group" className="text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <UsersRound className="h-3 w-3" />
-                        用户组
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="user" className="text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <UsersRound className="h-3 w-3" />
-                        用户
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-medium text-slate-500">目标类型</label>
+                  <Select
+                    value={targetType}
+                    onValueChange={(value: 'user' | 'group') => {
+                      setTargetType(value);
+                      setSelectedTargetId('');
+                      setSelectedPermissionIds([]);
+                    }}
+                  >
+                    <SelectTrigger className="text-xs h-7">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="group" className="text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <UsersRound className="h-3 w-3" />
+                          用户组
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="user" className="text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <UsersRound className="h-3 w-3" />
+                          用户
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-slate-500">
-                  选择{targetType === 'group' ? '用户组' : '用户'}
-                </label>
-                <Select
-                  value={selectedTargetId}
-                  onValueChange={setSelectedTargetId}
-                >
-                  <SelectTrigger className="text-xs h-7">
-                    <SelectValue placeholder={`请选择${targetType === 'group' ? '用户组' : '用户'}`} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {targetType === 'group'
-                      ? groups.map((group) => (
-                          <SelectItem key={group.id} value={group.id.toString()} className="text-xs">
-                            {group.name}
-                          </SelectItem>
-                        ))
-                      : users.map((user) => (
-                          <SelectItem key={user.id} value={user.id.toString()} className="text-xs">
-                            {user.username} ({user.email})
-                          </SelectItem>
-                        ))
-                    }
-                  </SelectContent>
-                </Select>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-medium text-slate-500">
+                    选择{targetType === 'group' ? '用户组' : '用户'}
+                  </label>
+                  <Select
+                    value={selectedTargetId}
+                    onValueChange={setSelectedTargetId}
+                  >
+                    <SelectTrigger className="text-xs h-7">
+                      <SelectValue placeholder={`请选择${targetType === 'group' ? '用户组' : '用户'}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {targetType === 'group'
+                        ? groups.map((group) => (
+                            <SelectItem key={group.id} value={group.id.toString()} className="text-xs">
+                              {group.name}
+                            </SelectItem>
+                          ))
+                        : users.map((user) => (
+                            <SelectItem key={user.id} value={user.id.toString()} className="text-xs">
+                              {user.username} ({user.email})
+                            </SelectItem>
+                          ))
+                      }
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {selectedTargetId && (
