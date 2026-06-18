@@ -3,19 +3,60 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import type { Department, TeamMember } from '@/types';
+import { PRESET_DEPARTMENTS, PRESET_TEAM_MEMBERS } from '@/types';
 
 // 配置文件路径
 const CONFIG_FILE_PATH = path.join(process.cwd(), 'data', 'organization.yaml');
 
+// 初始化默认配置文件（仅在文件不存在时）
+function initializeDefaultConfigIfNeeded() {
+  if (!fs.existsSync(CONFIG_FILE_PATH)) {
+    console.log('配置文件不存在，创建默认配置文件...');
+    
+    // 转换预设数据为 YAML 格式
+    const departmentsForYaml = PRESET_DEPARTMENTS.map((dept) => ({
+      ...dept,
+      createdAt: dept.createdAt.toISOString(),
+      updatedAt: dept.updatedAt.toISOString()
+    }));
+
+    const teamMembersForYaml = PRESET_TEAM_MEMBERS.map((member) => ({
+      ...member,
+      joinDate: member.joinDate.toISOString(),
+      createdAt: member.createdAt.toISOString(),
+      updatedAt: member.updatedAt.toISOString()
+    }));
+
+    // 生成 YAML 内容
+    const deptDoc = { departments: departmentsForYaml };
+    const memberDoc = { teamMembers: teamMembersForYaml };
+    
+    const yamlContent = `# 组织架构配置文件
+# 用途：存储公司组织架构、部门和人员信息
+# 说明：此文件由系统自动管理，也可手动编辑
+# AI 友好格式：清晰的注释、结构化数据、有意义的字段名
+
+---
+${yaml.dump(deptDoc, { indent: 2 })}---
+${yaml.dump(memberDoc, { indent: 2 })}`;
+
+    // 确保目录存在
+    const dir = path.dirname(CONFIG_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    // 写入默认配置文件
+    fs.writeFileSync(CONFIG_FILE_PATH, yamlContent, 'utf-8');
+    console.log('默认配置文件创建成功');
+  }
+}
+
 // 读取组织架构配置
 export async function GET() {
   try {
-    if (!fs.existsSync(CONFIG_FILE_PATH)) {
-      return NextResponse.json(
-        { error: '配置文件不存在' },
-        { status: 404 }
-      );
-    }
+    // 确保配置文件存在（如果不存在则初始化）
+    initializeDefaultConfigIfNeeded();
 
     const fileContent = fs.readFileSync(CONFIG_FILE_PATH, 'utf-8');
     const data = yaml.loadAll(fileContent);

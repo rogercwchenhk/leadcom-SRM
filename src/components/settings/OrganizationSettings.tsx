@@ -68,7 +68,7 @@ export function OrganizationSettings() {
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  // 状态管理
+  // 状态管理 - 初始为空，从 API 加载
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
 
@@ -77,7 +77,7 @@ export function OrganizationSettings() {
     loadFromAPI();
   }, []);
 
-  // 从 API 加载数据
+  // 从 API 加载数据 - API 会自动处理文件是否存在的问题
   const loadFromAPI = async () => {
     try {
       setIsLoading(true);
@@ -88,34 +88,10 @@ export function OrganizationSettings() {
         setTeamMembers(data.teamMembers);
         console.log('从 YAML 文件加载数据成功');
       } else {
-        // 如果 API 失败，使用默认数据
-        console.log('使用默认数据');
-        setDepartments(PRESET_DEPARTMENTS.map(dept => ({
-          ...dept,
-          createdAt: new Date(dept.createdAt),
-          updatedAt: new Date(dept.updatedAt)
-        })));
-        setTeamMembers(PRESET_TEAM_MEMBERS.map(member => ({
-          ...member,
-          joinDate: new Date(member.joinDate),
-          createdAt: new Date(member.createdAt),
-          updatedAt: new Date(member.updatedAt)
-        })));
+        console.error('API 响应失败:', response.status);
       }
     } catch (error) {
       console.error('加载数据失败:', error);
-      // 使用默认数据
-      setDepartments(PRESET_DEPARTMENTS.map(dept => ({
-        ...dept,
-        createdAt: new Date(dept.createdAt),
-        updatedAt: new Date(dept.updatedAt)
-      })));
-      setTeamMembers(PRESET_TEAM_MEMBERS.map(member => ({
-        ...member,
-        joinDate: new Date(member.joinDate),
-        createdAt: new Date(member.createdAt),
-        updatedAt: new Date(member.updatedAt)
-      })));
     } finally {
       setIsLoading(false);
     }
