@@ -23,7 +23,7 @@ import {
   Checkbox
 } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
-import { Department, TeamMember, UserRole, PRESET_POSITIONS, ROLE_LABELS } from '@/types';
+import { Department, TeamMember, UserRole, ROLE_LABELS } from '@/types';
 
 interface MemberDialogProps {
   open: boolean;
@@ -60,7 +60,6 @@ export function MemberDialog({
     email: '',
     phone: '',
     roles: [] as UserRole[],
-    position: '',
     department: '',
     isActive: true,
     supervisorId: undefined as string | undefined,
@@ -74,7 +73,6 @@ export function MemberDialog({
         email: editingMember.email,
         phone: editingMember.phone || '',
         roles: editingMember.roles || [],
-        position: editingMember.position || '',
         department: editingMember.department || '',
         isActive: editingMember.isActive,
         supervisorId: editingMember.supervisorId,
@@ -86,7 +84,6 @@ export function MemberDialog({
         email: '',
         phone: '',
         roles: [],
-        position: '',
         department: '',
         isActive: true,
         supervisorId: undefined,
@@ -211,25 +208,6 @@ export function MemberDialog({
               </Select>
             </div>
             
-            <div className="space-y-1.5">
-              <Label htmlFor="member-position" className="text-xs font-medium">岗位</Label>
-              <Select
-                value={formData.position}
-                onValueChange={(value) => setFormData({ ...formData, position: value })}
-              >
-                <SelectTrigger className="text-xs">
-                  <SelectValue placeholder="请选择岗位" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRESET_POSITIONS.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.name} className="text-xs">
-                      {pos.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
             <div className="space-y-1.5 col-span-2">
               <Label htmlFor="member-supervisor" className="text-xs font-medium">上级</Label>
               <Select
@@ -246,7 +224,7 @@ export function MemberDialog({
                   <SelectItem value="none" className="text-xs">无上级</SelectItem>
                   {availableSupervisors.map((member) => (
                     <SelectItem key={member.id} value={member.id} className="text-xs">
-                      {member.name} ({member.position || member.department || '成员'})
+                      {member.name} ({member.department || '成员'})
                     </SelectItem>
                   ))}
                 </SelectContent>
