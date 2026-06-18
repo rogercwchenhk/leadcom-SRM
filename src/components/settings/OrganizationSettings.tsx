@@ -87,19 +87,45 @@ export function OrganizationSettings() {
   // 从 API 加载数据 - API 会自动处理文件是否存在的问题
   const loadFromAPI = async () => {
     try {
+      console.log('=== 开始加载组织架构数据 ===');
       setIsLoading(true);
       const response = await fetch('/api/organization');
       if (response.ok) {
         const data = await response.json();
-        setDepartments(data.departments);
-        setTeamMembers(data.teamMembers);
+        console.log('API 返回原始数据:', data);
+        
+        // 转换日期字符串为 Date 对象
+        const parsedDepartments = (data.departments || []).map((dept: any) => ({
+          ...dept,
+          createdAt: new Date(dept.createdAt),
+          updatedAt: new Date(dept.updatedAt)
+        }));
+
+        const parsedTeamMembers = (data.teamMembers || []).map((member: any) => ({
+          ...member,
+          joinDate: new Date(member.joinDate),
+          createdAt: new Date(member.createdAt),
+          updatedAt: new Date(member.updatedAt)
+        }));
+        
+        console.log('解析后的部门:', parsedDepartments.map(d => d.name));
+        console.log('解析后的成员:', parsedTeamMembers.map(m => m.name));
+        
+        setDepartments(parsedDepartments);
+        setTeamMembers(parsedTeamMembers);
         bumpDataVersion(); // 加载数据后也更新版本
-        console.log('从 YAML 文件加载数据成功');
+        console.log('=== 从 YAML 文件加载数据成功 ===');
       } else {
         console.error('API 响应失败:', response.status);
+        // 如果API失败，设置空数组避免报错
+        setDepartments([]);
+        setTeamMembers([]);
       }
     } catch (error) {
       console.error('加载数据失败:', error);
+      // 出错时也设置空数组
+      setDepartments([]);
+      setTeamMembers([]);
     } finally {
       setIsLoading(false);
     }
@@ -148,15 +174,15 @@ export function OrganizationSettings() {
         // 为了简单，我们直接从内存数据生成 YAML 用于导出
         const departmentsForYaml = departments.map((dept: any) => ({
           ...dept,
-          createdAt: dept.createdAt.toISOString(),
-          updatedAt: dept.updatedAt.toISOString()
+          createdAt: dept.createdAt instanceof Date ? dept.createdAt.toISOString() : dept.createdAt,
+          updatedAt: dept.updatedAt instanceof Date ? dept.updatedAt.toISOString() : dept.updatedAt
         }));
 
         const teamMembersForYaml = teamMembers.map((member: any) => ({
           ...member,
-          joinDate: member.joinDate.toISOString(),
-          createdAt: member.createdAt.toISOString(),
-          updatedAt: member.updatedAt.toISOString()
+          joinDate: member.joinDate instanceof Date ? member.joinDate.toISOString() : member.joinDate,
+          createdAt: member.createdAt instanceof Date ? member.createdAt.toISOString() : member.createdAt,
+          updatedAt: member.updatedAt instanceof Date ? member.updatedAt.toISOString() : member.updatedAt
         }));
 
         const yamlContent = `# 组织架构配置文件
@@ -453,11 +479,28 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
   
   return (
     <div className="space-y-6">
+      {/* 加载状态显示 */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin text-orange-500 mx-auto mb-4" />
+            <p className="text-slate-600">正在加载组织架构数据...</p>
+          </div>
+        </div>
+      )}
+      
       {/* 数据管理工具栏 */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
-          <p className="text-sm text-slate-500">管理公司部门、人员和组织架构</p>
+          <p className="text-sm text-slate-500">
+            管理公司部门、人员和组织架构 
+            {!isLoading && (
+              <span className="ml-2 text-xs bg-slate-100 px-2 py-1 rounded">
+                部门: {departments.length} | 成员: {teamMembers.length}
+              </span>
+            )}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button 
@@ -474,6 +517,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             size="sm" 
             className="h-9 gap-1" 
             onClick={saveToAPI}
+            disabled={isLoading}
           >
             <Save className="w-4 h-4" />
             保存
@@ -483,12 +527,16 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             size="sm" 
             className="h-9 gap-1" 
             onClick={handleExportYAML}
+            disabled={isLoading}
           >
             <Download className="w-4 h-4" />
             导出 YAML
           </Button>
         </div>
       </div>
+      
+      {/* 只有在非加载状态下才显示主要内容 */}
+      {!isLoading && (
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-2 w-[400px]">
@@ -737,6 +785,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
           </div>
         </TabsContent>
       </Tabs>
+      )}
 
       {/* 编辑成员对话框 */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -1102,7 +1151,9 @@ function TeamMemberCard({
             )}
             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 col-span-2">
               <Calendar className="w-3 h-3" />
-              <span>入职时间：{member.joinDate.toLocaleDateString('zh-CN')}</span>
+              <span>入职时间：{member.joinDate instanceof Date && !isNaN(member.joinDate.getTime()) 
+                ? member.joinDate.toLocaleDateString('zh-CN') 
+                : '未知'}</span>
             </div>
           </div>
         </div>
