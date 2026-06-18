@@ -205,23 +205,6 @@ export function OrganizationSettings() {
                 </CardContent>
               </Card>
 
-              {/* Department Structure Card */}
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-1 pt-2 px-4">
-                  <CardTitle className="text-sm font-semibold text-slate-900">部门结构</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 mt-1">
-                    公司部门结构一览
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="px-4 pb-4 pt-0">
-                  <div className="space-y-2">
-                    <DepartmentItem name="采购部" count={2} icon={Building} />
-                    <DepartmentItem name="客服部" count={1} icon={UsersRound} />
-                    <DepartmentItem name="财务部" count={1} icon={Briefcase} />
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Workflow Card */}
               <Card className="border-slate-200 shadow-sm">
                 <CardHeader className="pb-1 pt-2 px-4">
@@ -568,30 +551,6 @@ function PositionCard({ position }: { position: Position }) {
           <Edit className="w-4 h-4" />
         </Button>
       </div>
-    </div>
-  );
-}
-
-function DepartmentItem({ 
-  name, 
-  count, 
-  icon: Icon 
-}: { 
-  name: string; 
-  count: number; 
-  icon: React.ElementType;
-}) {
-  return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
-          <Icon className="w-4 h-4 text-orange-600" />
-        </div>
-        <span className="text-sm font-medium text-slate-900">{name}</span>
-      </div>
-      <Badge variant="outline" className="text-[11px] h-5">
-        {count} 人
-      </Badge>
     </div>
   );
 }
