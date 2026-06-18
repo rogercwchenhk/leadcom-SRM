@@ -91,14 +91,14 @@ export function HierarchyView() {
       .slice(0, 2);
   };
 
-  const renderGroupNode = (group: any, level: number = 0): React.ReactNode => {
+  const renderGroupNodeContent = (group: any, level: number = 0): React.ReactNode => {
     const isExpanded = expandedGroups.has(group.id);
     const hasChildren = group.children && group.children.length > 0;
     const memberCount = group.users?.length || 0;
     const permissionCount = group.permissions?.length || 0;
 
     return (
-      <div key={group.id} className="select-none">
+      <>
         <div 
           className={`flex items-center gap-3 py-3 px-4 rounded-lg border border-slate-200 bg-white hover:border-orange-200 hover:bg-orange-50/30 transition-colors ${level > 0 ? 'ml-8' : ''}`}
         >
@@ -177,13 +177,13 @@ export function HierarchyView() {
         {hasChildren && isExpanded && (
           <div className="mt-3">
             {group.children.map((child: any) => (
-              <React.Fragment key={child.id}>
-                {renderGroupNode(child, level + 1)}
-              </React.Fragment>
+              <div key={child.id} className="select-none">
+                {renderGroupNodeContent(child, level + 1)}
+              </div>
             ))}
           </div>
         )}
-      </div>
+      </>
     );
   };
 
@@ -264,9 +264,9 @@ export function HierarchyView() {
               </div>
             ) : (
               groupTree.map((group) => (
-                <React.Fragment key={group.id}>
-                  {renderGroupNode(group)}
-                </React.Fragment>
+                <div key={group.id} className="select-none">
+                  {renderGroupNodeContent(group)}
+                </div>
               ))
             )}
           </div>
