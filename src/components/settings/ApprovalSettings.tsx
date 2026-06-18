@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckSquare, Save, Plus, Trash2, Users, AlertCircle } from 'lucide-react';
+import { CheckSquare, Save, Plus, Trash2, Users, UsersRound, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,8 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,29 +28,69 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+
+// 审批阶段类型
+type ApprovalType = 'all' | 'any'; // 会签：all，或签：any
+
+interface Approver {
+  id: string;
+  type: 'user' | 'group' | 'role';
+  name: string;
+  avatar?: string;
+  role?: string;
+}
+
+interface ApprovalStage {
+  id: string;
+  name: string;
+  type: ApprovalType;
+  approvers: Approver[];
+}
 
 interface ApprovalRule {
   id: number;
   name: string;
-  threshold: number;
+  minAmount: number;
+  maxAmount: number | null; // null 表示无上限
   currency: string;
-  approverRole: string;
+  stages: ApprovalStage[];
   enabled: boolean;
   description: string;
 }
 
-interface Approver {
-  id: number;
-  role: string;
-  name: string;
-}
+// 模拟用户数据（从组织架构来）
+const mockUsers = [
+  { id: 'u1', name: '钟丽莉', email: 'zhonglili@company.com', role: 'purchaser_manager', avatar: '' },
+  { id: 'u2', name: '梁静', email: 'liangjing@company.com', role: 'purchaser', avatar: '' },
+  { id: 'u3', name: '张财务', email: 'zhangcaiwu@company.com', role: 'finance', avatar: '' },
+  { id: 'u4', name: '王总', email: 'wangzong@company.com', role: 'approver', avatar: '' },
+  { id: 'u5', name: '李CEO', email: 'liceo@company.com', role: 'approver', avatar: '' },
+];
 
-const availableRoles = [
-  { value: 'ceo', label: 'CEO' },
-  { value: 'cfo', label: 'CFO' },
-  { value: 'purchasing_manager', label: '采购经理' },
-  { value: 'finance_manager', label: '财务经理' },
-  { value: 'department_head', label: '部门负责人' },
+// 模拟用户组数据
+const mockGroups = [
+  { id: 'g1', name: '采购部', memberCount: 5 },
+  { id: 'g2', name: '财务部', memberCount: 3 },
+  { id: 'g3', name: '管理层', memberCount: 4 },
+];
+
+// 模拟角色数据
+const mockRoles = [
+  { value: 'purchaser_manager', label: '采购负责人' },
+  { value: 'finance', label: '财务' },
+  { value: 'approver', label: '审批人员' },
 ];
 
 export function ApprovalSettings() {
@@ -58,6 +99,7 @@ export function ApprovalSettings() {
   const [rules, setRules] = useState<ApprovalRule[]>([]);
   const [editingRule, setEditingRule] = useState<ApprovalRule | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expandedRule, setExpandedRule] = useState<number | null>(null);
 
   useEffect(() => {
     loadApprovalRules();
@@ -71,38 +113,111 @@ export function ApprovalSettings() {
         {
           id: 1,
           name: '小额采购',
-          threshold: 10000,
+          minAmount: 0,
+          maxAmount: 10000,
           currency: 'CNY',
-          approverRole: 'purchasing_manager',
           enabled: true,
           description: '1万元以下的采购订单',
+          stages: [
+            {
+              id: 's1',
+              name: '采购负责人审批',
+              type: 'any',
+              approvers: [
+                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
+              ]
+            }
+          ]
         },
         {
           id: 2,
           name: '中额采购',
-          threshold: 50000,
+          minAmount: 10000,
+          maxAmount: 50000,
           currency: 'CNY',
-          approverRole: 'finance_manager',
           enabled: true,
           description: '1万-5万元的采购订单',
+          stages: [
+            {
+              id: 's1',
+              name: '采购负责人审批',
+              type: 'any',
+              approvers: [
+                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
+              ]
+            },
+            {
+              id: 's2',
+              name: '财务审批',
+              type: 'any',
+              approvers: [
+                { id: 'u3', type: 'user', name: '张财务', role: '财务' }
+              ]
+            }
+          ]
         },
         {
           id: 3,
           name: '大额采购',
-          threshold: 100000,
+          minAmount: 50000,
+          maxAmount: 100000,
           currency: 'CNY',
-          approverRole: 'cfo',
           enabled: true,
           description: '5万-10万元的采购订单',
+          stages: [
+            {
+              id: 's1',
+              name: '采购负责人审批',
+              type: 'any',
+              approvers: [
+                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
+              ]
+            },
+            {
+              id: 's2',
+              name: '财务和管理层审批',
+              type: 'all',
+              approvers: [
+                { id: 'u3', type: 'user', name: '张财务', role: '财务' },
+                { id: 'u4', type: 'user', name: '王总', role: '审批人员' }
+              ]
+            }
+          ]
         },
         {
           id: 4,
           name: '特大额采购',
-          threshold: Infinity,
+          minAmount: 100000,
+          maxAmount: null,
           currency: 'CNY',
-          approverRole: 'ceo',
           enabled: true,
           description: '10万元以上的采购订单',
+          stages: [
+            {
+              id: 's1',
+              name: '采购负责人审批',
+              type: 'any',
+              approvers: [
+                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
+              ]
+            },
+            {
+              id: 's2',
+              name: '财务审批',
+              type: 'any',
+              approvers: [
+                { id: 'u3', type: 'user', name: '张财务', role: '财务' }
+              ]
+            },
+            {
+              id: 's3',
+              name: 'CEO最终审批',
+              type: 'any',
+              approvers: [
+                { id: 'u5', type: 'user', name: '李CEO', role: '审批人员' }
+              ]
+            }
+          ]
         },
       ]);
     } catch (error) {
@@ -116,9 +231,10 @@ export function ApprovalSettings() {
     setEditingRule({
       id: 0,
       name: '',
-      threshold: 0,
+      minAmount: 0,
+      maxAmount: null,
       currency: 'CNY',
-      approverRole: '',
+      stages: [],
       enabled: true,
       description: '',
     });
@@ -126,7 +242,7 @@ export function ApprovalSettings() {
   }
 
   function handleEditRule(rule: ApprovalRule) {
-    setEditingRule({ ...rule });
+    setEditingRule(JSON.parse(JSON.stringify(rule)));
     setIsDialogOpen(true);
   }
 
@@ -138,15 +254,74 @@ export function ApprovalSettings() {
     if (!editingRule) return;
     
     if (editingRule.id === 0) {
-      // 新增
       setRules([...rules, { ...editingRule, id: Date.now() }]);
     } else {
-      // 更新
       setRules(rules.map(r => r.id === editingRule.id ? editingRule : r));
     }
     
     setIsDialogOpen(false);
     setEditingRule(null);
+  }
+
+  // 添加审批阶段
+  function addStage() {
+    if (!editingRule) return;
+    const newStage: ApprovalStage = {
+      id: `stage-${Date.now()}`,
+      name: `审批阶段 ${editingRule.stages.length + 1}`,
+      type: 'any',
+      approvers: [],
+    };
+    setEditingRule({
+      ...editingRule,
+      stages: [...editingRule.stages, newStage]
+    });
+  }
+
+  // 删除审批阶段
+  function removeStage(stageId: string) {
+    if (!editingRule) return;
+    setEditingRule({
+      ...editingRule,
+      stages: editingRule.stages.filter(s => s.id !== stageId)
+    });
+  }
+
+  // 更新阶段
+  function updateStage(stageId: string, updates: Partial<ApprovalStage>) {
+    if (!editingRule) return;
+    setEditingRule({
+      ...editingRule,
+      stages: editingRule.stages.map(s => 
+        s.id === stageId ? { ...s, ...updates } : s
+      )
+    });
+  }
+
+  // 添加审批人到阶段
+  function addApproverToStage(stageId: string, approver: Approver) {
+    if (!editingRule) return;
+    setEditingRule({
+      ...editingRule,
+      stages: editingRule.stages.map(s => 
+        s.id === stageId 
+          ? { ...s, approvers: [...s.approvers, approver] }
+          : s
+      )
+    });
+  }
+
+  // 从阶段移除审批人
+  function removeApproverFromStage(stageId: string, approverId: string) {
+    if (!editingRule) return;
+    setEditingRule({
+      ...editingRule,
+      stages: editingRule.stages.map(s => 
+        s.id === stageId 
+          ? { ...s, approvers: s.approvers.filter(a => a.id !== approverId) }
+          : s
+      )
+    });
   }
 
   async function handleSave() {
@@ -162,8 +337,21 @@ export function ApprovalSettings() {
     }
   }
 
-  function getRoleLabel(role: string) {
-    return availableRoles.find(r => r.value === role)?.label || role;
+  function getInitials(name: string) {
+    return name
+      .split(' ')
+      .filter(n => n.length > 0)
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  function formatAmountRange(rule: ApprovalRule) {
+    if (rule.maxAmount === null) {
+      return `¥${rule.minAmount.toLocaleString()} 以上`;
+    }
+    return `¥${rule.minAmount.toLocaleString()} - ¥${rule.maxAmount.toLocaleString()}`;
   }
 
   if (loading) {
@@ -207,7 +395,7 @@ export function ApprovalSettings() {
             <div>
               <CardTitle className="text-sm font-semibold text-slate-900">金额审批规则</CardTitle>
               <CardDescription className="text-xs text-slate-500">
-                根据采购订单金额设置不同的审批人
+                根据采购订单金额配置多级审批流程，支持会签和或签
               </CardDescription>
             </div>
             <Button onClick={handleAddRule} size="sm" className="gap-2">
@@ -218,63 +406,103 @@ export function ApprovalSettings() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {rules.map((rule, index) => (
-              <div key={rule.id} className="flex items-center justify-between p-4 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                      <CheckSquare className="h-5 w-5 text-orange-600" />
+            {rules.map((rule) => (
+              <div 
+                key={rule.id} 
+                className="rounded-lg border border-slate-200 bg-white overflow-hidden"
+              >
+                <div 
+                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50"
+                  onClick={() => setExpandedRule(expandedRule === rule.id ? null : rule.id)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                        <CheckSquare className="h-5 w-5 text-orange-600" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium text-slate-900">{rule.name}</h4>
+                        <Badge variant={rule.enabled ? 'default' : 'secondary'} className="text-xs">
+                          {rule.enabled ? '已启用' : '已禁用'}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-slate-500">{rule.description}</p>
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="text-xs text-slate-500">
+                          金额范围: {formatAmountRange(rule)}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          审批阶段: {rule.stages.length} 级
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium text-slate-900">{rule.name}</h4>
-                      <Badge variant={rule.enabled ? 'default' : 'secondary'} className="text-xs">
-                        {rule.enabled ? '已启用' : '已禁用'}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-slate-500">{rule.description}</p>
-                    <div className="flex items-center gap-4 mt-1">
-                      <span className="text-xs text-slate-500">
-                        金额阈值: {rule.threshold === Infinity ? '无上限' : `¥${rule.threshold.toLocaleString()}`}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        审批人: {getRoleLabel(rule.approverRole)}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => { e.stopPropagation(); handleEditRule(rule); }}
+                    >
+                      编辑
+                    </Button>
+                    {expandedRule === rule.id ? (
+                      <ChevronUp className="h-4 w-4 text-slate-400" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-slate-400" />
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleEditRule(rule)}>
-                    编辑
-                  </Button>
-                  {rules.length > 1 && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>确认删除</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            确定要删除审批规则 "{rule.name}" 吗？此操作不可恢复。
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>取消</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDeleteRule(rule.id)}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            确认删除
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
-                </div>
+
+                {/* 展开的审批流程 */}
+                {expandedRule === rule.id && (
+                  <div className="border-t border-slate-200 p-4 bg-slate-50/50">
+                    <div className="flex items-start gap-4">
+                      {rule.stages.map((stage, index) => (
+                        <div key={stage.id} className="flex-1">
+                          <div className="bg-white rounded-lg border border-slate-200 p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  阶段 {index + 1}
+                                </Badge>
+                                <span className="text-sm font-medium text-slate-900">{stage.name}</span>
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {stage.type === 'all' ? '会签' : '或签'}
+                              </Badge>
+                            </div>
+                            <div className="space-y-2">
+                              {stage.approvers.map((approver) => (
+                                <div key={approver.id} className="flex items-center gap-2">
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarFallback className="text-xs bg-slate-200 text-slate-700">
+                                      {getInitials(approver.name)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1">
+                                    <p className="text-xs font-medium text-slate-900">{approver.name}</p>
+                                    {approver.role && (
+                                      <p className="text-[10px] text-slate-500">{approver.role}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {index < rule.stages.length - 1 && (
+                            <div className="flex justify-center -mt-12 relative z-10">
+                              <div className="bg-white rounded-full p-1 border border-slate-200">
+                                <ArrowRight className="h-4 w-4 text-slate-400" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -283,66 +511,149 @@ export function ApprovalSettings() {
 
       {/* 编辑/新增对话框 */}
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{editingRule?.id === 0 ? '新增审批规则' : '编辑审批规则'}</AlertDialogTitle>
             <AlertDialogDescription>
-              配置审批规则的金额阈值和审批人
+              配置审批规则的金额范围和多级审批流程
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>规则名称 *</Label>
-              <Input
-                value={editingRule?.name || ''}
-                onChange={(e) => setEditingRule(prev => prev ? { ...prev, name: e.target.value } : null)}
-                placeholder="例如：小额采购"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>金额阈值 (CNY) *</Label>
-              <Input
-                type="number"
-                value={editingRule?.threshold === Infinity ? '' : editingRule?.threshold || ''}
-                onChange={(e) => setEditingRule(prev => prev ? { ...prev, threshold: e.target.value === '' ? Infinity : Number(e.target.value) } : null)}
-                placeholder="留空表示无上限"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>审批角色 *</Label>
-              <Select
-                value={editingRule?.approverRole || ''}
-                onValueChange={(value) => setEditingRule(prev => prev ? { ...prev, approverRole: value } : null)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="请选择审批角色" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableRoles.map(role => (
-                    <SelectItem key={role.value} value={role.value}>
-                      {role.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>规则描述</Label>
-              <Input
-                value={editingRule?.description || ''}
-                onChange={(e) => setEditingRule(prev => prev ? { ...prev, description: e.target.value } : null)}
-                placeholder="简要描述此规则的适用场景"
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>启用规则</Label>
-                <p className="text-xs text-slate-500">禁用后此规则暂不生效</p>
+          <div className="space-y-6 py-4">
+            {/* 基本信息 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>规则名称 *</Label>
+                <Input
+                  value={editingRule?.name || ''}
+                  onChange={(e) => setEditingRule(prev => prev ? { ...prev, name: e.target.value } : null)}
+                  placeholder="例如：小额采购"
+                />
               </div>
-              <Switch
-                checked={editingRule?.enabled || false}
-                onCheckedChange={(checked) => setEditingRule(prev => prev ? { ...prev, enabled: checked } : null)}
-              />
+              <div className="space-y-2">
+                <Label>规则描述</Label>
+                <Input
+                  value={editingRule?.description || ''}
+                  onChange={(e) => setEditingRule(prev => prev ? { ...prev, description: e.target.value } : null)}
+                  placeholder="简要描述此规则"
+                />
+              </div>
+            </div>
+
+            {/* 金额范围 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>最低金额 (CNY)</Label>
+                <Input
+                  type="number"
+                  value={editingRule?.minAmount || 0}
+                  onChange={(e) => setEditingRule(prev => prev ? { ...prev, minAmount: Number(e.target.value) } : null)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>最高金额 (CNY)</Label>
+                <Input
+                  type="number"
+                  value={editingRule?.maxAmount === null ? '' : editingRule?.maxAmount || ''}
+                  onChange={(e) => setEditingRule(prev => prev ? { ...prev, maxAmount: e.target.value === '' ? null : Number(e.target.value) } : null)}
+                  placeholder="留空表示无上限"
+                />
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* 审批阶段 */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>审批阶段</Label>
+                <Button onClick={addStage} size="sm" variant="secondary" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  添加阶段
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {editingRule?.stages.map((stage, stageIndex) => (
+                  <div key={stage.id} className="border border-slate-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline">阶段 {stageIndex + 1}</Badge>
+                        <Input
+                          value={stage.name}
+                          onChange={(e) => updateStage(stage.id, { name: e.target.value })}
+                          className="h-8 w-48"
+                          placeholder="阶段名称"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={stage.type}
+                          onValueChange={(value: ApprovalType) => updateStage(stage.id, { type: value })}
+                        >
+                          <SelectTrigger className="h-8 w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="any">或签</SelectItem>
+                            <SelectItem value="all">会签</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {editingRule.stages.length > 1 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => removeStage(stage.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs text-slate-500">审批人</Label>
+                        <ApproverSelector
+                          onSelect={(approver) => addApproverToStage(stage.id, approver)}
+                          existingApprovers={stage.approvers}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {stage.approvers.map((approver) => (
+                          <div key={approver.id} className="flex items-center gap-2 bg-slate-100 rounded-full pl-2 pr-1 py-1">
+                            <Avatar className="h-5 w-5">
+                              <AvatarFallback className="text-[10px] bg-slate-300 text-slate-700">
+                                {getInitials(approver.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-xs text-slate-700">{approver.name}</span>
+                            <button
+                              onClick={() => removeApproverFromStage(stage.id, approver.id)}
+                              className="h-5 w-5 rounded-full hover:bg-slate-200 flex items-center justify-center"
+                            >
+                              <Trash2 className="h-3 w-3 text-slate-500" />
+                            </button>
+                          </div>
+                        ))}
+                        {stage.approvers.length === 0 && (
+                          <span className="text-xs text-slate-400">暂未添加审批人</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={editingRule?.enabled || false}
+                  onCheckedChange={(checked) => setEditingRule(prev => prev ? { ...prev, enabled: checked } : null)}
+                />
+                <Label>启用规则</Label>
+              </div>
             </div>
           </div>
           <AlertDialogFooter>
@@ -362,5 +673,115 @@ export function ApprovalSettings() {
         </Button>
       </div>
     </div>
+  );
+}
+
+// 审批人选择器组件
+function ApproverSelector({ 
+  onSelect, 
+  existingApprovers 
+}: { 
+  onSelect: (approver: Approver) => void;
+  existingApprovers: Approver[];
+}) {
+  const [open, setOpen] = useState(false);
+  const existingIds = new Set(existingApprovers.map(a => a.id));
+
+  const handleSelect = (approver: Approver) => {
+    onSelect(approver);
+    setOpen(false);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-7 gap-1">
+          <Plus className="h-3 w-3" />
+          添加
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-0" align="end">
+        <Command>
+          <CommandInput placeholder="搜索用户、用户组或角色..." />
+          <CommandEmpty>未找到结果</CommandEmpty>
+          <CommandGroup heading="用户">
+            {mockUsers
+              .filter(u => !existingIds.has(u.id))
+              .map(user => (
+                <CommandItem 
+                  key={user.id} 
+                  onSelect={() => handleSelect({
+                    id: user.id,
+                    type: 'user',
+                    name: user.name,
+                    role: mockRoles.find(r => r.value === user.role)?.label
+                  })}
+                >
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarFallback className="text-xs bg-slate-200 text-slate-700">
+                        {user.name.substring(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm">{user.name}</p>
+                      <p className="text-xs text-slate-500">{user.email}</p>
+                    </div>
+                  </div>
+                </CommandItem>
+              ))}
+          </CommandGroup>
+          <CommandGroup heading="用户组">
+            {mockGroups
+              .filter(g => !existingIds.has(g.id))
+              .map(group => (
+                <CommandItem 
+                  key={group.id} 
+                  onSelect={() => handleSelect({
+                    id: group.id,
+                    type: 'group',
+                    name: `${group.name} (${group.memberCount}人)`,
+                  })}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-6 rounded bg-slate-100 flex items-center justify-center">
+                      <UsersRound className="h-3 w-3 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm">{group.name}</p>
+                      <p className="text-xs text-slate-500">{group.memberCount} 成员</p>
+                    </div>
+                  </div>
+                </CommandItem>
+              ))}
+          </CommandGroup>
+          <CommandGroup heading="角色">
+            {mockRoles
+              .filter(r => !existingIds.has(r.value))
+              .map(role => (
+                <CommandItem 
+                  key={role.value} 
+                  onSelect={() => handleSelect({
+                    id: role.value,
+                    type: 'role',
+                    name: role.label,
+                    role: '按角色'
+                  })}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-6 rounded bg-slate-100 flex items-center justify-center">
+                      <Users className="h-3 w-3 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm">{role.label}</p>
+                      <p className="text-xs text-slate-500">所有此角色的用户</p>
+                    </div>
+                  </div>
+                </CommandItem>
+              ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
