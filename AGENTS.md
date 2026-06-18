@@ -27,12 +27,7 @@
 │   │   ├── layout/        # 布局组件
 │   │   ├── permissions/   # 权限管理组件
 │   │   ├── settings/      # 系统设置组件
-│   │   │   ├── OrganizationSettings.tsx  # 组织架构设置
-│   │   │   ├── PermissionSettings.tsx    # 权限管理设置
-│   │   │   ├── CompanySettings.tsx       # 公司信息设置
-│   │   │   ├── ApprovalSettings.tsx      # 审批配置
-│   │   │   ├── AISettings.tsx            # AI配置
-│   │   │   └── NotificationSettings.tsx  # 通知设置
+│   │   │   └── PermissionSettings.tsx    # 权限管理设置
 │   │   └── ui/            # Shadcn UI 组件库
 │   ├── hooks/              # 自定义 Hooks
 │   ├── lib/                # 工具库
@@ -139,11 +134,8 @@
 - **功能模块**:
   - **组织架构**: 管理公司组织架构、部门、岗位和人员信息
   - **权限管理**: 管理用户、用户组、权限分配和层级关系
-  - **公司信息**: 配置公司基本信息
-  - **审批配置**: 设置审批流程和金额阈值
-  - **AI配置**: 配置AI相关参数
-  - **通知设置**: 配置系统通知规则
 - **组件位置**: `src/components/settings/` - 系统设置相关组件
+- **设计原则**: 手机友好、AI友好，保持简洁的权限管理功能
 
 ## 核心类型定义
 - **位置**: `src/types/index.ts`
