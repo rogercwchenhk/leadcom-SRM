@@ -57,6 +57,7 @@ export function OrganizationSettings() {
   const [activeTab, setActiveTab] = useState('chart');
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(PRESET_TEAM_MEMBERS);
 
   const handleEditMember = (member: TeamMember) => {
     setEditingMember({ ...member });
@@ -64,14 +65,23 @@ export function OrganizationSettings() {
   };
 
   const handleSaveMember = () => {
-    // 这里可以添加保存逻辑
+    if (!editingMember) return;
+    
+    // 更新成员列表
+    setTeamMembers(prev => 
+      prev.map(member => 
+        member.id === editingMember.id ? editingMember : member
+      )
+    );
+    
     console.log('保存成员信息:', editingMember);
     setIsEditDialogOpen(false);
     setEditingMember(null);
   };
 
   const handleDeleteMember = (member: TeamMember) => {
-    // 这里可以添加删除逻辑
+    // 从成员列表中删除
+    setTeamMembers(prev => prev.filter(m => m.id !== member.id));
     console.log('删除成员:', member);
   };
   
@@ -115,7 +125,7 @@ export function OrganizationSettings() {
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="space-y-3">
-                    {PRESET_TEAM_MEMBERS.map((member) => (
+                    {teamMembers.map((member) => (
                       <TeamMemberCard 
                         key={member.id} 
                         member={member}
@@ -223,7 +233,7 @@ export function OrganizationSettings() {
                   <Input
                     id="name"
                     value={editingMember.name}
-                    onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                    onChange={(e) => setEditingMember(prev => prev ? { ...prev, name: e.target.value } : null)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -232,7 +242,7 @@ export function OrganizationSettings() {
                     id="email"
                     type="email"
                     value={editingMember.email}
-                    onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
+                    onChange={(e) => setEditingMember(prev => prev ? { ...prev, email: e.target.value } : null)}
                   />
                 </div>
               </div>
@@ -243,7 +253,7 @@ export function OrganizationSettings() {
                   <Input
                     id="position"
                     value={editingMember.position || ''}
-                    onChange={(e) => setEditingMember({ ...editingMember, position: e.target.value })}
+                    onChange={(e) => setEditingMember(prev => prev ? { ...prev, position: e.target.value } : null)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -251,7 +261,7 @@ export function OrganizationSettings() {
                   <Input
                     id="department"
                     value={editingMember.department || ''}
-                    onChange={(e) => setEditingMember({ ...editingMember, department: e.target.value })}
+                    onChange={(e) => setEditingMember(prev => prev ? { ...prev, department: e.target.value } : null)}
                   />
                 </div>
               </div>
@@ -261,7 +271,7 @@ export function OrganizationSettings() {
                 <Input
                   id="phone"
                   value={editingMember.phone || ''}
-                  onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
+                  onChange={(e) => setEditingMember(prev => prev ? { ...prev, phone: e.target.value } : null)}
                 />
               </div>
               
@@ -269,14 +279,16 @@ export function OrganizationSettings() {
                 <Label htmlFor="supervisor">上级</Label>
                 <Select
                   value={editingMember.supervisorId || 'none'}
-                  onValueChange={(value) => setEditingMember({ ...editingMember, supervisorId: value === 'none' ? undefined : value })}
+                  onValueChange={(value) => setEditingMember(prev => 
+                    prev ? { ...prev, supervisorId: value === 'none' ? undefined : value } : null
+                  )}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="选择上级" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">无上级</SelectItem>
-                    {PRESET_TEAM_MEMBERS
+                    {teamMembers
                       .filter(m => m.id !== editingMember.id)
                       .map((member) => (
                         <SelectItem key={member.id} value={member.id}>
@@ -296,10 +308,13 @@ export function OrganizationSettings() {
                         id={`role-${role}`}
                         checked={editingMember.roles.includes(role as any)}
                         onCheckedChange={(checked) => {
-                          const newRoles = checked
-                            ? [...editingMember.roles, role as any]
-                            : editingMember.roles.filter(r => r !== role);
-                          setEditingMember({ ...editingMember, roles: newRoles });
+                          setEditingMember(prev => {
+                            if (!prev) return null;
+                            const newRoles = checked
+                              ? [...prev.roles, role as any]
+                              : prev.roles.filter(r => r !== role);
+                            return { ...prev, roles: newRoles };
+                          });
                         }}
                       />
                       <label
@@ -317,7 +332,9 @@ export function OrganizationSettings() {
                 <Switch
                   id="isActive"
                   checked={editingMember.isActive}
-                  onCheckedChange={(checked) => setEditingMember({ ...editingMember, isActive: checked })}
+                  onCheckedChange={(checked) => setEditingMember(prev => 
+                    prev ? { ...prev, isActive: checked } : null
+                  )}
                 />
                 <label
                   htmlFor="isActive"
