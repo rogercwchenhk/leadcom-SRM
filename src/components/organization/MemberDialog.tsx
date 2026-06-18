@@ -74,7 +74,7 @@ export function MemberDialog({
         name: editingMember.name,
         email: editingMember.email,
         phone: editingMember.phone || '',
-        roles: editingMember.roles,
+        roles: editingMember.roles || [],
         position: editingMember.position || '',
         department: editingMember.department || '',
         joinDate: editingMember.joinDate,

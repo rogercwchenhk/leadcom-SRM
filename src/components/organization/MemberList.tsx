@@ -59,7 +59,7 @@ function TeamMemberCard({
           </div>
           
           <div className="flex flex-wrap gap-1 mb-2">
-            {member.roles.map(role => (
+            {(member.roles || []).map(role => (
               <Badge 
                 key={role} 
                 className={`text-[10px] ${ROLE_COLORS[role]}`}

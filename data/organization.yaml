@@ -33,9 +33,11 @@ teamMembers:
     email: liangjing@company.com
     department: 综合管理部
     position: 采购专员
-    role: purchaser
+    roles:
+      - purchaser
     phone: 138-0000-0001
     joinDate: '2020-01-15T00:00:00.000Z'
+    isActive: true
     createdAt: '2020-01-15T00:00:00.000Z'
     updatedAt: '2020-01-15T00:00:00.000Z'
   - id: member-2
@@ -43,9 +45,11 @@ teamMembers:
     email: linxiao@company.com
     department: 综合管理部
     position: 财务经理
-    role: finance
+    roles:
+      - finance
     phone: 138-0000-0002
     joinDate: '2019-06-01T00:00:00.000Z'
+    isActive: true
     createdAt: '2019-06-01T00:00:00.000Z'
     updatedAt: '2019-06-01T00:00:00.000Z'
   - id: member-3
@@ -53,9 +57,12 @@ teamMembers:
     email: wangfang@company.com
     department: 销售部
     position: 销售经理
-    role: sales
+    roles:
+      - requester
+      - request_confirmer
     phone: 138-0000-0003
     joinDate: '2018-03-20T00:00:00.000Z'
+    isActive: true
     createdAt: '2018-03-20T00:00:00.000Z'
     updatedAt: '2018-03-20T00:00:00.000Z'
   - id: member-4
@@ -63,8 +70,11 @@ teamMembers:
     email: zhaoqiang@company.com
     department: 技术部
     position: 技术总监
-    role: admin
+    roles:
+      - approver
+    supervisorId: member-3
     phone: 138-0000-0004
     joinDate: '2017-01-10T00:00:00.000Z'
+    isActive: true
     createdAt: '2017-01-10T00:00:00.000Z'
     updatedAt: '2017-01-10T00:00:00.000Z'

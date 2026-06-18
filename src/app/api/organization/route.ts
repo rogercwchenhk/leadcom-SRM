@@ -80,6 +80,10 @@ export async function GET() {
 
     const parsedTeamMembers: TeamMember[] = teamMembers.map((member: any) => ({
       ...member,
+      // 兼容旧格式：如果有 role 字段但没有 roles 字段，转换为 roles 数组
+      roles: member.roles || (member.role ? [member.role] : []),
+      // 确保 isActive 字段存在
+      isActive: member.isActive !== undefined ? member.isActive : true,
       joinDate: new Date(member.joinDate),
       createdAt: new Date(member.createdAt),
       updatedAt: new Date(member.updatedAt)

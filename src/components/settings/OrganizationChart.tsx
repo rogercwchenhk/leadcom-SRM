@@ -323,7 +323,7 @@ function OrgTreeNode({ node, onToggleExpand, level }: OrgTreeNodeProps) {
               <p className="text-xs text-slate-500 mb-1.5">{node.title}</p>
               {node.member && (
                 <div className="flex flex-wrap justify-center gap-1">
-                  {node.member.roles.map((role) => (
+                  {(node.member.roles || []).map((role) => (
                     <Badge 
                       key={role} 
                       className={`${ROLE_COLORS[role]} text-[10px] h-4`}
