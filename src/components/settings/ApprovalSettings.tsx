@@ -70,22 +70,6 @@ interface ApprovalRule {
   description: string;
 }
 
-// 模拟用户数据（从组织架构来）
-const mockUsers = [
-  { id: 'u1', name: '钟丽莉', email: 'zhonglili@company.com', role: 'purchaser_manager', avatar: '' },
-  { id: 'u2', name: '梁静', email: 'liangjing@company.com', role: 'purchaser', avatar: '' },
-  { id: 'u3', name: '张财务', email: 'zhangcaiwu@company.com', role: 'finance', avatar: '' },
-  { id: 'u4', name: '王总', email: 'wangzong@company.com', role: 'approver', avatar: '' },
-  { id: 'u5', name: '李CEO', email: 'liceo@company.com', role: 'approver', avatar: '' },
-];
-
-// 模拟用户组数据
-const mockGroups = [
-  { id: 'g1', name: '采购部', memberCount: 5 },
-  { id: 'g2', name: '财务部', memberCount: 3 },
-  { id: 'g3', name: '管理层', memberCount: 4 },
-];
-
 // 模拟角色数据
 const mockRoles = [
   { value: 'purchaser_manager', label: '采购负责人' },
@@ -100,10 +84,33 @@ export function ApprovalSettings() {
   const [editingRule, setEditingRule] = useState<ApprovalRule | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expandedRule, setExpandedRule] = useState<number | null>(null);
+  const [orgUsers, setOrgUsers] = useState<any[]>([]);
+  const [orgGroups, setOrgGroups] = useState<any[]>([]);
+  const [orgLoading, setOrgLoading] = useState(true);
 
   useEffect(() => {
     loadApprovalRules();
+    loadOrganizationData();
   }, []);
+
+  async function loadOrganizationData() {
+    setOrgLoading(true);
+    try {
+      // 从真实API加载用户数据
+      const usersRes = await fetch('/api/permissions/users');
+      const usersData = await usersRes.json();
+      setOrgUsers(usersData);
+
+      // 从真实API加载用户组数据
+      const groupsRes = await fetch('/api/permissions/groups');
+      const groupsData = await groupsRes.json();
+      setOrgGroups(groupsData);
+    } catch (error) {
+      console.error('加载组织架构数据失败:', error);
+    } finally {
+      setOrgLoading(false);
+    }
+  }
 
   async function loadApprovalRules() {
     setLoading(true);
@@ -354,7 +361,7 @@ export function ApprovalSettings() {
     return `¥${rule.minAmount.toLocaleString()} - ¥${rule.maxAmount.toLocaleString()}`;
   }
 
-  if (loading) {
+  if (loading || orgLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
@@ -617,6 +624,8 @@ export function ApprovalSettings() {
                         <ApproverSelector
                           onSelect={(approver) => addApproverToStage(stage.id, approver)}
                           existingApprovers={stage.approvers}
+                          orgUsers={orgUsers}
+                          orgGroups={orgGroups}
                         />
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -679,10 +688,14 @@ export function ApprovalSettings() {
 // 审批人选择器组件
 function ApproverSelector({ 
   onSelect, 
-  existingApprovers 
+  existingApprovers,
+  orgUsers,
+  orgGroups 
 }: { 
   onSelect: (approver: Approver) => void;
   existingApprovers: Approver[];
+  orgUsers: any[];
+  orgGroups: any[];
 }) {
   const [open, setOpen] = useState(false);
   const existingIds = new Set(existingApprovers.map(a => a.id));
@@ -704,57 +717,69 @@ function ApproverSelector({
         <Command>
           <CommandInput placeholder="搜索用户、用户组或角色..." />
           <CommandEmpty>未找到结果</CommandEmpty>
-          <CommandGroup heading="用户">
-            {mockUsers
-              .filter(u => !existingIds.has(u.id))
-              .map(user => (
-                <CommandItem 
-                  key={user.id} 
-                  onSelect={() => handleSelect({
-                    id: user.id,
-                    type: 'user',
-                    name: user.name,
-                    role: mockRoles.find(r => r.value === user.role)?.label
-                  })}
-                >
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="text-xs bg-slate-200 text-slate-700">
-                        {user.name.substring(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm">{user.name}</p>
-                      <p className="text-xs text-slate-500">{user.email}</p>
+          
+          {/* 用户 */}
+          {orgUsers.length > 0 && (
+            <CommandGroup heading="用户">
+              {orgUsers
+                .filter((u: any) => !existingIds.has(String(u.id)))
+                .map((user: any) => (
+                  <CommandItem 
+                    key={user.id} 
+                    onSelect={() => handleSelect({
+                      id: String(user.id),
+                      type: 'user',
+                      name: user.username,
+                      role: user.userGroups?.map((g: any) => g.group?.name).join(', ') || undefined
+                    })}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="text-xs bg-slate-200 text-slate-700">
+                          {(user.username || 'U').substring(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm">{user.username}</p>
+                        <p className="text-xs text-slate-500">{user.email}</p>
+                      </div>
                     </div>
-                  </div>
-                </CommandItem>
-              ))}
-          </CommandGroup>
-          <CommandGroup heading="用户组">
-            {mockGroups
-              .filter(g => !existingIds.has(g.id))
-              .map(group => (
-                <CommandItem 
-                  key={group.id} 
-                  onSelect={() => handleSelect({
-                    id: group.id,
-                    type: 'group',
-                    name: `${group.name} (${group.memberCount}人)`,
-                  })}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded bg-slate-100 flex items-center justify-center">
-                      <UsersRound className="h-3 w-3 text-slate-600" />
+                  </CommandItem>
+                ))}
+            </CommandGroup>
+          )}
+          
+          {/* 用户组 */}
+          {orgGroups.length > 0 && (
+            <CommandGroup heading="用户组">
+              {orgGroups
+                .filter((g: any) => !existingIds.has(String(g.id)))
+                .map((group: any) => (
+                  <CommandItem 
+                    key={group.id} 
+                    onSelect={() => handleSelect({
+                      id: String(group.id),
+                      type: 'group',
+                      name: `${group.name} (${group.users?.length || 0}人)`,
+                    })}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-6 rounded bg-slate-100 flex items-center justify-center">
+                        <UsersRound className="h-3 w-3 text-slate-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm">{group.name}</p>
+                        <p className="text-xs text-slate-500">
+                          {group.users?.length || 0} 成员
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm">{group.name}</p>
-                      <p className="text-xs text-slate-500">{group.memberCount} 成员</p>
-                    </div>
-                  </div>
-                </CommandItem>
-              ))}
-          </CommandGroup>
+                  </CommandItem>
+                ))}
+            </CommandGroup>
+          )}
+          
+          {/* 角色 */}
           <CommandGroup heading="角色">
             {mockRoles
               .filter(r => !existingIds.has(r.value))
