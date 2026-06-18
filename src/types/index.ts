@@ -157,7 +157,7 @@ export interface UserPermissionsResponse {
 }
 
 // 用户角色类型
-export type UserRole = 'requester' | 'request_confirmer' | 'purchaser' | 'purchaser_manager' | 'customer_service' | 'approver' | 'finance' | 'supplier';
+export type UserRole = 'requester' | 'request_confirmer' | 'purchaser' | 'purchaser_manager' | 'customer_service' | 'approver' | 'finance' | 'supplier' | 'admin';
 
 // 岗位信息
 export interface Position {
@@ -695,7 +695,8 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   customer_service: '客服',
   approver: '审批人员',
   finance: '财务',
-  supplier: '供应商'
+  supplier: '供应商',
+  admin: '系统管理员'
 };
 
 // 角色颜色映射
@@ -707,5 +708,6 @@ export const ROLE_COLORS: Record<UserRole, string> = {
   customer_service: 'bg-purple-100 text-purple-700',
   approver: 'bg-yellow-100 text-yellow-700',
   finance: 'bg-emerald-100 text-emerald-700',
-  supplier: 'bg-slate-100 text-slate-700'
+  supplier: 'bg-slate-100 text-slate-700',
+  admin: 'bg-slate-800 text-white'
 };

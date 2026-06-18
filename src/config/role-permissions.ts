@@ -196,6 +196,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionCode[]> = {
     PERMISSION_CODES.SUPPLIER_PORTAL_SHIPMENT,
     PERMISSION_CODES.SUPPLIER_PORTAL_INVOICE,
   ],
+
+  // 系统管理员 - 拥有所有权限
+  admin: getAllPermissionCodes(),
 };
 
 // 角色名称映射
@@ -208,6 +211,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   approver: '审批人员',
   finance: '财务',
   supplier: '供应商',
+  admin: '系统管理员',
 };
 
 // 角色描述
@@ -220,6 +224,7 @@ export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
   approver: '负责审批采购订单，确保采购合规',
   finance: '负责财务管理，处理付款和发票',
   supplier: '供应商门户权限，可以签署合同、提交发货和发票信息',
+  admin: '系统超级管理员，拥有系统所有功能的访问权限',
 };
 
 // 权限分组（用于展示）
@@ -318,3 +323,8 @@ export const PERMISSION_GROUPS: {
     ],
   },
 ];
+
+// 获取所有权限代码的工具函数
+function getAllPermissionCodes(): PermissionCode[] {
+  return Object.values(PERMISSION_CODES) as PermissionCode[];
+}

@@ -18,7 +18,8 @@ import {
   Users,
   BarChart3,
   Settings,
-  DollarSign
+  DollarSign,
+  Cog
 } from 'lucide-react';
 import { UserRole, ROLE_LABELS } from '@/types';
 import { 
@@ -38,7 +39,8 @@ const ROLE_ICONS: Record<UserRole, React.ReactNode> = {
   customer_service: <Users className="h-4 w-4" />,
   approver: <CheckCircle2 className="h-4 w-4" />,
   finance: <DollarSign className="h-4 w-4" />,
-  supplier: <FileText className="h-4 w-4" />
+  supplier: <FileText className="h-4 w-4" />,
+  admin: <Cog className="h-4 w-4" />
 };
 
 // 权限组图标映射

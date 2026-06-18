@@ -45,7 +45,8 @@ const ALL_ROLES: UserRole[] = [
   'customer_service',
   'approver',
   'finance',
-  'supplier'
+  'supplier',
+  'admin'
 ];
 
 export function MemberDialog({

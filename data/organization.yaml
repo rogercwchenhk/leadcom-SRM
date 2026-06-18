@@ -53,8 +53,11 @@ teamMembers:
     joinDate: '2019-06-01T00:00:00.000Z'
     isActive: true
     createdAt: '2019-06-01T00:00:00.000Z'
-    updatedAt: '2026-06-18T07:10:37.311Z'
+    updatedAt: '2026-06-18T08:15:57.530Z'
     avatar: ''
+    hasSystemAccess: true
+    systemUsername: zhonglili@leadcom.com.cn
+    tempPassword: uPQJAE%b7p@r
   - id: member-3
     name: 高芳兰
     email: wangfang@company.com
@@ -82,3 +85,16 @@ teamMembers:
     createdAt: '2017-01-10T00:00:00.000Z'
     updatedAt: '2026-06-18T07:15:11.383Z'
     avatar: ''
+  - name: 陈超伟
+    email: chencw@leadcom.com.cn
+    phone: ''
+    roles: []
+    department: 总部
+    isActive: true
+    avatar: ''
+    hasSystemAccess: true
+    systemUsername: chencw@leadcom.com.cn
+    tempPassword: ''
+    id: member-1781770649598
+    createdAt: '2026-06-18T08:17:29.598Z'
+    updatedAt: '2026-06-18T08:18:05.998Z'
