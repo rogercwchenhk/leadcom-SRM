@@ -272,7 +272,7 @@ export function PermissionTree() {
             <CardContent className="space-y-2 px-3 pb-2">
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-medium text-slate-500">目标类型</label>
+                  <label className="text-sm font-bold text-slate-900">目标类型</label>
                   <Select
                     value={targetType}
                     onValueChange={(value: 'user' | 'group') => {
@@ -302,7 +302,7 @@ export function PermissionTree() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-medium text-slate-500">
+                  <label className="text-sm font-bold text-slate-900">
                     选择{targetType === 'group' ? '用户组' : '用户'}
                   </label>
                   <Select
