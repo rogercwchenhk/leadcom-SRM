@@ -22,11 +22,11 @@ departments:
     createdAt: '2024-01-01T00:00:00.000Z'
     updatedAt: '2024-01-01T00:00:00.000Z'
   - id: dept-tech
-    name: 技术部
-    description: 负责技术研发
+    name: 技术服务部
+    description: 负责售前、售后研发
     parentDepartmentId: dept-headquarters
     createdAt: '2024-01-01T00:00:00.000Z'
-    updatedAt: '2024-01-01T00:00:00.000Z'
+    updatedAt: '2026-06-18T07:15:38.817Z'
 teamMembers:
   - id: member-1
     name: 梁静
