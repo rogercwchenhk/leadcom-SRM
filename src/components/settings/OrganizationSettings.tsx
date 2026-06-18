@@ -64,9 +64,25 @@ export function OrganizationSettings() {
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   
-  // 使用 useState 函数式初始化，确保只在第一次渲染时初始化一次
+  // 使用 useState 函数式初始化，从 localStorage 读取数据或使用默认值
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
-    // 深拷贝预设数据，避免修改原始数据
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('org-team-members');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return parsed.map((member: any) => ({
+            ...member,
+            joinDate: new Date(member.joinDate),
+            createdAt: new Date(member.createdAt),
+            updatedAt: new Date(member.updatedAt)
+          }));
+        }
+      } catch (e) {
+        console.error('Failed to load team members from localStorage:', e);
+      }
+    }
+    // 使用默认数据
     return PRESET_TEAM_MEMBERS.map(member => ({
       ...member,
       joinDate: new Date(member.joinDate),
@@ -76,13 +92,41 @@ export function OrganizationSettings() {
   });
   
   const [departments, setDepartments] = useState<Department[]>(() => {
-    // 深拷贝预设部门数据
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('org-departments');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return parsed.map((dept: any) => ({
+            ...dept,
+            createdAt: new Date(dept.createdAt),
+            updatedAt: new Date(dept.updatedAt)
+          }));
+        }
+      } catch (e) {
+        console.error('Failed to load departments from localStorage:', e);
+      }
+    }
+    // 使用默认数据
     return PRESET_DEPARTMENTS.map(dept => ({
       ...dept,
       createdAt: new Date(dept.createdAt),
       updatedAt: new Date(dept.updatedAt)
     }));
   });
+
+  // 保存数据到 localStorage
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('org-team-members', JSON.stringify(teamMembers));
+    }
+  }, [teamMembers]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('org-departments', JSON.stringify(departments));
+    }
+  }, [departments]);
   
   // 从现有成员中提取所有部门（包括预设部门和成员中使用的部门）
   const availableDepartments = React.useMemo(() => {
@@ -253,8 +297,13 @@ export function OrganizationSettings() {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      setDepartments(prev => [...prev, newDept]);
-      console.log('添加新部门:', newDept);
+      console.log('准备添加新部门:', newDept);
+      setDepartments(prev => {
+        const updated = [...prev, newDept];
+        console.log('部门列表已更新:', updated.map(d => d.name));
+        return updated;
+      });
+      console.log('添加新部门完成');
     } else {
       // 检查是否会造成循环引用
       if (editingDepartment.parentDepartmentId && editingDepartment.id) {

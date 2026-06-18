@@ -45,8 +45,18 @@ interface OrganizationChartProps {
 export function OrganizationChart({ members, departments }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
   
+  // 添加调试日志
+  React.useEffect(() => {
+    console.log('OrganizationChart received updated data:', { 
+      membersCount: members.length, 
+      departmentsCount: departments.length,
+      departments: departments.map(d => d.name)
+    });
+  }, [members, departments]);
+  
   // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
   const orgData = React.useMemo(() => {
+    console.log('Rebuilding organization tree...');
     return buildOrgTree(members, departments);
   }, [members, departments]);
 
