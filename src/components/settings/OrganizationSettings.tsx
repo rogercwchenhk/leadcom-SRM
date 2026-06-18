@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   UsersRound, 
   Mail, 
@@ -15,7 +16,9 @@ import {
   Clock,
   Plus,
   Edit,
-  Trash2
+  Trash2,
+  Users,
+  Layout
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -26,113 +29,135 @@ import {
   type TeamMember,
   type Position
 } from '@/types';
+import { OrganizationChart } from './OrganizationChart';
 
 export function OrganizationSettings() {
+  const [activeTab, setActiveTab] = useState('chart');
+  
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Organization Members */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Organization Members Card */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-semibold text-slate-900">组织成员</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 mt-1">
-                    管理公司组织架构和人员信息
-                  </CardDescription>
-                </div>
-                <Button size="sm" className="h-8 gap-1">
-                  <Plus className="w-3.5 h-3.5" />
-                  添加成员
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="space-y-3">
-                {PRESET_TEAM_MEMBERS.map((member) => (
-                  <TeamMemberCard key={member.id} member={member} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-2 w-[400px]">
+          <TabsTrigger value="chart" className="gap-2">
+            <Layout className="h-4 w-4" />
+            组织架构图
+          </TabsTrigger>
+          <TabsTrigger value="list" className="gap-2">
+            <Users className="h-4 w-4" />
+            详细列表
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Right Column - Positions & Departments */}
-        <div className="space-y-6">
-          {/* Positions Card */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-semibold text-slate-900">岗位职责</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 mt-1">
-                    各岗位的职责说明
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="space-y-3">
-                {PRESET_POSITIONS.slice(0, 3).map((position) => (
-                  <PositionCard key={position.id} position={position} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="chart" className="mt-6">
+          <OrganizationChart />
+        </TabsContent>
 
-          {/* Department Structure Card */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
-              <CardTitle className="text-sm font-semibold text-slate-900">组织架构</CardTitle>
-              <CardDescription className="text-xs text-slate-500 mt-1">
-                公司部门结构一览
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="space-y-2">
-                <DepartmentItem name="采购部" count={2} icon={Building} />
-                <DepartmentItem name="客服部" count={1} icon={UsersRound} />
-                <DepartmentItem name="财务部" count={1} icon={Briefcase} />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Workflow Card */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-1 pt-2 px-4">
-              <CardTitle className="text-sm font-semibold text-slate-900">采购闭环流程</CardTitle>
-              <CardDescription className="text-xs text-slate-500 mt-1">
-                从询价到付款的完整流程
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 pt-0">
-              <div className="space-y-2">
-                {[
-                  { step: 1, title: '对外询价', role: '梁静（采购专员）' },
-                  { step: 2, title: '订单生产', role: '梁静（采购专员）' },
-                  { step: 3, title: '收货确认', role: '客服 + 梁静' },
-                  { step: 4, title: '收发票', role: '梁静（采购专员）' },
-                  { step: 5, title: '付款申请', role: '梁静（采购专员）' },
-                  { step: 6, title: '审批', role: '钟丽莉（采购负责人）' },
-                  { step: 7, title: '付款完成', role: '财务' }
-                ].map((item) => (
-                  <div key={item.step} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-semibold">{item.step}</span>
+        <TabsContent value="list" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Organization Members */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Organization Members Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-sm font-semibold text-slate-900">组织成员</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-1">
+                        管理公司组织架构和人员信息
+                      </CardDescription>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900">{item.title}</p>
-                      <p className="text-xs text-slate-500">{item.role}</p>
+                    <Button size="sm" className="h-8 gap-1">
+                      <Plus className="w-3.5 h-3.5" />
+                      添加成员
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-3">
+                    {PRESET_TEAM_MEMBERS.map((member) => (
+                      <TeamMemberCard key={member.id} member={member} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Positions & Departments */}
+            <div className="space-y-6">
+              {/* Positions Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-sm font-semibold text-slate-900">岗位职责</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-1">
+                        各岗位的职责说明
+                      </CardDescription>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-3">
+                    {PRESET_POSITIONS.slice(0, 3).map((position) => (
+                      <PositionCard key={position.id} position={position} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Department Structure Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <CardTitle className="text-sm font-semibold text-slate-900">部门结构</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 mt-1">
+                    公司部门结构一览
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-2">
+                    <DepartmentItem name="采购部" count={2} icon={Building} />
+                    <DepartmentItem name="客服部" count={1} icon={UsersRound} />
+                    <DepartmentItem name="财务部" count={1} icon={Briefcase} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Workflow Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <CardTitle className="text-sm font-semibold text-slate-900">采购闭环流程</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 mt-1">
+                    从询价到付款的完整流程
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-2">
+                    {[
+                      { step: 1, title: '对外询价', role: '梁静（采购专员）' },
+                      { step: 2, title: '订单生产', role: '梁静（采购专员）' },
+                      { step: 3, title: '收货确认', role: '客服 + 梁静' },
+                      { step: 4, title: '收发票', role: '梁静（采购专员）' },
+                      { step: 5, title: '付款申请', role: '梁静（采购专员）' },
+                      { step: 6, title: '审批', role: '钟丽莉（采购负责人）' },
+                      { step: 7, title: '付款完成', role: '财务' }
+                    ].map((item) => (
+                      <div key={item.step} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-xs font-semibold">{item.step}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-900">{item.title}</p>
+                          <p className="text-xs text-slate-500">{item.role}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
