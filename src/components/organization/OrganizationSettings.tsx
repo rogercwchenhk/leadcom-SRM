@@ -184,15 +184,15 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
               </span>
             )}
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             管理公司部门、人员和组织架构 
             {!isLoading && (
-              <span className="ml-2 text-xs bg-slate-100 px-2 py-1 rounded">
+              <span className="ml-2 text-[10px] bg-slate-100 px-2 py-1 rounded">
                 部门: {departments.length} | 成员: {teamMembers.length}
               </span>
             )}
             {isDirty && (
-              <span className="ml-2 text-xs text-orange-500">
+              <span className="ml-2 text-[10px] text-orange-500">
                 · 3秒后自动保存
               </span>
             )}
