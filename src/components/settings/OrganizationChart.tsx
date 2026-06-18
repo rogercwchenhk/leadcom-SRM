@@ -41,11 +41,10 @@ interface OrganizationChartProps {
 
 export function OrganizationChart({ members }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [orgData, setOrgData] = useState<OrgNode>(() => buildOrgTree(members));
-
-  // 当成员数据变化时重新构建组织架构树
-  React.useEffect(() => {
-    setOrgData(buildOrgTree(members));
+  
+  // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
+  const orgData = React.useMemo(() => {
+    return buildOrgTree(members);
   }, [members]);
 
   function buildOrgTree(members: TeamMember[]): OrgNode {
@@ -65,7 +64,7 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
       title: '组织架构',
       department: '',
       children: [],
-      isExpanded: true,
+      isExpanded: true, // 默认值，会被外部状态覆盖
       type: 'root'
     };
 
@@ -77,7 +76,7 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
         title: `${deptName}`,
         department: deptName,
         children: [],
-        isExpanded: true,
+        isExpanded: true, // 默认值，会被外部状态覆盖
         type: 'department'
       };
 
@@ -107,7 +106,7 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
       department: person.department || '',
       member: person,
       children: [],
-      isExpanded: true,
+      isExpanded: true, // 默认值，会被外部状态覆盖
       type: 'person'
     };
 
@@ -119,19 +118,37 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
     return node;
   }
 
-  const toggleExpand = (nodeId: string, node: OrgNode = orgData): OrgNode => {
-    if (node.id === nodeId) {
-      return { ...node, isExpanded: !node.isExpanded };
-    }
-    return {
-      ...node,
-      children: node.children.map(child => toggleExpand(nodeId, child))
-    };
-  };
+  // 添加展开状态的管理
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['root']));
 
   const handleToggleExpand = (nodeId: string) => {
-    setOrgData(toggleExpand(nodeId));
+    setExpandedNodes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(nodeId)) {
+        newSet.delete(nodeId);
+      } else {
+        newSet.add(nodeId);
+      }
+      return newSet;
+    });
   };
+
+  // 辅助函数：检查节点是否展开
+  const isNodeExpanded = (nodeId: string) => {
+    return expandedNodes.has(nodeId);
+  };
+
+  // 修改 orgData，添加展开状态
+  const orgDataWithExpandedState = React.useMemo(() => {
+    const applyExpandedState = (node: OrgNode): OrgNode => {
+      return {
+        ...node,
+        isExpanded: isNodeExpanded(node.id),
+        children: node.children.map(applyExpandedState)
+      };
+    };
+    return applyExpandedState(orgData);
+  }, [orgData, expandedNodes]);
 
   const handleZoomIn = () => {
     setZoomLevel(prev => Math.min(prev + 0.1, 2));
@@ -146,8 +163,8 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
   };
 
   const handleRefresh = () => {
-    setOrgData(buildOrgTree(members));
     setZoomLevel(1);
+    setExpandedNodes(new Set(['root']));
   };
 
   return (
@@ -185,7 +202,7 @@ export function OrganizationChart({ members }: OrganizationChartProps) {
             className="p-8 transition-transform duration-200 origin-top-left"
             style={{ transform: `scale(${zoomLevel})` }}
           >
-            <OrgTreeNode node={orgData} onToggleExpand={handleToggleExpand} level={0} />
+            <OrgTreeNode node={orgDataWithExpandedState} onToggleExpand={handleToggleExpand} level={0} />
           </div>
         </div>
       </CardContent>

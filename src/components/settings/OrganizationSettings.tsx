@@ -58,7 +58,19 @@ export function OrganizationSettings() {
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(PRESET_TEAM_MEMBERS);
+  
+  // 使用 useMemo 确保初始数据只被初始化一次
+  const initialMembers = React.useMemo(() => {
+    // 深拷贝预设数据，避免修改原始数据
+    return PRESET_TEAM_MEMBERS.map(member => ({
+      ...member,
+      joinDate: new Date(member.joinDate),
+      createdAt: new Date(member.createdAt),
+      updatedAt: new Date(member.updatedAt)
+    }));
+  }, []);
+  
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialMembers);
 
   const handleEditMember = (member: TeamMember) => {
     setEditingMember({ ...member });
