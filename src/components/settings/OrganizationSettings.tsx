@@ -113,6 +113,8 @@ export function OrganizationSettings() {
       
       if (response.ok) {
         console.log('数据保存到 YAML 文件成功');
+        // 保存成功后重新加载数据，确保数据同步
+        await loadFromAPI();
       } else {
         let errorData;
         try {
@@ -229,8 +231,11 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
 
 
   const handleDeleteMember = (member: TeamMember) => {
-    // 从成员列表中删除
-    setTeamMembers(prev => prev.filter(m => m.id !== member.id));
+    // 从成员列表中删除，确保创建全新的数组引用
+    setTeamMembers(prev => {
+      const filtered = prev.filter(m => m.id !== member.id);
+      return [...filtered];
+    });
     console.log('删除成员:', member);
   };
 
@@ -259,16 +264,21 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
     if (!editingMember) return;
     
     if (isAddingMember) {
-      // 添加新成员
-      setTeamMembers(prev => [...prev, editingMember]);
+      // 添加新成员，确保创建全新的数组引用
+      setTeamMembers(prev => {
+        const updated = [...prev];
+        updated.push(editingMember);
+        return updated;
+      });
       console.log('添加新成员:', editingMember);
     } else {
-      // 更新成员列表
-      setTeamMembers(prev => 
-        prev.map(member => 
+      // 更新成员列表，确保创建全新的数组引用
+      setTeamMembers(prev => {
+        const updated = prev.map(member => 
           member.id === editingMember.id ? editingMember : member
-        )
-      );
+        );
+        return [...updated];
+      });
       console.log('保存成员信息:', editingMember);
     }
     
@@ -314,8 +324,11 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       return;
     }
     
-    // 从部门列表中删除
-    setDepartments(prev => prev.filter(d => d.id !== dept.id));
+    // 从部门列表中删除，确保创建全新的数组引用
+    setDepartments(prev => {
+      const filtered = prev.filter(d => d.id !== dept.id);
+      return [...filtered];
+    });
     console.log('删除部门:', deptName);
   };
 
@@ -348,8 +361,10 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         updatedAt: new Date()
       };
       console.log('准备添加新部门:', newDept);
+      // 确保创建全新的数组引用
       setDepartments(prev => {
-        const updated = [...prev, newDept];
+        const updated = [...prev];
+        updated.push(newDept);
         console.log('部门列表已更新:', updated.map(d => d.name));
         return updated;
       });
@@ -366,8 +381,9 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       
       // 更新部门
       if (editingDepartment.id) {
-        setDepartments(prev => 
-          prev.map(dept => 
+        setDepartments(prev => {
+          // 确保创建全新的数组引用
+          const updated = prev.map(dept => 
             dept.id === editingDepartment.id 
               ? { 
                   ...dept, 
@@ -377,8 +393,9 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                   updatedAt: new Date() 
                 }
               : dept
-          )
-        );
+          );
+          return [...updated];
+        });
       }
       
       // 如果部门名称改了，同时更新成员的部门

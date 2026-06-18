@@ -44,6 +44,8 @@ interface OrganizationChartProps {
 
 export function OrganizationChart({ members, departments }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
+  // 添加展开状态的管理 - 移到前面确保声明顺序正确
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['root']));
   
   // 添加调试日志
   React.useEffect(() => {
@@ -53,6 +55,11 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
       departments: departments.map(d => d.name)
     });
   }, [members, departments]);
+  
+  // 当数据变化时，重置展开状态，确保新数据能正确显示
+  React.useEffect(() => {
+    setExpandedNodes(new Set(['root']));
+  }, [members.length, departments.length]);
   
   // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
   const orgData = React.useMemo(() => {
@@ -166,9 +173,6 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
     return node;
   }
 
-  // 添加展开状态的管理
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['root']));
-
   const handleToggleExpand = (nodeId: string) => {
     setExpandedNodes(prev => {
       const newSet = new Set(prev);
@@ -188,6 +192,7 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
 
   // 修改 orgData，添加展开状态
   const orgDataWithExpandedState = React.useMemo(() => {
+    console.log('Applying expanded state to orgData...');
     const applyExpandedState = (node: OrgNode): OrgNode => {
       return {
         ...node,
@@ -195,7 +200,9 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
         children: node.children.map(applyExpandedState)
       };
     };
-    return applyExpandedState(orgData);
+    const result = applyExpandedState(orgData);
+    console.log('orgDataWithExpandedState updated:', result);
+    return result;
   }, [orgData, expandedNodes]);
 
   const handleZoomIn = () => {
@@ -249,6 +256,7 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
           <div 
             className="p-8 transition-transform duration-200 origin-top-left"
             style={{ transform: `scale(${zoomLevel})` }}
+            key={`org-chart-${members.length}-${departments.length}`}
           >
             <OrgTreeNode node={orgDataWithExpandedState} onToggleExpand={handleToggleExpand} level={0} />
           </div>
