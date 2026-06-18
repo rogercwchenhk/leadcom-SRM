@@ -159,69 +159,72 @@ export function UserManagement() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin text-orange-600" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <h3 className="text-sm font-medium">用户列表</h3>
+        <h3 className="text-xs font-medium">用户列表</h3>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+            <Button className="gap-1.5 text-xs h-8">
+              <Plus className="h-3.5 w-3.5" />
               新建用户
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="text-sm">新建用户</DialogTitle>
-              <DialogDescription>创建一个新的系统用户</DialogDescription>
+              <DialogDescription className="text-xs">创建一个新的系统用户</DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>用户名</Label>
+            <div className="space-y-3 py-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">用户名</Label>
                 <Input
+                  className="h-8 text-xs"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   placeholder="请输入用户名"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>邮箱</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">邮箱</Label>
                 <Input
                   type="email"
+                  className="h-8 text-xs"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="请输入邮箱"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>状态</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">状态</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value: any) => setFormData({ ...formData, status: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-8 text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">正常</SelectItem>
-                    <SelectItem value="inactive">未激活</SelectItem>
-                    <SelectItem value="suspended">已暂停</SelectItem>
+                    <SelectItem value="active" className="text-xs">正常</SelectItem>
+                    <SelectItem value="inactive" className="text-xs">未激活</SelectItem>
+                    <SelectItem value="suspended" className="text-xs">已暂停</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>所属用户组</Label>
-                <div className="space-y-2 border rounded-md p-3 max-h-48 overflow-y-auto">
+              <div className="space-y-1.5">
+                <Label className="text-xs">所属用户组</Label>
+                <div className="space-y-1.5 border rounded-md p-2.5 max-h-36 overflow-y-auto">
                   {groups.map((group) => (
-                    <div key={group.id} className="flex items-center gap-2">
+                    <div key={group.id} className="flex items-center gap-1.5">
                       <Checkbox
                         id={`create-group-${group.id}`}
+                        className="h-4 w-4"
                         checked={formData.groupIds.includes(group.id)}
                         onCheckedChange={(checked) => {
                           if (checked) {
@@ -231,7 +234,7 @@ export function UserManagement() {
                           }
                         }}
                       />
-                      <label htmlFor={`create-group-${group.id}`} className="text-sm cursor-pointer">
+                      <label htmlFor={`create-group-${group.id}`} className="text-xs cursor-pointer">
                         {group.name}
                       </label>
                     </div>
@@ -240,10 +243,10 @@ export function UserManagement() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="secondary" onClick={() => setIsCreateDialogOpen(false)}>
+              <Button variant="secondary" size="sm" className="text-xs h-8" onClick={() => setIsCreateDialogOpen(false)}>
                 取消
               </Button>
-              <Button onClick={handleCreate}>
+              <Button size="sm" className="text-xs h-8" onClick={handleCreate}>
                 创建
               </Button>
             </DialogFooter>
@@ -254,50 +257,50 @@ export function UserManagement() {
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>用户名</TableHead>
-              <TableHead>邮箱</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead>所属用户组</TableHead>
-              <TableHead className="text-right">操作</TableHead>
+            <TableRow className="h-10">
+              <TableHead className="text-xs py-2">用户名</TableHead>
+              <TableHead className="text-xs py-2">邮箱</TableHead>
+              <TableHead className="text-xs py-2">状态</TableHead>
+              <TableHead className="text-xs py-2">所属用户组</TableHead>
+              <TableHead className="text-right text-xs py-2">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusBadgeVariant(user.status)}>
+              <TableRow key={user.id} className="h-10">
+                <TableCell className="font-medium text-xs py-2">{user.username}</TableCell>
+                <TableCell className="text-xs py-2">{user.email}</TableCell>
+                <TableCell className="py-2">
+                  <Badge variant={getStatusBadgeVariant(user.status)} className="text-[10px] h-4 px-1">
                     {getStatusText(user.status)}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
+                <TableCell className="py-2">
+                  <div className="flex flex-wrap gap-0.5">
                     {user.userGroups?.map((ug) => (
-                      <Badge key={ug.group.id} variant="outline" className="text-xs">
+                      <Badge key={ug.group.id} variant="outline" className="text-[10px] h-4 px-1">
                         {ug.group.name}
                       </Badge>
                     ))}
                   </div>
                 </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                <TableCell className="text-right py-2">
+                  <div className="flex justify-end gap-1">
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="h-8 w-8 p-0"
+                      className="h-7 w-7 p-0"
                       onClick={() => openEditDialog(user)}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <Edit2 className="h-3.5 w-3.5" />
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
-                      className="h-8 w-8 p-0"
+                      className="h-7 w-7 p-0"
                       onClick={() => openDeleteDialog(user)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </TableCell>
@@ -309,50 +312,53 @@ export function UserManagement() {
 
       {/* 编辑对话框 */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>编辑用户</DialogTitle>
-            <DialogDescription>修改用户信息</DialogDescription>
+            <DialogTitle className="text-sm">编辑用户</DialogTitle>
+            <DialogDescription className="text-xs">修改用户信息</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>用户名</Label>
+          <div className="space-y-3 py-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">用户名</Label>
               <Input
+                className="h-8 text-xs"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>邮箱</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">邮箱</Label>
               <Input
                 type="email"
+                className="h-8 text-xs"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label>状态</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">状态</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value: any) => setFormData({ ...formData, status: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">正常</SelectItem>
-                  <SelectItem value="inactive">未激活</SelectItem>
-                  <SelectItem value="suspended">已暂停</SelectItem>
+                  <SelectItem value="active" className="text-xs">正常</SelectItem>
+                  <SelectItem value="inactive" className="text-xs">未激活</SelectItem>
+                  <SelectItem value="suspended" className="text-xs">已暂停</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>所属用户组</Label>
-              <div className="space-y-2 border rounded-md p-3 max-h-48 overflow-y-auto">
+            <div className="space-y-1.5">
+              <Label className="text-xs">所属用户组</Label>
+              <div className="space-y-1.5 border rounded-md p-2.5 max-h-36 overflow-y-auto">
                 {groups.map((group) => (
-                  <div key={group.id} className="flex items-center gap-2">
+                  <div key={group.id} className="flex items-center gap-1.5">
                     <Checkbox
                       id={`edit-group-${group.id}`}
+                      className="h-4 w-4"
                       checked={formData.groupIds.includes(group.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {
@@ -362,7 +368,7 @@ export function UserManagement() {
                         }
                       }}
                     />
-                    <label htmlFor={`edit-group-${group.id}`} className="text-sm cursor-pointer">
+                    <label htmlFor={`edit-group-${group.id}`} className="text-xs cursor-pointer">
                       {group.name}
                     </label>
                   </div>
@@ -371,10 +377,10 @@ export function UserManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setIsEditDialogOpen(false)}>
+            <Button variant="secondary" size="sm" className="text-xs h-8" onClick={() => setIsEditDialogOpen(false)}>
               取消
             </Button>
-            <Button onClick={handleEdit}>
+            <Button size="sm" className="text-xs h-8" onClick={handleEdit}>
               保存
             </Button>
           </DialogFooter>
@@ -383,18 +389,18 @@ export function UserManagement() {
 
       {/* 删除对话框 */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>确认删除</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-sm">确认删除</DialogTitle>
+            <DialogDescription className="text-xs">
               确定要删除用户 "{selectedUser?.username}" 吗？此操作不可恢复。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button variant="secondary" size="sm" className="text-xs h-8" onClick={() => setIsDeleteDialogOpen(false)}>
               取消
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant="destructive" size="sm" className="text-xs h-8" onClick={handleDelete}>
               删除
             </Button>
           </DialogFooter>

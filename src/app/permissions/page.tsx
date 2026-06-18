@@ -16,33 +16,30 @@ export default function PermissionsPage() {
   return (
     <AppLayout initialRole="purchaser_manager">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           {/* Header */}
-          <div className="mb-6">
+          <div className="mb-4">
             <h1 className="text-sm font-semibold text-slate-900 tracking-tight">权限管理</h1>
-            <p className="text-sm text-slate-500 mt-1">管理用户、用户组和权限分配</p>
+            <p className="text-xs text-slate-500 mt-0.5">管理用户、用户组和权限分配</p>
           </div>
 
           <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 pt-4 px-4">
               <CardTitle className="text-sm font-semibold text-slate-900">权限管理控制台</CardTitle>
-              <CardDescription className="text-xs text-slate-500">
-                管理系统用户、用户组和权限分配
-              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 pb-4">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-3 mb-6">
-                  <TabsTrigger value="users" className="gap-2">
-                    <Users className="h-4 w-4" />
+                <TabsList className="grid grid-cols-3 mb-4">
+                  <TabsTrigger value="users" className="gap-1.5 text-xs">
+                    <Users className="h-3.5 w-3.5" />
                     用户管理
                   </TabsTrigger>
-                  <TabsTrigger value="groups" className="gap-2">
-                    <UsersRound className="h-4 w-4" />
+                  <TabsTrigger value="groups" className="gap-1.5 text-xs">
+                    <UsersRound className="h-3.5 w-3.5" />
                     用户组管理
                   </TabsTrigger>
-                  <TabsTrigger value="permissions" className="gap-2">
-                    <Shield className="h-4 w-4" />
+                  <TabsTrigger value="permissions" className="gap-1.5 text-xs">
+                    <Shield className="h-3.5 w-3.5" />
                     权限分配
                   </TabsTrigger>
                 </TabsList>
