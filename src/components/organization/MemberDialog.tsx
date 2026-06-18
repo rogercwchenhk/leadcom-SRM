@@ -232,17 +232,17 @@ export function MemberDialog({
             <div className="space-y-2">
               <Label htmlFor="member-supervisor">上级</Label>
               <Select
-                value={formData.supervisorId || ''}
+                value={formData.supervisorId || 'none'}
                 onValueChange={(value) => setFormData({ 
                   ...formData, 
-                  supervisorId: value || undefined 
+                  supervisorId: value === 'none' ? undefined : value 
                 })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="无上级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">无上级</SelectItem>
+                  <SelectItem value="none">无上级</SelectItem>
                   {availableSupervisors.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.name} ({member.position || member.department || '成员'})

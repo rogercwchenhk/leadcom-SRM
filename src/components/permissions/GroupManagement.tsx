@@ -223,14 +223,14 @@ export function GroupManagement() {
               <div className="space-y-2">
                 <Label>上级用户组（可选）</Label>
                 <Select
-                  value={formData.parentGroupId?.toString() || ''}
-                  onValueChange={(value) => setFormData({ ...formData, parentGroupId: value ? parseInt(value) : null })}
+                  value={formData.parentGroupId?.toString() || 'none'}
+                  onValueChange={(value) => setFormData({ ...formData, parentGroupId: value === 'none' ? null : parseInt(value) })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="无上级用户组" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">无上级用户组</SelectItem>
+                    <SelectItem value="none">无上级用户组</SelectItem>
                     {groups
                       .filter(g => !selectedGroup || g.id !== selectedGroup.id)
                       .map((group) => (
@@ -349,14 +349,14 @@ export function GroupManagement() {
             <div className="space-y-2">
               <Label>上级用户组（可选）</Label>
               <Select
-                value={formData.parentGroupId?.toString() || ''}
-                onValueChange={(value) => setFormData({ ...formData, parentGroupId: value ? parseInt(value) : null })}
+                value={formData.parentGroupId?.toString() || 'none'}
+                onValueChange={(value) => setFormData({ ...formData, parentGroupId: value === 'none' ? null : parseInt(value) })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="无上级用户组" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">无上级用户组</SelectItem>
+                  <SelectItem value="none">无上级用户组</SelectItem>
                   {groups
                     .filter(g => !selectedGroup || g.id !== selectedGroup.id)
                     .map((group) => (

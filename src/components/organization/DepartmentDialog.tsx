@@ -129,17 +129,17 @@ export function DepartmentDialog({
           <div className="space-y-2">
             <Label htmlFor="parent-department">上级部门</Label>
             <Select
-              value={formData.parentDepartmentId || ''}
+              value={formData.parentDepartmentId || 'none'}
               onValueChange={(value) => setFormData({ 
                 ...formData, 
-                parentDepartmentId: value || undefined 
+                parentDepartmentId: value === 'none' ? undefined : value 
               })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="无（顶级部门）" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">无（顶级部门）</SelectItem>
+                <SelectItem value="none">无（顶级部门）</SelectItem>
                 {availableParentDepartments.map((dept) => (
                   <SelectItem key={dept.id} value={dept.id}>
                     {dept.name}
