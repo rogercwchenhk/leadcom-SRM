@@ -89,6 +89,10 @@ logs/
 
 # Preview files
 .preview
+# Database files
+data/*.db
+data/*.db-journal
+data/*.db-wal
 # Dependencies
 node_modules/
 .pnp
