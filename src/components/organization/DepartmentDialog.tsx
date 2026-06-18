@@ -96,38 +96,40 @@ export function DepartmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-base">
             {isAdding ? '新增部门' : '编辑部门'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs">
             {isAdding ? '创建一个新的部门' : '修改部门信息'}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="department-name">部门名称 *</Label>
+        <div className="space-y-3 py-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="department-name" className="text-xs font-medium">部门名称 *</Label>
             <Input
               id="department-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="请输入部门名称"
+              className="text-sm"
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="department-description">部门描述</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="department-description" className="text-xs font-medium">部门描述</Label>
             <Textarea
               id="department-description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="请输入部门描述（可选）"
               rows={3}
+              className="text-sm"
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="parent-department">上级部门</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="parent-department" className="text-xs font-medium">上级部门</Label>
             <Select
               value={formData.parentDepartmentId || 'none'}
               onValueChange={(value) => setFormData({ 
@@ -135,13 +137,13 @@ export function DepartmentDialog({
                 parentDepartmentId: value === 'none' ? undefined : value 
               })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="text-sm">
                 <SelectValue placeholder="无（顶级部门）" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">无（顶级部门）</SelectItem>
+                <SelectItem value="none" className="text-sm">无（顶级部门）</SelectItem>
                 {availableParentDepartments.map((dept) => (
-                  <SelectItem key={dept.id} value={dept.id}>
+                  <SelectItem key={dept.id} value={dept.id} className="text-sm">
                     {dept.name}
                   </SelectItem>
                 ))}
@@ -151,10 +153,10 @@ export function DepartmentDialog({
         </div>
         
         <DialogFooter>
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
+          <Button variant="secondary" onClick={() => onOpenChange(false)} className="text-sm">
             取消
           </Button>
-          <Button onClick={handleSave} disabled={!formData.name.trim()}>
+          <Button onClick={handleSave} disabled={!formData.name.trim()} className="text-sm">
             保存
           </Button>
         </DialogFooter>

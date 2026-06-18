@@ -133,73 +133,77 @@ export function MemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-base">
             {isAdding ? '新增成员' : '编辑成员'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs">
             {isAdding ? '添加一个新的团队成员' : '修改团队成员信息'}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 py-4">
           {/* 基本信息 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="member-name">姓名 *</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="member-name" className="text-xs font-medium">姓名 *</Label>
               <Input
                 id="member-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="请输入姓名"
+                className="text-sm"
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="member-email">邮箱 *</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="member-email" className="text-xs font-medium">邮箱 *</Label>
               <Input
                 id="member-email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="请输入邮箱"
+                className="text-sm"
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="member-phone">电话</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="member-phone" className="text-xs font-medium">电话</Label>
               <Input
                 id="member-phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="请输入电话"
+                className="text-sm"
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="member-avatar">头像URL</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="member-avatar" className="text-xs font-medium">头像URL</Label>
               <Input
                 id="member-avatar"
                 value={formData.avatar}
                 onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
                 placeholder="请输入头像URL（可选）"
+                className="text-sm"
               />
             </div>
           </div>
 
           {/* 组织信息 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="member-department">部门</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="member-department" className="text-xs font-medium">部门</Label>
               <Select
                 value={formData.department}
                 onValueChange={(value) => setFormData({ ...formData, department: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-sm">
                   <SelectValue placeholder="请选择部门" />
                 </SelectTrigger>
                 <SelectContent>
                   {availableDepartments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
+                    <SelectItem key={dept} value={dept} className="text-sm">
                       {dept}
                     </SelectItem>
                   ))}
@@ -207,18 +211,18 @@ export function MemberDialog({
               </Select>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="member-position">岗位</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="member-position" className="text-xs font-medium">岗位</Label>
               <Select
                 value={formData.position}
                 onValueChange={(value) => setFormData({ ...formData, position: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-sm">
                   <SelectValue placeholder="请选择岗位" />
                 </SelectTrigger>
                 <SelectContent>
                   {PRESET_POSITIONS.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.name}>
+                    <SelectItem key={pos.id} value={pos.name} className="text-sm">
                       {pos.name}
                     </SelectItem>
                   ))}
@@ -226,8 +230,8 @@ export function MemberDialog({
               </Select>
             </div>
             
-            <div className="space-y-2 col-span-2">
-              <Label htmlFor="member-supervisor">上级</Label>
+            <div className="space-y-1.5 col-span-2">
+              <Label htmlFor="member-supervisor" className="text-xs font-medium">上级</Label>
               <Select
                 value={formData.supervisorId || 'none'}
                 onValueChange={(value) => setFormData({ 
@@ -235,13 +239,13 @@ export function MemberDialog({
                   supervisorId: value === 'none' ? undefined : value 
                 })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-sm">
                   <SelectValue placeholder="无上级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">无上级</SelectItem>
+                  <SelectItem value="none" className="text-sm">无上级</SelectItem>
                   {availableSupervisors.map((member) => (
-                    <SelectItem key={member.id} value={member.id}>
+                    <SelectItem key={member.id} value={member.id} className="text-sm">
                       {member.name} ({member.position || member.department || '成员'})
                     </SelectItem>
                   ))}
@@ -251,8 +255,8 @@ export function MemberDialog({
           </div>
 
           {/* 角色选择 */}
-          <div className="space-y-3">
-            <Label>角色</Label>
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">角色</Label>
             <div className="grid grid-cols-2 gap-2">
               {ALL_ROLES.map((role) => (
                 <div key={role} className="flex items-center space-x-2">
@@ -263,7 +267,7 @@ export function MemberDialog({
                   />
                   <Label
                     htmlFor={`role-${role}`}
-                    className="text-sm font-normal cursor-pointer"
+                    className="text-xs font-normal cursor-pointer"
                   >
                     {ROLE_LABELS[role]}
                   </Label>
@@ -275,8 +279,8 @@ export function MemberDialog({
           {/* 状态 */}
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>成员状态</Label>
-              <p className="text-xs text-slate-500">
+              <Label className="text-xs font-medium">成员状态</Label>
+              <p className="text-[10px] text-slate-500">
                 禁用后该成员将被标记为已离职
               </p>
             </div>
@@ -288,12 +292,13 @@ export function MemberDialog({
         </div>
         
         <DialogFooter>
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
+          <Button variant="secondary" onClick={() => onOpenChange(false)} className="text-sm">
             取消
           </Button>
           <Button 
             onClick={handleSave} 
             disabled={!formData.name.trim() || !formData.email.trim()}
+            className="text-sm"
           >
             保存
           </Button>
