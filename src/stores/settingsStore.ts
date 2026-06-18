@@ -8,39 +8,172 @@ import {
   ApprovalRule
 } from '@/types';
 
+/**
+ * 设置状态管理 Store 的接口定义
+ * 
+ * @interface SettingsStore
+ * @description 管理系统设置的状态、加载、保存和更新操作
+ */
 interface SettingsStore {
-  // 状态
+  /** 当前加载的系统设置 */
   settings: SystemSettings | null;
+  /** 是否正在加载设置 */
   isLoading: boolean;
+  /** 是否正在保存设置 */
   isSaving: boolean;
+  /** 错误信息，如果有的话 */
   error: string | null;
 
-  // Actions - 加载
+  /**
+   * 加载所有系统设置
+   * 
+   * @async
+   * @function loadSettings
+   * @returns {Promise<void>}
+   * @throws {Error} 当加载失败时抛出错误
+   */
   loadSettings: () => Promise<void>;
+
+  /**
+   * 加载单个设置模块
+   * 
+   * @async
+   * @function loadSection
+   * @template T - 设置模块的键类型
+   * @param {T} section - 要加载的设置模块名称
+   * @returns {Promise<SystemSettings[T]>} 返回加载的设置数据
+   * @throws {Error} 当加载失败时抛出错误
+   */
   loadSection: <T extends keyof SystemSettings>(section: T) => Promise<SystemSettings[T]>;
 
-  // Actions - 保存
+  /**
+   * 保存设置（部分更新）
+   * 
+   * @async
+   * @function saveSettings
+   * @param {Partial<SystemSettings>} settings - 要保存的设置部分
+   * @returns {Promise<void>}
+   * @throws {Error} 当保存失败时抛出错误
+   */
   saveSettings: (settings: Partial<SystemSettings>) => Promise<void>;
+
+  /**
+   * 保存单个设置模块
+   * 
+   * @async
+   * @function saveSection
+   * @template T - 设置模块的键类型
+   * @param {T} section - 要保存的设置模块名称
+   * @param {SystemSettings[T]} data - 要保存的设置数据
+   * @returns {Promise<void>}
+   * @throws {Error} 当保存失败时抛出错误
+   */
   saveSection: <T extends keyof SystemSettings>(
     section: T, 
     data: SystemSettings[T]
   ) => Promise<void>;
 
-  // Actions - 单个模块更新
+  /**
+   * 更新公司设置
+   * 
+   * @async
+   * @function updateCompanySettings
+   * @param {Partial<CompanySettings>} settings - 要更新的公司设置部分
+   * @returns {Promise<void>}
+   * @throws {Error} 当更新失败时抛出错误
+   */
   updateCompanySettings: (settings: Partial<CompanySettings>) => Promise<void>;
+
+  /**
+   * 更新 AI 设置
+   * 
+   * @async
+   * @function updateAISettings
+   * @param {Partial<AISettings>} settings - 要更新的 AI 设置部分
+   * @returns {Promise<void>}
+   * @throws {Error} 当更新失败时抛出错误
+   */
   updateAISettings: (settings: Partial<AISettings>) => Promise<void>;
+
+  /**
+   * 更新通知设置
+   * 
+   * @async
+   * @function updateNotificationSettings
+   * @param {Partial<NotificationSettings>} settings - 要更新的通知设置部分
+   * @returns {Promise<void>}
+   * @throws {Error} 当更新失败时抛出错误
+   */
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => Promise<void>;
+
+  /**
+   * 更新审批设置
+   * 
+   * @async
+   * @function updateApprovalSettings
+   * @param {Partial<ApprovalSettings>} settings - 要更新的审批设置部分
+   * @returns {Promise<void>}
+   * @throws {Error} 当更新失败时抛出错误
+   */
   updateApprovalSettings: (settings: Partial<ApprovalSettings>) => Promise<void>;
+
+  /**
+   * 更新单个审批规则
+   * 
+   * @async
+   * @function updateApprovalRule
+   * @param {ApprovalRule} rule - 要更新的审批规则
+   * @returns {Promise<void>}
+   * @throws {Error} 当更新失败时抛出错误
+   */
   updateApprovalRule: (rule: ApprovalRule) => Promise<void>;
+
+  /**
+   * 添加新的审批规则
+   * 
+   * @async
+   * @function addApprovalRule
+   * @param {Omit<ApprovalRule, 'id'>} rule - 要添加的审批规则（不含ID）
+   * @returns {Promise<void>}
+   * @throws {Error} 当添加失败时抛出错误
+   */
   addApprovalRule: (rule: Omit<ApprovalRule, 'id'>) => Promise<void>;
+
+  /**
+   * 删除审批规则
+   * 
+   * @async
+   * @function deleteApprovalRule
+   * @param {number} ruleId - 要删除的审批规则ID
+   * @returns {Promise<void>}
+   * @throws {Error} 当删除失败时抛出错误
+   */
   deleteApprovalRule: (ruleId: number) => Promise<void>;
 
-  // Actions - 重置
+  /**
+   * 重置错误状态
+   * 
+   * @function resetError
+   * @returns {void}
+   */
   resetError: () => void;
+
+  /**
+   * 清除所有设置
+   * 
+   * @function clearSettings
+   * @returns {void}
+   */
   clearSettings: () => void;
 }
 
-// 默认设置
+/**
+ * 默认系统设置
+ * 
+ * @constant DEFAULT_SETTINGS
+ * @type {SystemSettings}
+ * @description 提供完整的默认设置配置
+ */
 const DEFAULT_SETTINGS: SystemSettings = {
   company: {
     name: '示例科技有限公司',
@@ -99,14 +232,32 @@ const DEFAULT_SETTINGS: SystemSettings = {
   }
 };
 
+/**
+ * 设置状态管理 Store
+ * 
+ * @function useSettingsStore
+ * @returns {SettingsStore} 设置状态管理的 store 实例
+ * @example
+ * ```tsx
+ * const { settings, loadSettings, updateCompanySettings } = useSettingsStore();
+ * 
+ * // 加载设置
+ * useEffect(() => {
+ *   loadSettings();
+ * }, []);
+ * 
+ * // 更新公司设置
+ * const handleSave = async () => {
+ *   await updateCompanySettings({ name: '新公司名' });
+ * };
+ * ```
+ */
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
-  // 初始状态
   settings: null,
   isLoading: false,
   isSaving: false,
   error: null,
 
-  // 加载所有设置
   loadSettings: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -125,7 +276,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  // 加载单个 section
   loadSection: async (section) => {
     set({ isLoading: true, error: null });
     try {
@@ -152,7 +302,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  // 保存设置（部分更新）
   saveSettings: async (partialSettings) => {
     set({ isSaving: true, error: null });
     try {
@@ -181,7 +330,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  // 保存单个 section
   saveSection: async (section, data) => {
     set({ isSaving: true, error: null });
     try {
@@ -210,7 +358,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  // 更新公司设置
   updateCompanySettings: async (settings) => {
     const currentSettings = get().settings;
     const newCompanySettings = {
@@ -220,7 +367,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().saveSection('company', newCompanySettings);
   },
 
-  // 更新 AI 设置
   updateAISettings: async (settings) => {
     const currentSettings = get().settings;
     const newAISettings = {
@@ -230,7 +376,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().saveSection('ai', newAISettings);
   },
 
-  // 更新通知设置
   updateNotificationSettings: async (settings) => {
     const currentSettings = get().settings;
     const newNotificationSettings = {
@@ -240,7 +385,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().saveSection('notification', newNotificationSettings);
   },
 
-  // 更新审批设置
   updateApprovalSettings: async (settings) => {
     const currentSettings = get().settings;
     const newApprovalSettings = {
@@ -250,7 +394,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().saveSection('approval', newApprovalSettings);
   },
 
-  // 更新单个审批规则
   updateApprovalRule: async (rule) => {
     const currentSettings = get().settings;
     const currentRules = currentSettings?.approval?.rules || DEFAULT_SETTINGS.approval.rules;
@@ -258,7 +401,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().updateApprovalSettings({ rules: newRules });
   },
 
-  // 添加审批规则
   addApprovalRule: async (rule) => {
     const currentSettings = get().settings;
     const currentRules = currentSettings?.approval?.rules || DEFAULT_SETTINGS.approval.rules;
@@ -269,7 +411,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().updateApprovalSettings({ rules: [...currentRules, newRule] });
   },
 
-  // 删除审批规则
   deleteApprovalRule: async (ruleId) => {
     const currentSettings = get().settings;
     const currentRules = currentSettings?.approval?.rules || DEFAULT_SETTINGS.approval.rules;
@@ -277,9 +418,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     await get().updateApprovalSettings({ rules: newRules });
   },
 
-  // 重置错误
   resetError: () => set({ error: null }),
 
-  // 清除设置
   clearSettings: () => set({ settings: null, error: null })
 }));
