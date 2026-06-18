@@ -71,11 +71,18 @@ export function OrganizationSettings() {
   // 状态管理 - 初始为空，从 API 加载
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  // 添加一个强制重新渲染的版本号
+  const [dataVersion, setDataVersion] = useState(0);
 
   // 从 API 加载数据
   useEffect(() => {
     loadFromAPI();
   }, []);
+
+  // 强制更新数据版本，触发重新渲染
+  const bumpDataVersion = () => {
+    setDataVersion(prev => prev + 1);
+  };
 
   // 从 API 加载数据 - API 会自动处理文件是否存在的问题
   const loadFromAPI = async () => {
@@ -86,6 +93,7 @@ export function OrganizationSettings() {
         const data = await response.json();
         setDepartments(data.departments);
         setTeamMembers(data.teamMembers);
+        bumpDataVersion(); // 加载数据后也更新版本
         console.log('从 YAML 文件加载数据成功');
       } else {
         console.error('API 响应失败:', response.status);
@@ -236,6 +244,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       const filtered = prev.filter(m => m.id !== member.id);
       return [...filtered];
     });
+    bumpDataVersion(); // 强制更新数据版本
     console.log('删除成员:', member);
   };
 
@@ -282,6 +291,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       console.log('保存成员信息:', editingMember);
     }
     
+    bumpDataVersion(); // 强制更新数据版本
     setIsEditDialogOpen(false);
     setEditingMember(null);
     setIsAddingMember(false);
@@ -329,6 +339,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       const filtered = prev.filter(d => d.id !== dept.id);
       return [...filtered];
     });
+    bumpDataVersion(); // 强制更新数据版本
     console.log('删除部门:', deptName);
   };
 
@@ -368,6 +379,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         console.log('部门列表已更新:', updated.map(d => d.name));
         return updated;
       });
+      bumpDataVersion(); // 强制更新数据版本
       console.log('添加新部门完成');
     } else {
       // 检查是否会造成循环引用
@@ -379,36 +391,42 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         }
       }
       
-      // 更新部门
-      if (editingDepartment.id) {
-        setDepartments(prev => {
-          // 确保创建全新的数组引用
-          const updated = prev.map(dept => 
-            dept.id === editingDepartment.id 
-              ? { 
-                  ...dept, 
-                  name: editingDepartment.name, 
-                  description: editingDepartment.description,
-                  parentDepartmentId: editingDepartment.parentDepartmentId,
-                  updatedAt: new Date() 
-                }
-              : dept
-          );
-          return [...updated];
-        });
-      }
-      
-      // 如果部门名称改了，同时更新成员的部门
-      const oldDept = departments.find(d => d.id === editingDepartment.id);
-      if (oldDept && oldDept.name !== editingDepartment.name) {
-        setTeamMembers(prev => 
-          prev.map(member => 
-            member.department === oldDept.name 
-              ? { ...member, department: editingDepartment.name }
-              : member
-          )
+      // 更新部门 - 使用函数式更新确保获取最新状态
+      setDepartments(prev => {
+        // 确保创建全新的数组引用
+        const updated = prev.map(dept => 
+          dept.id === editingDepartment.id 
+            ? { 
+                ...dept, 
+                name: editingDepartment.name, 
+                description: editingDepartment.description,
+                parentDepartmentId: editingDepartment.parentDepartmentId,
+                updatedAt: new Date() 
+              }
+            : dept
         );
-      }
+        return [...updated];
+      });
+      
+      // 如果部门名称改了，同时更新成员的部门 - 也需要在状态更新后处理
+      setTimeout(() => {
+        // 延迟执行以确保我们能获取到最新的部门状态
+        setDepartments(currentDepts => {
+          const oldDept = currentDepts.find(d => d.id === editingDepartment.id);
+          if (oldDept && oldDept.name !== editingDepartment.name) {
+            setTeamMembers(prevMembers => 
+              prevMembers.map(member => 
+                member.department === oldDept.name 
+                  ? { ...member, department: editingDepartment.name }
+                  : member
+              )
+            );
+          }
+          return currentDepts; // 返回不变的部门列表
+        });
+      }, 0);
+      
+      bumpDataVersion(); // 强制更新数据版本
       console.log('保存部门信息:', editingDepartment);
     }
     
@@ -487,7 +505,12 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         <TabsContent value="chart" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
-              <OrganizationChart members={teamMembers} departments={departments} />
+              {/* 使用 dataVersion 作为 key，强制在数据变化时重新渲染整个组件 */}
+              <OrganizationChart 
+                key={`org-chart-${dataVersion}`} 
+                members={teamMembers} 
+                departments={departments} 
+              />
             </div>
             <div className="space-y-6">
               {/* Departments Card */}

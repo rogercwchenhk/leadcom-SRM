@@ -18,8 +18,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
-  PRESET_TEAM_MEMBERS, 
-  PRESET_DEPARTMENTS,
   ROLE_LABELS, 
   ROLE_COLORS,
   type TeamMember,
@@ -44,134 +42,132 @@ interface OrganizationChartProps {
 
 export function OrganizationChart({ members, departments }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
-  // 添加展开状态的管理 - 移到前面确保声明顺序正确
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['root']));
-  
-  // 添加调试日志
+
+  // 每次组件接收到新props时，重置展开状态并记录日志
   React.useEffect(() => {
-    console.log('OrganizationChart received updated data:', { 
-      membersCount: members.length, 
-      departmentsCount: departments.length,
-      departments: departments.map(d => d.name)
-    });
-  }, [members, departments]);
-  
-  // 当数据变化时，重置展开状态，确保新数据能正确显示
-  React.useEffect(() => {
+    console.log('=== OrganizationChart 收到新数据 ===');
+    console.log('部门数量:', departments.length);
+    console.log('部门列表:', departments.map(d => ({ id: d.id, name: d.name, parent: d.parentDepartmentId })));
+    console.log('成员数量:', members.length);
     setExpandedNodes(new Set(['root']));
-  }, [members.length, departments.length]);
-  
-  // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
-  const orgData = React.useMemo(() => {
-    console.log('Rebuilding organization tree...');
-    return buildOrgTree(members, departments);
   }, [members, departments]);
 
-  function buildOrgTree(members: TeamMember[], depts: Department[]): OrgNode {
-    // 构建部门层级树
-    const root: OrgNode = {
-      id: 'root',
-      name: '公司',
-      title: '组织架构',
-      department: '',
-      children: [],
-      isExpanded: true,
-      type: 'root'
-    };
-
-    // 找出顶级部门（没有上级部门的）
-    const topLevelDepts = depts.filter(d => !d.parentDepartmentId);
+  // 构建组织架构树
+  const orgData = useMemo(() => {
+    console.log('=== 重新构建组织架构树 ===');
     
-    // 递归构建部门树
-    topLevelDepts.forEach(dept => {
-      const deptNode = buildDepartmentTree(dept, depts, members);
-      root.children.push(deptNode);
-    });
+    function buildOrgTree(members: TeamMember[], depts: Department[]): OrgNode {
+      const root: OrgNode = {
+        id: 'root',
+        name: '公司',
+        title: '组织架构',
+        department: '',
+        children: [],
+        isExpanded: true,
+        type: 'root'
+      };
 
-    // 处理没有部门的成员
-    const membersWithoutDept = members.filter(m => !m.department);
-    if (membersWithoutDept.length > 0) {
-      const unassignedDeptNode: OrgNode = {
-        id: 'dept-unassigned',
-        name: '未分配',
-        title: '未分配部门',
-        department: '未分配',
+      // 找出顶级部门（没有上级部门的）
+      const topLevelDepts = depts.filter(d => !d.parentDepartmentId);
+      console.log('顶级部门:', topLevelDepts.map(d => d.name));
+      
+      // 递归构建部门树
+      topLevelDepts.forEach(dept => {
+        const deptNode = buildDepartmentTree(dept, depts, members);
+        root.children.push(deptNode);
+      });
+
+      // 处理没有部门的成员
+      const membersWithoutDept = members.filter(m => !m.department);
+      if (membersWithoutDept.length > 0) {
+        const unassignedDeptNode: OrgNode = {
+          id: 'dept-unassigned',
+          name: '未分配',
+          title: '未分配部门',
+          department: '未分配',
+          children: [],
+          isExpanded: true,
+          type: 'department'
+        };
+        
+        const supervisors = membersWithoutDept.filter(m => !m.supervisorId);
+        supervisors.forEach(supervisor => {
+          const supervisorNode = buildPersonTree(supervisor, membersWithoutDept);
+          unassignedDeptNode.children.push(supervisorNode);
+        });
+        
+        root.children.push(unassignedDeptNode);
+      }
+
+      console.log('构建完成的根节点:', root);
+      return root;
+    }
+
+    function buildDepartmentTree(dept: Department, allDepts: Department[], allMembers: TeamMember[]): OrgNode {
+      const deptNode: OrgNode = {
+        id: dept.id,
+        name: dept.name,
+        title: dept.description || dept.name,
+        department: dept.name,
         children: [],
         isExpanded: true,
         type: 'department'
       };
-      
-      const supervisors = membersWithoutDept.filter(m => !m.supervisorId);
-      supervisors.forEach(supervisor => {
-        const supervisorNode = buildPersonTree(supervisor, membersWithoutDept);
-        unassignedDeptNode.children.push(supervisorNode);
+
+      // 添加子部门
+      const childDepts = allDepts.filter(d => d.parentDepartmentId === dept.id);
+      console.log(`部门 ${dept.name} 的子部门:`, childDepts.map(d => d.name));
+      childDepts.forEach(childDept => {
+        const childDeptNode = buildDepartmentTree(childDept, allDepts, allMembers);
+        deptNode.children.push(childDeptNode);
       });
-      
-      root.children.push(unassignedDeptNode);
+
+      // 添加该部门的成员
+      const deptMembers = allMembers.filter(m => m.department === dept.name);
+      console.log(`部门 ${dept.name} 的成员:`, deptMembers.map(m => m.name));
+      if (deptMembers.length > 0) {
+        // 找出部门负责人（没有上级的成员，或上级不在本部门的）
+        const supervisors = deptMembers.filter(m => {
+          if (!m.supervisorId) return true;
+          const supervisor = allMembers.find(mm => mm.id === m.supervisorId);
+          return !supervisor || supervisor.department !== dept.name;
+        });
+        
+        supervisors.forEach(supervisor => {
+          const supervisorNode = buildPersonTree(supervisor, deptMembers);
+          deptNode.children.push(supervisorNode);
+        });
+      }
+
+      return deptNode;
     }
 
-    return root;
-  }
-
-  function buildDepartmentTree(dept: Department, allDepts: Department[], allMembers: TeamMember[]): OrgNode {
-    const deptNode: OrgNode = {
-      id: dept.id,
-      name: dept.name,
-      title: dept.description || dept.name,
-      department: dept.name,
-      children: [],
-      isExpanded: true,
-      type: 'department'
-    };
-
-    // 添加子部门
-    const childDepts = allDepts.filter(d => d.parentDepartmentId === dept.id);
-    childDepts.forEach(childDept => {
-      const childDeptNode = buildDepartmentTree(childDept, allDepts, allMembers);
-      deptNode.children.push(childDeptNode);
-    });
-
-    // 添加该部门的成员
-    const deptMembers = allMembers.filter(m => m.department === dept.name);
-    if (deptMembers.length > 0) {
-      // 找出部门负责人（没有上级的成员，或上级不在本部门的）
-      const supervisors = deptMembers.filter(m => {
-        if (!m.supervisorId) return true;
-        const supervisor = allMembers.find(mm => mm.id === m.supervisorId);
-        return !supervisor || supervisor.department !== dept.name;
-      });
+    function buildPersonTree(person: TeamMember, allMembers: TeamMember[]): OrgNode {
+      // 找出这个人的直接下属
+      const subordinates = allMembers.filter(m => m.supervisorId === person.id);
       
-      supervisors.forEach(supervisor => {
-        const supervisorNode = buildPersonTree(supervisor, deptMembers);
-        deptNode.children.push(supervisorNode);
+      const node: OrgNode = {
+        id: person.id,
+        name: person.name,
+        title: person.position || '员工',
+        department: person.department || '',
+        member: person,
+        children: [],
+        isExpanded: true,
+        type: 'person'
+      };
+
+      // 递归构建下属树
+      subordinates.forEach(subordinate => {
+        node.children.push(buildPersonTree(subordinate, allMembers));
       });
+
+      return node;
     }
 
-    return deptNode;
-  }
-
-  function buildPersonTree(person: TeamMember, allMembers: TeamMember[]): OrgNode {
-    // 找出这个人的直接下属
-    const subordinates = allMembers.filter(m => m.supervisorId === person.id);
-    
-    const node: OrgNode = {
-      id: person.id,
-      name: person.name,
-      title: person.position || '员工',
-      department: person.department || '',
-      member: person,
-      children: [],
-      isExpanded: true, // 默认值，会被外部状态覆盖
-      type: 'person'
-    };
-
-    // 递归构建下属树
-    subordinates.forEach(subordinate => {
-      node.children.push(buildPersonTree(subordinate, allMembers));
-    });
-
-    return node;
-  }
+    return buildOrgTree(members, departments);
+  }, [members, departments]);
 
   const handleToggleExpand = (nodeId: string) => {
     setExpandedNodes(prev => {
@@ -185,24 +181,16 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
     });
   };
 
-  // 辅助函数：检查节点是否展开
-  const isNodeExpanded = (nodeId: string) => {
-    return expandedNodes.has(nodeId);
-  };
-
-  // 修改 orgData，添加展开状态
-  const orgDataWithExpandedState = React.useMemo(() => {
-    console.log('Applying expanded state to orgData...');
+  // 应用展开状态 - 直接在 useMemo 内实现逻辑，避免依赖问题
+  const orgDataWithExpandedState = useMemo(() => {
     const applyExpandedState = (node: OrgNode): OrgNode => {
       return {
         ...node,
-        isExpanded: isNodeExpanded(node.id),
+        isExpanded: expandedNodes.has(node.id),
         children: node.children.map(applyExpandedState)
       };
     };
-    const result = applyExpandedState(orgData);
-    console.log('orgDataWithExpandedState updated:', result);
-    return result;
+    return applyExpandedState(orgData);
   }, [orgData, expandedNodes]);
 
   const handleZoomIn = () => {
@@ -229,7 +217,7 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
           <div>
             <CardTitle className="text-sm font-semibold text-slate-900">组织架构图</CardTitle>
             <CardDescription className="text-xs text-slate-500 mt-1">
-              基于上级关系自动构建的组织架构
+              基于上级关系自动构建的组织架构 (部门数: {departments.length}, 成员数: {members.length})
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -256,7 +244,6 @@ export function OrganizationChart({ members, departments }: OrganizationChartPro
           <div 
             className="p-8 transition-transform duration-200 origin-top-left"
             style={{ transform: `scale(${zoomLevel})` }}
-            key={`org-chart-${members.length}-${departments.length}`}
           >
             <OrgTreeNode node={orgDataWithExpandedState} onToggleExpand={handleToggleExpand} level={0} />
           </div>
