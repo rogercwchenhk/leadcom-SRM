@@ -57,6 +57,7 @@ export function OrganizationSettings() {
   const [activeTab, setActiveTab] = useState('chart');
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddingMember, setIsAddingMember] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(PRESET_TEAM_MEMBERS);
 
   const handleEditMember = (member: TeamMember) => {
@@ -64,25 +65,55 @@ export function OrganizationSettings() {
     setIsEditDialogOpen(true);
   };
 
-  const handleSaveMember = () => {
-    if (!editingMember) return;
-    
-    // 更新成员列表
-    setTeamMembers(prev => 
-      prev.map(member => 
-        member.id === editingMember.id ? editingMember : member
-      )
-    );
-    
-    console.log('保存成员信息:', editingMember);
-    setIsEditDialogOpen(false);
-    setEditingMember(null);
-  };
+
 
   const handleDeleteMember = (member: TeamMember) => {
     // 从成员列表中删除
     setTeamMembers(prev => prev.filter(m => m.id !== member.id));
     console.log('删除成员:', member);
+  };
+
+  const handleAddMember = () => {
+    // 创建新成员的默认数据
+    const newMember: TeamMember = {
+      id: `member-${Date.now()}`,
+      name: '',
+      email: '',
+      phone: '',
+      roles: [],
+      position: '',
+      department: '',
+      joinDate: new Date(),
+      isActive: true,
+      supervisorId: undefined,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    setEditingMember(newMember);
+    setIsAddingMember(true);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveMember = () => {
+    if (!editingMember) return;
+    
+    if (isAddingMember) {
+      // 添加新成员
+      setTeamMembers(prev => [...prev, editingMember]);
+      console.log('添加新成员:', editingMember);
+    } else {
+      // 更新成员列表
+      setTeamMembers(prev => 
+        prev.map(member => 
+          member.id === editingMember.id ? editingMember : member
+        )
+      );
+      console.log('保存成员信息:', editingMember);
+    }
+    
+    setIsEditDialogOpen(false);
+    setEditingMember(null);
+    setIsAddingMember(false);
   };
   
   return (
@@ -117,7 +148,7 @@ export function OrganizationSettings() {
                         管理公司组织架构和人员信息
                       </CardDescription>
                     </div>
-                    <Button size="sm" className="h-8 gap-1">
+                    <Button size="sm" className="h-8 gap-1" onClick={handleAddMember}>
                       <Plus className="w-3.5 h-3.5" />
                       添加成员
                     </Button>
@@ -219,9 +250,9 @@ export function OrganizationSettings() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>编辑成员信息</DialogTitle>
+            <DialogTitle>{isAddingMember ? '添加新成员' : '编辑成员信息'}</DialogTitle>
             <DialogDescription>
-              修改组织成员的基本信息和设置
+              {isAddingMember ? '添加新的组织成员' : '修改组织成员的基本信息和设置'}
             </DialogDescription>
           </DialogHeader>
           
@@ -347,11 +378,15 @@ export function OrganizationSettings() {
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button variant="outline" onClick={() => {
+              setIsEditDialogOpen(false);
+              setEditingMember(null);
+              setIsAddingMember(false);
+            }}>
               取消
             </Button>
             <Button onClick={handleSaveMember}>
-              保存
+              {isAddingMember ? '添加' : '保存'}
             </Button>
           </DialogFooter>
         </DialogContent>
