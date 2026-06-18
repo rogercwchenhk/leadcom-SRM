@@ -176,7 +176,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
+            <h2 className="text-sm font-semibold text-slate-900">组织架构设置</h2>
             {isDirty && (
               <span className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
                 <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
