@@ -41,21 +41,22 @@ teamMembers:
     createdAt: '2020-01-15T00:00:00.000Z'
     updatedAt: '2020-01-15T00:00:00.000Z'
   - id: member-2
-    name: 林晓
+    name: 钟丽莉
     email: linxiao@company.com
     department: 综合管理部
     position: 财务经理
     roles:
-      - finance
+      - purchaser_manager
     phone: 138-0000-0002
     joinDate: '2019-06-01T00:00:00.000Z'
     isActive: true
     createdAt: '2019-06-01T00:00:00.000Z'
-    updatedAt: '2019-06-01T00:00:00.000Z'
+    updatedAt: '2026-06-18T07:10:37.311Z'
+    avatar: ''
   - id: member-3
-    name: 王芳
+    name: 高芳兰
     email: wangfang@company.com
-    department: 销售部
+    department: 综合管理部
     position: 销售经理
     roles:
       - requester
@@ -64,17 +65,18 @@ teamMembers:
     joinDate: '2018-03-20T00:00:00.000Z'
     isActive: true
     createdAt: '2018-03-20T00:00:00.000Z'
-    updatedAt: '2018-03-20T00:00:00.000Z'
+    updatedAt: '2026-06-18T07:14:38.148Z'
+    supervisorId: member-2
+    avatar: ''
   - id: member-4
-    name: 赵强
+    name: 丘加钦
     email: zhaoqiang@company.com
     department: 技术部
     position: 技术总监
-    roles:
-      - approver
-    supervisorId: member-3
+    roles: []
     phone: 138-0000-0004
     joinDate: '2017-01-10T00:00:00.000Z'
     isActive: true
     createdAt: '2017-01-10T00:00:00.000Z'
-    updatedAt: '2017-01-10T00:00:00.000Z'
+    updatedAt: '2026-06-18T07:15:11.383Z'
+    avatar: ''

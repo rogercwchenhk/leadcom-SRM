@@ -22,7 +22,6 @@ function initializeDefaultConfigIfNeeded() {
 
     const teamMembersForYaml = PRESET_TEAM_MEMBERS.map((member) => ({
       ...member,
-      joinDate: member.joinDate.toISOString(),
       createdAt: member.createdAt.toISOString(),
       updatedAt: member.updatedAt.toISOString()
     }));
@@ -84,7 +83,6 @@ export async function GET() {
       roles: member.roles || (member.role ? [member.role] : []),
       // 确保 isActive 字段存在
       isActive: member.isActive !== undefined ? member.isActive : true,
-      joinDate: new Date(member.joinDate),
       createdAt: new Date(member.createdAt),
       updatedAt: new Date(member.updatedAt)
     }));
@@ -130,7 +128,6 @@ export async function PUT(request: NextRequest) {
 
     const teamMembersForYaml = teamMembers.map((member: TeamMember) => ({
       ...member,
-      joinDate: member.joinDate instanceof Date ? member.joinDate.toISOString() : member.joinDate,
       createdAt: member.createdAt instanceof Date ? member.createdAt.toISOString() : member.createdAt,
       updatedAt: member.updatedAt instanceof Date ? member.updatedAt.toISOString() : member.updatedAt
     }));

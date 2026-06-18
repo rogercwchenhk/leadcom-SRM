@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Edit, Trash2, Plus, Mail, Phone, Calendar, Briefcase } from 'lucide-react';
+import { Edit, Trash2, Plus, Mail, Phone, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -122,10 +122,6 @@ function TeamMemberCard({
               <span className="truncate">上级: {supervisor.name}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <Calendar className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate">入职: {member.joinDate.toLocaleDateString('zh-CN')}</span>
-          </div>
         </div>
       </div>
     </div>

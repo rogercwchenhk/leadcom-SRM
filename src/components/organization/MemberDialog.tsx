@@ -62,7 +62,6 @@ export function MemberDialog({
     roles: [] as UserRole[],
     position: '',
     department: '',
-    joinDate: new Date(),
     isActive: true,
     supervisorId: undefined as string | undefined,
     avatar: ''
@@ -77,7 +76,6 @@ export function MemberDialog({
         roles: editingMember.roles || [],
         position: editingMember.position || '',
         department: editingMember.department || '',
-        joinDate: editingMember.joinDate,
         isActive: editingMember.isActive,
         supervisorId: editingMember.supervisorId,
         avatar: editingMember.avatar || ''
@@ -90,7 +88,6 @@ export function MemberDialog({
         roles: [],
         position: '',
         department: '',
-        joinDate: new Date(),
         isActive: true,
         supervisorId: undefined,
         avatar: ''
@@ -229,7 +226,7 @@ export function MemberDialog({
               </Select>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 col-span-2">
               <Label htmlFor="member-supervisor">上级</Label>
               <Select
                 value={formData.supervisorId || 'none'}
@@ -250,19 +247,6 @@ export function MemberDialog({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="member-join-date">入职日期</Label>
-              <Input
-                id="member-join-date"
-                type="date"
-                value={formData.joinDate.toISOString().split('T')[0]}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  joinDate: new Date(e.target.value) 
-                })}
-              />
             </div>
           </div>
 

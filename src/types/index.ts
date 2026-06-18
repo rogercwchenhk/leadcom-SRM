@@ -187,7 +187,6 @@ export interface TeamMember {
   roles: UserRole[];
   position?: string;
   department?: string;
-  joinDate: Date;
   isActive: boolean;
   supervisorId?: string;  // 上级ID
   createdAt: Date;
@@ -629,7 +628,6 @@ export const PRESET_TEAM_MEMBERS: TeamMember[] = [
     position: '采购专员',
     department: '采购部',
     supervisorId: 'member-2',  // 上级是钟丽莉
-    joinDate: new Date('2023-06-15'),
     isActive: true,
     createdAt: new Date('2023-06-15'),
     updatedAt: new Date('2023-06-15')
@@ -643,7 +641,6 @@ export const PRESET_TEAM_MEMBERS: TeamMember[] = [
     position: '采购负责人',
     department: '采购部',
     supervisorId: undefined,  // 没有上级，是部门负责人
-    joinDate: new Date('2022-03-20'),
     isActive: true,
     createdAt: new Date('2022-03-20'),
     updatedAt: new Date('2022-03-20')
@@ -657,7 +654,6 @@ export const PRESET_TEAM_MEMBERS: TeamMember[] = [
     position: '客服',
     department: '客服部',
     supervisorId: undefined,  // 没有上级，是部门负责人
-    joinDate: new Date('2023-09-01'),
     isActive: true,
     createdAt: new Date('2023-09-01'),
     updatedAt: new Date('2023-09-01')
@@ -671,7 +667,6 @@ export const PRESET_TEAM_MEMBERS: TeamMember[] = [
     position: '财务',
     department: '财务部',
     supervisorId: undefined,  // 没有上级，是部门负责人
-    joinDate: new Date('2022-01-10'),
     isActive: true,
     createdAt: new Date('2022-01-10'),
     updatedAt: new Date('2022-01-10')

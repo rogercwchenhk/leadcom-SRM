@@ -105,7 +105,6 @@ export const useOrganizationStore = create<OrganizationStore>((set, get) => {
         const parsedTeamMembers = (data.teamMembers || []).map((member: any) => ({
           ...member,
           roles: member.roles || [],
-          joinDate: new Date(member.joinDate),
           createdAt: new Date(member.createdAt),
           updatedAt: new Date(member.updatedAt)
         }));
@@ -171,7 +170,6 @@ export const useOrganizationStore = create<OrganizationStore>((set, get) => {
         const parsedTeamMembers = (data.teamMembers || []).map((member: any) => ({
           ...member,
           roles: member.roles || [],
-          joinDate: new Date(member.joinDate),
           createdAt: new Date(member.createdAt),
           updatedAt: new Date(member.updatedAt)
         }));

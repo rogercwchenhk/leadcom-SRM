@@ -201,10 +201,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
                 <span>{member.phone}</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 col-span-2">
-              <Calendar className="w-3 h-3" />
-              <span>入职时间：{member.joinDate.toLocaleDateString('zh-CN')}</span>
-            </div>
+
           </div>
         </div>
       </div>
