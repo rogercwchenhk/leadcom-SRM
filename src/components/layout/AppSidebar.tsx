@@ -187,7 +187,11 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
               <p className="text-xs text-slate-500 truncate">{roleNames[currentRole]}</p>
             </div>
           </div>
-          <Button variant="ghost" className="w-full justify-start gap-2 h-9 text-slate-600">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start gap-2 h-9 text-slate-600"
+            onClick={() => handleNavigate('/settings')}
+          >
             <Settings className="h-4 w-4" />
             系统设置
           </Button>
