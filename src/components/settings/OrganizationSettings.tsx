@@ -18,7 +18,8 @@ import {
   Edit,
   Trash2,
   Users,
-  Layout
+  Layout,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -30,9 +31,49 @@ import {
   type Position
 } from '@/types';
 import { OrganizationChart } from './OrganizationChart';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Checkbox
+} from '@/components/ui/checkbox';
 
 export function OrganizationSettings() {
   const [activeTab, setActiveTab] = useState('chart');
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleEditMember = (member: TeamMember) => {
+    setEditingMember({ ...member });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveMember = () => {
+    // 这里可以添加保存逻辑
+    console.log('保存成员信息:', editingMember);
+    setIsEditDialogOpen(false);
+    setEditingMember(null);
+  };
+
+  const handleDeleteMember = (member: TeamMember) => {
+    // 这里可以添加删除逻辑
+    console.log('删除成员:', member);
+  };
   
   return (
     <div className="space-y-6">
@@ -75,7 +116,12 @@ export function OrganizationSettings() {
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="space-y-3">
                     {PRESET_TEAM_MEMBERS.map((member) => (
-                      <TeamMemberCard key={member.id} member={member} />
+                      <TeamMemberCard 
+                        key={member.id} 
+                        member={member}
+                        onEdit={handleEditMember}
+                        onDelete={handleDeleteMember}
+                      />
                     ))}
                   </div>
                 </CardContent>
@@ -158,11 +204,154 @@ export function OrganizationSettings() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* 编辑成员对话框 */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>编辑成员信息</DialogTitle>
+            <DialogDescription>
+              修改组织成员的基本信息和设置
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingMember && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">姓名</Label>
+                  <Input
+                    id="name"
+                    value={editingMember.name}
+                    onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">邮箱</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={editingMember.email}
+                    onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="position">职位</Label>
+                  <Input
+                    id="position"
+                    value={editingMember.position || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, position: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="department">部门</Label>
+                  <Input
+                    id="department"
+                    value={editingMember.department || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, department: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">电话</Label>
+                <Input
+                  id="phone"
+                  value={editingMember.phone || ''}
+                  onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="supervisor">上级</Label>
+                <Select
+                  value={editingMember.supervisorId || ''}
+                  onValueChange={(value) => setEditingMember({ ...editingMember, supervisorId: value || undefined })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="选择上级" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">无上级</SelectItem>
+                    {PRESET_TEAM_MEMBERS
+                      .filter(m => m.id !== editingMember.id)
+                      .map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name} - {member.position}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-3">
+                <Label>角色权限</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(ROLE_LABELS).map(([role, label]) => (
+                    <div key={role} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`role-${role}`}
+                        checked={editingMember.roles.includes(role as any)}
+                        onCheckedChange={(checked) => {
+                          const newRoles = checked
+                            ? [...editingMember.roles, role as any]
+                            : editingMember.roles.filter(r => r !== role);
+                          setEditingMember({ ...editingMember, roles: newRoles });
+                        }}
+                      />
+                      <label
+                        htmlFor={`role-${role}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={editingMember.isActive}
+                  onCheckedChange={(checked) => setEditingMember({ ...editingMember, isActive: checked })}
+                />
+                <label
+                  htmlFor="isActive"
+                  className="text-sm font-medium leading-none"
+                >
+                  在职状态
+                </label>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              取消
+            </Button>
+            <Button onClick={handleSaveMember}>
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function TeamMemberCard({ member }: { member: TeamMember }) {
+function TeamMemberCard({ 
+  member, 
+  onEdit, 
+  onDelete 
+}: { 
+  member: TeamMember;
+  onEdit: (member: TeamMember) => void;
+  onDelete: (member: TeamMember) => void;
+}) {
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -219,10 +408,20 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
               )}
             </div>
             <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0"
+                onClick={() => onEdit(member)}
+              >
                 <Edit className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => onDelete(member)}
+              >
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
