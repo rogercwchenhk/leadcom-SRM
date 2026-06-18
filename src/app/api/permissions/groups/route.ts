@@ -31,13 +31,13 @@ export async function GET(request: NextRequest) {
       .where(eq(userGroupRelations.groupId, parseInt(groupId))).all();
     
     // 获取该组的权限
-    const permissions = await db.select().from(groupPermissionRelations)
+    const groupPerms = await db.select().from(groupPermissionRelations)
       .where(eq(groupPermissionRelations.groupId, parseInt(groupId))).all();
     
     const result: GroupWithDetails = {
       ...group,
       users: users.map((u) => ({ user: u })),
-      permissions: permissions.map((p) => ({ permission: p })),
+      permissions: groupPerms.map((p) => ({ permission: p })),
     };
     
     return NextResponse.json(result);
@@ -47,13 +47,13 @@ export async function GET(request: NextRequest) {
   const groupsWithDetails: GroupWithDetails[] = await Promise.all(allGroups.map(async (group) => {
     const users = await db.select().from(userGroupRelations)
       .where(eq(userGroupRelations.groupId, group.id)).all();
-    const permissions = await db.select().from(groupPermissionRelations)
+    const groupPerms = await db.select().from(groupPermissionRelations)
       .where(eq(groupPermissionRelations.groupId, group.id)).all();
     
     return {
       ...group,
       users: users.map((u) => ({ user: u })),
-      permissions: permissions.map((p) => ({ permission: p })),
+      permissions: groupPerms.map((p) => ({ permission: p })),
     };
   }));
   

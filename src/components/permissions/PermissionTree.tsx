@@ -103,7 +103,7 @@ export function PermissionTree() {
         // 加载用户组权限
         const res = await fetch(`/api/permissions/groups?id=${selectedTargetId}`);
         const data = await res.json();
-        const groupPermissionIds = data.permissions?.map((p: any) => p.permission.id) || [];
+        const groupPermissionIds = data.permissions?.map((p: any) => p.permission.permissionId) || [];
         setSelectedPermissionIds(groupPermissionIds);
       }
     } catch (error) {
