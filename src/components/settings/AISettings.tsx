@@ -151,7 +151,7 @@ export function AISettings() {
             配置 Hermes Agent 的 API 连接参数
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="api-endpoint">API 端点</Label>
@@ -209,12 +209,12 @@ export function AISettings() {
           </div>
 
           {/* 连接测试 */}
-          <div className="flex items-center gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
             <Button 
               onClick={handleTestConnection} 
               disabled={testing}
               variant="secondary"
-              className="gap-2"
+              className="gap-2 w-full sm:w-auto"
             >
               {testing ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -227,10 +227,10 @@ export function AISettings() {
             {testStatus !== 'idle' && (
               <div className="flex items-center gap-2">
                 {testStatus === 'success' && (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
                 )}
                 {testStatus === 'error' && (
-                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
                 )}
                 <span className={`text-sm ${testStatus === 'success' ? 'text-green-600' : testStatus === 'error' ? 'text-red-600' : 'text-slate-600'}`}>
                   {testMessage}

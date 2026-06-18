@@ -102,24 +102,24 @@ export function CompanySettings() {
             配置公司Logo、名称等基本标识信息
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-8 items-start">
+        <CardContent className="px-3 sm:px-6">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
             {/* Logo 上传 */}
-            <div className="flex flex-col items-center gap-4">
-              <Avatar className="h-24 w-24 rounded-xl border-2 border-dashed border-slate-200">
+            <div className="flex flex-col items-center gap-4 w-full md:w-auto">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl border-2 border-dashed border-slate-200">
                 <AvatarImage src={companySettings.companyLogo} />
-                <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-2xl">
+                <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-xl sm:text-2xl">
                   {companySettings.companyName ? companySettings.companyName.substring(0, 2) : '公'}
                 </AvatarFallback>
               </Avatar>
               <Button variant="secondary" size="sm" className="gap-2">
                 <Upload className="h-4 w-4" />
-                上传Logo
+                <span className="text-sm">上传Logo</span>
               </Button>
             </div>
 
             {/* 公司名称 */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 w-full">
               <div className="space-y-2">
                 <Label htmlFor="company-name">公司名称 *</Label>
                 <Input
@@ -154,7 +154,7 @@ export function CompanySettings() {
             配置公司的联系方式和地址信息
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="website" className="flex items-center gap-2">

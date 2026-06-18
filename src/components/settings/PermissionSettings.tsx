@@ -30,24 +30,31 @@ export function PermissionSettings() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-4 mb-6">
-              <TabsTrigger value="users" className="gap-2">
-                <Users className="h-4 w-4" />
-                用户管理
-              </TabsTrigger>
-              <TabsTrigger value="groups" className="gap-2">
-                <UsersRound className="h-4 w-4" />
-                用户组管理
-              </TabsTrigger>
-              <TabsTrigger value="permissions" className="gap-2">
-                <Shield className="h-4 w-4" />
-                权限分配
-              </TabsTrigger>
-              <TabsTrigger value="hierarchy" className="gap-2">
-                <UsersRound className="h-4 w-4" />
-                层级关系
-              </TabsTrigger>
-            </TabsList>
+            {/* 移动端使用可滚动标签，桌面端使用网格 */}
+            <div className="mb-6 overflow-x-auto -mx-2 sm:mx-0 pb-2">
+              <TabsList className="grid-cols-2 sm:grid-cols-4 w-full min-w-max sm:w-auto">
+                <TabsTrigger value="users" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">用户管理</span>
+                  <span className="sm:hidden">用户</span>
+                </TabsTrigger>
+                <TabsTrigger value="groups" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <UsersRound className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">用户组管理</span>
+                  <span className="sm:hidden">用户组</span>
+                </TabsTrigger>
+                <TabsTrigger value="permissions" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">权限分配</span>
+                  <span className="sm:hidden">权限</span>
+                </TabsTrigger>
+                <TabsTrigger value="hierarchy" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <UsersRound className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">层级关系</span>
+                  <span className="sm:hidden">层级</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="users">
               <UserManagement />

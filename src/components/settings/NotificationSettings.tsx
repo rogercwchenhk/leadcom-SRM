@@ -180,7 +180,7 @@ export function NotificationSettings() {
             />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 sm:px-6">
           {settings.email.enabled && (
             <>
               <div className="space-y-2">
@@ -196,14 +196,15 @@ export function NotificationSettings() {
               <Separator />
               <div className="space-y-3">
                 {notificationItems.map((item) => (
-                  <div key={item.key} className="flex items-center justify-between">
-                    <div className="space-y-0.5">
+                  <div key={item.key} className="flex items-center justify-between gap-4">
+                    <div className="space-y-0.5 flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-slate-900">{item.label}</h4>
-                      <p className="text-xs text-slate-500">{item.description}</p>
+                      <p className="text-xs text-slate-500 truncate">{item.description}</p>
                     </div>
                     <Switch 
                       checked={Boolean(settings.email[item.key as keyof typeof settings.email])}
                       onCheckedChange={(checked) => updateEmailSetting(item.key as any, checked)}
+                      className="flex-shrink-0"
                     />
                   </div>
                 ))}
@@ -232,18 +233,19 @@ export function NotificationSettings() {
             />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 sm:px-6">
           {settings.inApp.enabled && (
             <div className="space-y-3">
               {notificationItems.map((item) => (
-                <div key={item.key} className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div key={item.key} className="flex items-center justify-between gap-4">
+                  <div className="space-y-0.5 flex-1 min-w-0">
                     <h4 className="text-sm font-medium text-slate-900">{item.label}</h4>
-                    <p className="text-xs text-slate-500">{item.description}</p>
+                    <p className="text-xs text-slate-500 truncate">{item.description}</p>
                   </div>
                   <Switch 
                     checked={settings.inApp[item.key as keyof typeof settings.inApp]}
                     onCheckedChange={(checked) => updateInAppSetting(item.key as any, checked)}
+                    className="flex-shrink-0"
                   />
                 </div>
               ))}
@@ -271,18 +273,19 @@ export function NotificationSettings() {
             />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 sm:px-6">
           {settings.push.enabled && (
             <div className="space-y-3">
               {notificationItems.map((item) => (
-                <div key={item.key} className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div key={item.key} className="flex items-center justify-between gap-4">
+                  <div className="space-y-0.5 flex-1 min-w-0">
                     <h4 className="text-sm font-medium text-slate-900">{item.label}</h4>
-                    <p className="text-xs text-slate-500">{item.description}</p>
+                    <p className="text-xs text-slate-500 truncate">{item.description}</p>
                   </div>
                   <Switch 
                     checked={settings.push[item.key as keyof typeof settings.push]}
                     onCheckedChange={(checked) => updatePushSetting(item.key as any, checked)}
+                    className="flex-shrink-0"
                   />
                 </div>
               ))}

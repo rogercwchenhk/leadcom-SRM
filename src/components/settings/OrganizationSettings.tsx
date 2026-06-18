@@ -501,8 +501,8 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         </div>
       )}
       
-      {/* 数据管理工具栏 */}
-      <div className="flex items-center justify-between">
+      {/* 数据管理工具栏 - 移动端优化 */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
           <p className="text-sm text-slate-500">
@@ -514,7 +514,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button 
             variant="ghost" 
             size="sm" 
@@ -523,7 +523,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             disabled={isLoading}
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            刷新
+            <span className="hidden sm:inline">刷新</span>
           </Button>
           <Button 
             size="sm" 
@@ -532,7 +532,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             disabled={isLoading}
           >
             <Save className="w-4 h-4" />
-            保存
+            <span className="hidden sm:inline">保存</span>
           </Button>
           <Button 
             variant="outline" 
@@ -542,7 +542,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
             disabled={isLoading}
           >
             <Download className="w-4 h-4" />
-            导出 YAML
+            <span className="hidden sm:inline">导出 YAML</span>
           </Button>
         </div>
       </div>
@@ -551,20 +551,20 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       {!isLoading && (
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 w-[400px]">
+        <TabsList className="grid grid-cols-2 w-full sm:w-[400px]">
           <TabsTrigger value="chart" className="gap-2">
             <Layout className="h-4 w-4" />
-            组织架构图
+            <span className="text-sm">组织架构图</span>
           </TabsTrigger>
           <TabsTrigger value="list" className="gap-2">
             <Users className="h-4 w-4" />
-            详细列表
+            <span className="text-sm">详细列表</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="chart" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="lg:col-span-3 order-2 lg:order-1">
               {/* 使用 dataVersion 作为 key，强制在数据变化时重新渲染整个组件 */}
               <OrganizationChart 
                 key={`org-chart-${dataVersion}`} 
@@ -572,10 +572,10 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                 departments={departments} 
               />
             </div>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
               {/* Departments Card */}
               <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-1 pt-2 px-4">
+                <CardHeader className="pb-1 pt-2 px-3 sm:px-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-sm font-semibold text-slate-900">部门管理</CardTitle>
@@ -585,27 +585,27 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                     </div>
                     <Button size="sm" className="h-8 gap-1" onClick={handleAddDepartment}>
                       <Plus className="w-3.5 h-3.5" />
-                      添加
+                      <span className="hidden sm:inline">添加</span>
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="px-4 pb-4 pt-0">
+                <CardContent className="px-3 sm:px-4 pb-4 pt-0">
                   <div className="space-y-2">
                     {departmentTree.map(({ dept, level }) => (
                       <div 
                         key={dept.id} 
                         className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
-                        style={{ paddingLeft: `${level * 16 + 8}px` }}
+                        style={{ paddingLeft: `${level * 12 + 8}px` }}
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
                           {level > 0 && (
-                            <div className="w-3 h-px bg-slate-300" />
+                            <div className="w-3 h-px bg-slate-300 flex-shrink-0" />
                           )}
-                          <Building className="w-4 h-4 text-slate-500" />
-                          <span className="text-sm font-medium text-slate-900">{dept.name}</span>
+                          <Building className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                          <span className="text-sm font-medium text-slate-900 truncate">{dept.name}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Badge variant="outline" className="text-[10px] h-5">
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <Badge variant="outline" className="text-[10px] h-5 hidden sm:inline-flex">
                             {teamMembers.filter(m => m.department === dept.name).length} 人
                           </Badge>
                           <Button 
@@ -640,12 +640,12 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         </TabsContent>
 
         <TabsContent value="list" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Left Column - Organization Members */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6 order-1">
               {/* Organization Members Card */}
               <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="pb-1 pt-2 px-4">
+                <CardHeader className="pb-1 pt-2 px-3 sm:px-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-sm font-semibold text-slate-900">组织成员</CardTitle>
@@ -655,11 +655,11 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                     </div>
                     <Button size="sm" className="h-8 gap-1" onClick={handleAddMember}>
                       <Plus className="w-3.5 h-3.5" />
-                      添加成员
+                      <span className="hidden sm:inline">添加成员</span>
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="px-4 pb-4 pt-0">
+                <CardContent className="px-3 sm:px-4 pb-4 pt-0">
                   <div className="space-y-3">
                     {teamMembers.map((member) => (
                       <TeamMemberCard 
@@ -799,9 +799,9 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       </Tabs>
       )}
 
-      {/* 编辑成员对话框 */}
+      {/* 编辑成员对话框 - 移动端优化 */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isAddingMember ? '添加新成员' : '编辑成员信息'}</DialogTitle>
             <DialogDescription>
@@ -811,7 +811,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
           
           {editingMember && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">姓名</Label>
                   <Input
@@ -831,7 +831,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="position">职位</Label>
                   <Input

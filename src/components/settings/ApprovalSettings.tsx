@@ -372,36 +372,36 @@ export function ApprovalSettings() {
                   </div>
                 </div>
 
-                {/* 展开的审批流程 */}
+                {/* 展开的审批流程 - 移动端优化 */}
                 {expandedRule === rule.id && (
-                  <div className="border-t border-slate-200 p-4 bg-slate-50/50">
-                    <div className="flex items-start gap-4">
+                  <div className="border-t border-slate-200 p-3 sm:p-4 bg-slate-50/50">
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
                       {rule.stages.map((stage, index) => (
                         <div key={stage.id} className="flex-1">
-                          <div className="bg-white rounded-lg border border-slate-200 p-4">
-                            <div className="flex items-center justify-between mb-3">
+                          <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4">
+                            <div className="flex items-center justify-between mb-2 sm:mb-3">
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs">
                                   阶段 {index + 1}
                                 </Badge>
-                                <span className="text-sm font-medium text-slate-900">{stage.name}</span>
+                                <span className="text-sm font-medium text-slate-900 truncate">{stage.name}</span>
                               </div>
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs flex-shrink-0">
                                 {stage.type === 'all' ? '会签' : '或签'}
                               </Badge>
                             </div>
                             <div className="space-y-2">
                               {stage.approvers.map((approver) => (
                                 <div key={approver.id} className="flex items-center gap-2">
-                                  <Avatar className="h-6 w-6">
+                                  <Avatar className="h-6 w-6 flex-shrink-0">
                                     <AvatarFallback className="text-xs bg-slate-200 text-slate-700">
                                       {getInitials(approver.name)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <div className="flex-1">
-                                    <p className="text-xs font-medium text-slate-900">{approver.name}</p>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium text-slate-900 truncate">{approver.name}</p>
                                     {approver.role && (
-                                      <p className="text-[10px] text-slate-500">{approver.role}</p>
+                                      <p className="text-[10px] text-slate-500 truncate">{approver.role}</p>
                                     )}
                                   </div>
                                 </div>
@@ -409,11 +409,18 @@ export function ApprovalSettings() {
                             </div>
                           </div>
                           {index < rule.stages.length - 1 && (
-                            <div className="flex justify-center -mt-12 relative z-10">
-                              <div className="bg-white rounded-full p-1 border border-slate-200">
-                                <ArrowRight className="h-4 w-4 text-slate-400" />
+                            <>
+                              <div className="hidden sm:flex justify-center -mt-12 relative z-10">
+                                <div className="bg-white rounded-full p-1 border border-slate-200">
+                                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                                </div>
                               </div>
-                            </div>
+                              <div className="sm:hidden flex justify-center py-2">
+                                <div className="bg-white rounded-full p-1 border border-slate-200">
+                                  <ChevronDown className="h-4 w-4 text-slate-400" />
+                                </div>
+                              </div>
+                            </>
                           )}
                         </div>
                       ))}
@@ -435,9 +442,9 @@ export function ApprovalSettings() {
               配置审批规则的金额范围和多级审批流程
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="space-y-6 py-4">
+          <div className="space-y-6 py-4 px-1">
             {/* 基本信息 */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>规则名称 *</Label>
                 <Input
@@ -457,7 +464,7 @@ export function ApprovalSettings() {
             </div>
 
             {/* 金额范围 */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>最低金额 (CNY)</Label>
                 <Input
