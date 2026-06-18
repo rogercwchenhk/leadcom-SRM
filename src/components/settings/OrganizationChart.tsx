@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,8 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  RefreshCw
+  RefreshCw,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -31,16 +32,23 @@ interface OrgNode {
   member?: TeamMember;
   children: OrgNode[];
   isExpanded: boolean;
+  type: 'root' | 'department' | 'person';
 }
 
 export function OrganizationChart() {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [orgData, setOrgData] = useState<OrgNode>(buildOrgTree());
+  const [orgData, setOrgData] = useState<OrgNode>(() => buildOrgTree(PRESET_TEAM_MEMBERS));
 
-  function buildOrgTree(): OrgNode {
-    const purchasingManager = PRESET_TEAM_MEMBERS.find(m => m.roles.includes('purchaser_manager'));
-    const purchasers = PRESET_TEAM_MEMBERS.filter(m => m.roles.includes('purchaser') && !m.roles.includes('purchaser_manager'));
-    const customerService = PRESET_TEAM_MEMBERS.find(m => m.roles.includes('customer_service'));
+  function buildOrgTree(members: TeamMember[]): OrgNode {
+    // 按部门分组
+    const departments: Record<string, TeamMember[]> = {};
+    members.forEach(member => {
+      const dept = member.department || '未分配';
+      if (!departments[dept]) {
+        departments[dept] = [];
+      }
+      departments[dept].push(member);
+    });
 
     const root: OrgNode = {
       id: 'root',
@@ -48,90 +56,58 @@ export function OrganizationChart() {
       title: '组织架构',
       department: '',
       children: [],
-      isExpanded: true
+      isExpanded: true,
+      type: 'root'
     };
 
-    const purchasingDept: OrgNode = {
-      id: 'purchasing',
-      name: '采购部',
-      title: '采购部门',
-      department: '采购部',
-      children: [],
-      isExpanded: true
-    };
-
-    if (purchasingManager) {
-      const managerNode: OrgNode = {
-        id: purchasingManager.id,
-        name: purchasingManager.name,
-        title: purchasingManager.position || '采购负责人',
-        department: purchasingManager.department || '采购部',
-        member: purchasingManager,
+    // 为每个部门创建节点
+    Object.entries(departments).forEach(([deptName, deptMembers]) => {
+      const deptNode: OrgNode = {
+        id: `dept-${deptName}`,
+        name: deptName,
+        title: `${deptName}`,
+        department: deptName,
         children: [],
-        isExpanded: true
+        isExpanded: true,
+        type: 'department'
       };
 
-      purchasers.forEach(purchaser => {
-        managerNode.children.push({
-          id: purchaser.id,
-          name: purchaser.name,
-          title: purchaser.position || '采购专员',
-          department: purchaser.department || '采购部',
-          member: purchaser,
-          children: [],
-          isExpanded: true
-        });
+      // 找出部门负责人（没有上级的成员）
+      const supervisors = deptMembers.filter(m => !m.supervisorId);
+      
+      // 为每个负责人构建下属树
+      supervisors.forEach(supervisor => {
+        const supervisorNode = buildPersonTree(supervisor, deptMembers);
+        deptNode.children.push(supervisorNode);
       });
 
-      purchasingDept.children.push(managerNode);
-    }
-
-    root.children.push(purchasingDept);
-
-    if (customerService) {
-      const serviceDept: OrgNode = {
-        id: 'customer-service',
-        name: '客服部',
-        title: '客服部门',
-        department: '客服部',
-        children: [
-          {
-            id: customerService.id,
-            name: customerService.name,
-            title: customerService.position || '客服',
-            department: customerService.department || '客服部',
-            member: customerService,
-            children: [],
-            isExpanded: true
-          }
-        ],
-        isExpanded: true
-      };
-
-      root.children.push(serviceDept);
-    }
-
-    const financeDept: OrgNode = {
-      id: 'finance',
-      name: '财务部',
-      title: '财务部门',
-      department: '财务部',
-      children: [
-        {
-          id: 'finance-staff',
-          name: '财务人员',
-          title: '财务',
-          department: '财务部',
-          children: [],
-          isExpanded: true
-        }
-      ],
-      isExpanded: true
-    };
-
-    root.children.push(financeDept);
+      root.children.push(deptNode);
+    });
 
     return root;
+  }
+
+  function buildPersonTree(person: TeamMember, allMembers: TeamMember[]): OrgNode {
+    // 找出这个人的直接下属
+    const subordinates = allMembers.filter(m => m.supervisorId === person.id);
+    
+    const node: OrgNode = {
+      id: person.id,
+      name: person.name,
+      title: person.position || '员工',
+      department: person.department || '',
+      member: person,
+      children: [],
+      isExpanded: true,
+      type: 'person'
+    };
+
+    // 递归构建下属树
+    subordinates.forEach(subordinate => {
+      node.children.push(buildPersonTree(subordinate, allMembers));
+    });
+
+    return node;
   }
 
   const toggleExpand = (nodeId: string, node: OrgNode = orgData): OrgNode => {
@@ -161,7 +137,7 @@ export function OrganizationChart() {
   };
 
   const handleRefresh = () => {
-    setOrgData(buildOrgTree());
+    setOrgData(buildOrgTree(PRESET_TEAM_MEMBERS));
     setZoomLevel(1);
   };
 
@@ -172,7 +148,7 @@ export function OrganizationChart() {
           <div>
             <CardTitle className="text-sm font-semibold text-slate-900">组织架构图</CardTitle>
             <CardDescription className="text-xs text-slate-500 mt-1">
-              可视化展示公司组织架构和汇报关系
+              基于上级关系自动构建的组织架构
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -224,9 +200,9 @@ function OrgTreeNode({ node, onToggleExpand, level }: OrgTreeNodeProps) {
       .slice(0, 2);
   };
 
-  const isRoot = level === 0;
-  const isDepartment = !node.member && node.children.length > 0;
-  const isPerson = !!node.member;
+  const isRoot = node.type === 'root';
+  const isDepartment = node.type === 'department';
+  const isPerson = node.type === 'person';
 
   return (
     <div className="flex flex-col items-center">

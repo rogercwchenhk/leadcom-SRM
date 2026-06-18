@@ -172,6 +172,9 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
       .slice(0, 2);
   };
 
+  const supervisor = PRESET_TEAM_MEMBERS.find(m => m.id === member.supervisorId);
+  const subordinates = PRESET_TEAM_MEMBERS.filter(m => m.supervisorId === member.id);
+
   return (
     <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all duration-200">
       <div className="flex items-start gap-4">
@@ -184,7 +187,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-sm font-semibold text-slate-900 truncate">
                   {member.name}
                 </h3>
@@ -205,6 +208,13 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
                 <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
                   <Building className="w-3 h-3" />
                   {member.department}
+                </p>
+              )}
+              {/* 上级信息 */}
+              {supervisor && (
+                <p className="text-xs text-orange-600 mt-0.5 flex items-center gap-1">
+                  <UsersRound className="w-3 h-3" />
+                  上级：{supervisor.name}
                 </p>
               )}
             </div>
@@ -228,6 +238,20 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
               </Badge>
             ))}
           </div>
+
+          {/* 下属信息 */}
+          {subordinates.length > 0 && (
+            <div className="mt-3">
+              <p className="text-[11px] font-medium text-slate-600 mb-1.5">下属：</p>
+              <div className="flex flex-wrap gap-1.5">
+                {subordinates.map(sub => (
+                  <Badge key={sub.id} variant="outline" className="text-[10px] h-5">
+                    {sub.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
