@@ -75,18 +75,18 @@ export function DepartmentList({
           {departmentTree.map(({ dept, level }) => (
             <div 
               key={dept.id} 
-              className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
-              style={{ paddingLeft: `${level * 16 + 8}px` }}
+              className="flex items-start gap-2 p-2 sm:p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
+              style={{ paddingLeft: `${level * 12 + 8}px` }}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
                 {level > 0 && (
-                  <div className="w-3 h-px bg-slate-300" />
+                  <div className="w-3 h-px bg-slate-300 flex-shrink-0" />
                 )}
-                <Building className="w-4 h-4 text-slate-500" />
-                <span className="text-sm font-medium text-slate-900">{dept.name}</span>
+                <Building className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                <span className="text-sm font-medium text-slate-900 truncate">{dept.name}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Badge variant="outline" className="text-[10px] h-5">
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <Badge variant="outline" className="text-[10px] h-5 hidden sm:inline-flex">
                   {getMemberCount(dept.name)} 人
                 </Badge>
                 <Button 

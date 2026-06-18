@@ -41,90 +41,92 @@ function TeamMemberCard({
   };
 
   return (
-    <div className="flex items-start justify-between p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors">
-      <div className="flex items-start gap-4 flex-1">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={member.avatar} />
-          <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
-            {getInitials(member.name)}
-          </AvatarFallback>
-        </Avatar>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-medium text-slate-900">{member.name}</h4>
-            {!member.isActive && (
-              <Badge variant="secondary" className="text-xs">已离职</Badge>
-            )}
-          </div>
-          
-          <div className="flex flex-wrap gap-1 mb-2">
-            {(member.roles || []).map(role => (
-              <Badge 
-                key={role} 
-                className={`text-[10px] ${ROLE_COLORS[role]}`}
-              >
-                {ROLE_LABELS[role]}
-              </Badge>
-            ))}
-          </div>
-          
-          <div className="space-y-1">
-            {member.position && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Briefcase className="w-3 h-3" />
-                <span>{member.position}</span>
-              </div>
-            )}
-            {member.department && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <span className="w-3 h-3 flex items-center justify-center text-slate-400">🏢</span>
-                <span>{member.department}</span>
-              </div>
-            )}
-            {member.email && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Mail className="w-3 h-3" />
-                <span className="truncate">{member.email}</span>
-              </div>
-            )}
-            {member.phone && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Phone className="w-3 h-3" />
-                <span>{member.phone}</span>
-              </div>
-            )}
-            {supervisor && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <span className="w-3 h-3 flex items-center justify-center text-slate-400">👤</span>
-                <span>上级: {supervisor.name}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Calendar className="w-3 h-3" />
-              <span>入职: {member.joinDate.toLocaleDateString('zh-CN')}</span>
+    <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors">
+      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
+        <AvatarImage src={member.avatar} />
+        <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+          {getInitials(member.name)}
+        </AvatarFallback>
+      </Avatar>
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h4 className="font-medium text-slate-900 text-sm">{member.name}</h4>
+              {!member.isActive && (
+                <Badge variant="secondary" className="text-[10px]">已离职</Badge>
+              )}
+            </div>
+            
+            <div className="flex flex-wrap gap-1 mb-2">
+              {(member.roles || []).map(role => (
+                <Badge 
+                  key={role} 
+                  className={`text-[10px] ${ROLE_COLORS[role]}`}
+                >
+                  {ROLE_LABELS[role]}
+                </Badge>
+              ))}
             </div>
           </div>
+          
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 w-7 sm:h-8 sm:w-8 p-0"
+              onClick={() => onEdit(member)}
+            >
+              <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 w-7 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => onDelete(member)}
+            >
+              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <div className="flex items-center gap-1 ml-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0"
-          onClick={() => onEdit(member)}
-        >
-          <Edit className="w-4 h-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-          onClick={() => onDelete(member)}
-        >
-          <Trash2 className="w-4 h-4" />
-        </Button>
+        
+        <div className="space-y-1">
+          {member.position && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <Briefcase className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{member.position}</span>
+            </div>
+          )}
+          {member.department && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <span className="w-3 h-3 flex items-center justify-center text-slate-400 flex-shrink-0">🏢</span>
+              <span className="truncate">{member.department}</span>
+            </div>
+          )}
+          {member.email && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <Mail className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{member.email}</span>
+            </div>
+          )}
+          {member.phone && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <Phone className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{member.phone}</span>
+            </div>
+          )}
+          {supervisor && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <span className="w-3 h-3 flex items-center justify-center text-slate-400 flex-shrink-0">👤</span>
+              <span className="truncate">上级: {supervisor.name}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <Calendar className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">入职: {member.joinDate.toLocaleDateString('zh-CN')}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
