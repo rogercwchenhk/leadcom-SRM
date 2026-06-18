@@ -27,18 +27,18 @@ function initializeDefaultConfigIfNeeded() {
       updatedAt: member.updatedAt.toISOString()
     }));
 
-    // 生成 YAML 内容
-    const deptDoc = { departments: departmentsForYaml };
-    const memberDoc = { teamMembers: teamMembersForYaml };
+    // 生成 YAML 内容 - 使用单文档格式
+    const yamlData = {
+      departments: departmentsForYaml,
+      teamMembers: teamMembersForYaml
+    };
     
     const yamlContent = `# 组织架构配置文件
 # 用途：存储公司组织架构、部门和人员信息
 # 说明：此文件由系统自动管理，也可手动编辑
 # AI 友好格式：清晰的注释、结构化数据、有意义的字段名
 
----
-${yaml.dump(deptDoc, { indent: 2 })}---
-${yaml.dump(memberDoc, { indent: 2 })}`;
+${yaml.dump(yamlData, { indent: 2 })}`;
 
     // 确保目录存在
     const dir = path.dirname(CONFIG_FILE_PATH);
@@ -59,19 +59,16 @@ export async function GET() {
     initializeDefaultConfigIfNeeded();
 
     const fileContent = fs.readFileSync(CONFIG_FILE_PATH, 'utf-8');
-    const data = yaml.loadAll(fileContent);
+    const data = yaml.load(fileContent) as any;
     
     // 解析 YAML 文档
-    let departments: any[] = [];
-    let teamMembers: any[] = [];
-    
-    data.forEach((doc: any) => {
-      if (doc && doc.departments) {
-        departments = doc.departments;
-      }
-      if (doc && doc.teamMembers) {
-        teamMembers = doc.teamMembers;
-      }
+    const departments: any[] = data?.departments || [];
+    const teamMembers: any[] = data?.teamMembers || [];
+
+    console.log('读取到数据:', { 
+      departmentsCount: departments.length, 
+      teamMembersCount: teamMembers.length,
+      departments: departments.map((d: any) => d.name)
     });
 
     // 转换日期字符串为 Date 对象
@@ -106,7 +103,8 @@ export async function PUT(request: NextRequest) {
   try {
     console.log('收到保存请求...');
     const body = await request.json();
-    console.log('请求体:', body);
+    console.log('请求体 - 部门数量:', body.departments?.length, '成员数量:', body.teamMembers?.length);
+    console.log('请求部门:', body.departments?.map((d: any) => d.name));
     
     const { departments, teamMembers } = body;
     
@@ -134,9 +132,11 @@ export async function PUT(request: NextRequest) {
     }));
 
     console.log('生成 YAML 内容...');
-    // 生成 YAML 内容 - 分别生成两个文档
-    const deptDoc = { departments: departmentsForYaml };
-    const memberDoc = { teamMembers: teamMembersForYaml };
+    // 生成 YAML 内容 - 使用单文档格式
+    const yamlData = {
+      departments: departmentsForYaml,
+      teamMembers: teamMembersForYaml
+    };
     
     // 生成完整的 YAML 内容，包含文件头注释
     const yamlContent = `# 组织架构配置文件
@@ -144,9 +144,7 @@ export async function PUT(request: NextRequest) {
 # 说明：此文件由系统自动管理，也可手动编辑
 # AI 友好格式：清晰的注释、结构化数据、有意义的字段名
 
----
-${yaml.dump(deptDoc, { indent: 2 })}---
-${yaml.dump(memberDoc, { indent: 2 })}`;
+${yaml.dump(yamlData, { indent: 2 })}`;
 
     console.log('准备写入文件:', CONFIG_FILE_PATH);
     // 确保目录存在
