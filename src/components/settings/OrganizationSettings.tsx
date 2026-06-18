@@ -101,6 +101,8 @@ export function OrganizationSettings() {
   const saveToAPI = async () => {
     try {
       console.log('正在保存数据到 YAML 文件...');
+      console.log('待保存数据:', { departmentsCount: departments.length, teamMembersCount: teamMembers.length });
+      
       const response = await fetch('/api/organization', {
         method: 'PUT',
         headers: {
@@ -112,7 +114,12 @@ export function OrganizationSettings() {
       if (response.ok) {
         console.log('数据保存到 YAML 文件成功');
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { error: '未知错误' };
+        }
         console.error('保存数据失败:', errorData);
       }
     } catch (error) {
@@ -120,23 +127,8 @@ export function OrganizationSettings() {
     }
   };
 
-  // 使用防抖保存，避免频繁写入文件
-  const debouncedSave = React.useMemo(() => {
-    let timeoutId: NodeJS.Timeout;
-    return () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        saveToAPI();
-      }, 1000); // 1秒防抖
-    };
-  }, [departments, teamMembers]);
-
-  // 当数据变化时，延迟保存
-  useEffect(() => {
-    if (!isLoading && (departments.length > 0 || teamMembers.length > 0)) {
-      debouncedSave();
-    }
-  }, [departments, teamMembers, isLoading, debouncedSave]);
+  // 暂时禁用自动保存，只使用手动保存以确保稳定性
+  // 当用户点击"保存"按钮时才会保存数据
 
   // 导出 YAML 功能
   const handleExportYAML = async () => {

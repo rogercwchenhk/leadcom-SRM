@@ -104,22 +104,36 @@ export async function GET() {
 // 保存组织架构配置
 export async function PUT(request: NextRequest) {
   try {
-    const { departments, teamMembers }: { departments: Department[]; teamMembers: TeamMember[] } = await request.json();
+    console.log('收到保存请求...');
+    const body = await request.json();
+    console.log('请求体:', body);
+    
+    const { departments, teamMembers } = body;
+    
+    if (!departments || !teamMembers) {
+      console.error('缺少必要数据:', { departments: !!departments, teamMembers: !!teamMembers });
+      return NextResponse.json(
+        { error: '缺少必要数据' },
+        { status: 400 }
+      );
+    }
 
+    console.log('准备转换数据...');
     // 转换 Date 对象为字符串
     const departmentsForYaml = departments.map((dept: Department) => ({
       ...dept,
-      createdAt: dept.createdAt.toISOString(),
-      updatedAt: dept.updatedAt.toISOString()
+      createdAt: dept.createdAt instanceof Date ? dept.createdAt.toISOString() : dept.createdAt,
+      updatedAt: dept.updatedAt instanceof Date ? dept.updatedAt.toISOString() : dept.updatedAt
     }));
 
     const teamMembersForYaml = teamMembers.map((member: TeamMember) => ({
       ...member,
-      joinDate: member.joinDate.toISOString(),
-      createdAt: member.createdAt.toISOString(),
-      updatedAt: member.updatedAt.toISOString()
+      joinDate: member.joinDate instanceof Date ? member.joinDate.toISOString() : member.joinDate,
+      createdAt: member.createdAt instanceof Date ? member.createdAt.toISOString() : member.createdAt,
+      updatedAt: member.updatedAt instanceof Date ? member.updatedAt.toISOString() : member.updatedAt
     }));
 
+    console.log('生成 YAML 内容...');
     // 生成 YAML 内容 - 分别生成两个文档
     const deptDoc = { departments: departmentsForYaml };
     const memberDoc = { teamMembers: teamMembersForYaml };
@@ -134,20 +148,24 @@ export async function PUT(request: NextRequest) {
 ${yaml.dump(deptDoc, { indent: 2 })}---
 ${yaml.dump(memberDoc, { indent: 2 })}`;
 
+    console.log('准备写入文件:', CONFIG_FILE_PATH);
     // 确保目录存在
     const dir = path.dirname(CONFIG_FILE_PATH);
     if (!fs.existsSync(dir)) {
+      console.log('创建目录:', dir);
       fs.mkdirSync(dir, { recursive: true });
     }
 
     // 写入文件
     fs.writeFileSync(CONFIG_FILE_PATH, yamlContent, 'utf-8');
+    console.log('文件写入成功');
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('保存配置文件失败:', error);
+    console.error('错误详情:', JSON.stringify(error, null, 2));
     return NextResponse.json(
-      { error: '保存配置文件失败' },
+      { error: '保存配置文件失败', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
