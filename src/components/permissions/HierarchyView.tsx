@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -176,7 +176,11 @@ export function HierarchyView() {
         {/* 子组 */}
         {hasChildren && isExpanded && (
           <div className="mt-3">
-            {group.children.map((child: any) => renderGroupNode(child, level + 1))}
+            {group.children.map((child: any) => (
+              <React.Fragment key={child.id}>
+                {renderGroupNode(child, level + 1)}
+              </React.Fragment>
+            ))}
           </div>
         )}
       </div>
@@ -259,7 +263,11 @@ export function HierarchyView() {
                 <p>暂无用户组</p>
               </div>
             ) : (
-              groupTree.map((group) => renderGroupNode(group))
+              groupTree.map((group) => (
+                <React.Fragment key={group.id}>
+                  {renderGroupNode(group)}
+                </React.Fragment>
+              ))
             )}
           </div>
         </CardContent>
