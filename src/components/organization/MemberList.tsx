@@ -75,18 +75,18 @@ function TeamMemberCard({
             <Button 
               variant="ghost" 
               size="sm" 
-              className="h-7 w-7 sm:h-8 sm:w-8 p-0"
+              className="h-6 w-6 sm:h-7 sm:w-7 p-0"
               onClick={() => onEdit(member)}
             >
-              <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Edit className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="h-7 w-7 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="h-6 w-6 sm:h-7 sm:w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
               onClick={() => onDelete(member)}
             >
-              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </Button>
           </div>
         </div>
@@ -147,8 +147,8 @@ export function MemberList({
               管理公司组织架构和人员信息
             </CardDescription>
           </div>
-          <Button size="sm" className="h-8 gap-1" onClick={onAddMember}>
-            <Plus className="w-3.5 h-3.5" />
+          <Button size="sm" className="h-7 gap-1 text-xs" onClick={onAddMember}>
+            <Plus className="w-3 h-3" />
             添加成员
           </Button>
         </div>

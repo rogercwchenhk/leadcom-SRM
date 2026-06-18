@@ -64,8 +64,8 @@ export function DepartmentList({
               组织架构中的可用部门
             </CardDescription>
           </div>
-          <Button size="sm" className="h-8 gap-1" onClick={onAddDepartment}>
-            <Plus className="w-3.5 h-3.5" />
+          <Button size="sm" className="h-7 gap-1 text-xs" onClick={onAddDepartment}>
+            <Plus className="w-3 h-3" />
             添加
           </Button>
         </div>
@@ -92,18 +92,18 @@ export function DepartmentList({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-7 w-7 p-0"
+                  className="h-6 w-6 p-0"
                   onClick={() => onEditDepartment(dept.id)}
                 >
-                  <Edit className="w-3.5 h-3.5" />
+                  <Edit className="w-3 h-3" />
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                   onClick={() => onDeleteDepartment(dept.id)}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
             </div>
