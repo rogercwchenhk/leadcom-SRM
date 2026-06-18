@@ -39,7 +39,9 @@ teamMembers:
     joinDate: '2020-01-15T00:00:00.000Z'
     isActive: true
     createdAt: '2020-01-15T00:00:00.000Z'
-    updatedAt: '2020-01-15T00:00:00.000Z'
+    updatedAt: '2026-06-18T07:24:56.985Z'
+    supervisorId: member-2
+    avatar: ''
   - id: member-2
     name: 钟丽莉
     email: linxiao@company.com

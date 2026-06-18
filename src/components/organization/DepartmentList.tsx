@@ -83,7 +83,7 @@ export function DepartmentList({
                   <div className="w-3 h-px bg-slate-300 flex-shrink-0" />
                 )}
                 <Building className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                <span className="text-sm font-medium text-slate-900 truncate">{dept.name}</span>
+                <span className={`font-medium text-slate-900 truncate ${level === 0 ? 'text-xs' : 'text-[11px]'}`}>{dept.name}</span>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <Badge variant="outline" className="text-[10px] h-5 hidden sm:inline-flex">
