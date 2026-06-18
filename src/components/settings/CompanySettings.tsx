@@ -8,17 +8,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 
-interface CompanyInfo {
-  name: string;
-  logo: string;
-  website: string;
+interface CompanySettingsData {
+  companyName: string;
+  companyLogo: string;
+  address: string;
   phone: string;
   email: string;
-  address: string;
-  description: string;
+  website: string;
   taxId: string;
   businessLicense: string;
 }
@@ -26,35 +24,32 @@ interface CompanyInfo {
 export function CompanySettings() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
-    name: '',
-    logo: '',
-    website: '',
+  const [companySettings, setCompanySettings] = useState<CompanySettingsData>({
+    companyName: '',
+    companyLogo: '',
+    address: '',
     phone: '',
     email: '',
-    address: '',
-    description: '',
+    website: '',
     taxId: '',
     businessLicense: '',
   });
 
   useEffect(() => {
-    loadCompanyInfo();
+    loadCompanySettings();
   }, []);
 
-  async function loadCompanyInfo() {
+  async function loadCompanySettings() {
     setLoading(true);
     try {
-      // 从API加载数据
-      const response = await fetch('/api/settings?section=company');
-      if (response.ok) {
-        const data = await response.json();
-        setCompanyInfo(data);
-      } else {
-        console.error('加载公司信息失败:', response.status);
+      const response = await fetch('/api/settings/company');
+      const result = await response.json();
+      if (result.success) {
+        setCompanySettings(result.data);
       }
     } catch (error) {
-      console.error('加载公司信息失败:', error);
+      console.error('Failed to load company settings:', error);
+      toast.error('加载公司信息失败');
     } finally {
       setLoading(false);
     }
@@ -63,23 +58,24 @@ export function CompanySettings() {
   async function handleSave() {
     setSaving(true);
     try {
-      // 保存到API
-      const response = await fetch('/api/settings', {
+      const response = await fetch('/api/settings/company', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ section: 'company', data: companyInfo }),
+        body: JSON.stringify(companySettings),
       });
       
-      if (response.ok) {
-        alert('保存成功！');
+      const result = await response.json();
+      
+      if (result.success) {
+        toast.success('公司信息已保存');
       } else {
-        alert('保存失败');
+        toast.error(result.error || '保存失败');
       }
     } catch (error) {
-      console.error('保存失败:', error);
-      alert('保存失败');
+      console.error('Failed to save company settings:', error);
+      toast.error('保存失败');
     } finally {
       setSaving(false);
     }
@@ -111,9 +107,9 @@ export function CompanySettings() {
             {/* Logo 上传 */}
             <div className="flex flex-col items-center gap-4">
               <Avatar className="h-24 w-24 rounded-xl border-2 border-dashed border-slate-200">
-                <AvatarImage src={companyInfo.logo} />
+                <AvatarImage src={companySettings.companyLogo} />
                 <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-2xl">
-                  {companyInfo.name ? companyInfo.name.substring(0, 2) : '公'}
+                  {companySettings.companyName ? companySettings.companyName.substring(0, 2) : '公'}
                 </AvatarFallback>
               </Avatar>
               <Button variant="secondary" size="sm" className="gap-2">
@@ -128,8 +124,8 @@ export function CompanySettings() {
                 <Label htmlFor="company-name">公司名称 *</Label>
                 <Input
                   id="company-name"
-                  value={companyInfo.name}
-                  onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })}
+                  value={companySettings.companyName}
+                  onChange={(e) => setCompanySettings({ ...companySettings, companyName: e.target.value })}
                   placeholder="请输入公司全称"
                 />
               </div>
@@ -137,8 +133,8 @@ export function CompanySettings() {
                 <Label htmlFor="tax-id">统一社会信用代码</Label>
                 <Input
                   id="tax-id"
-                  value={companyInfo.taxId}
-                  onChange={(e) => setCompanyInfo({ ...companyInfo, taxId: e.target.value })}
+                  value={companySettings.taxId}
+                  onChange={(e) => setCompanySettings({ ...companySettings, taxId: e.target.value })}
                   placeholder="请输入统一社会信用代码"
                 />
               </div>
@@ -167,8 +163,8 @@ export function CompanySettings() {
               </Label>
               <Input
                 id="website"
-                value={companyInfo.website}
-                onChange={(e) => setCompanyInfo({ ...companyInfo, website: e.target.value })}
+                value={companySettings.website}
+                onChange={(e) => setCompanySettings({ ...companySettings, website: e.target.value })}
                 placeholder="https://example.com"
               />
             </div>
@@ -179,8 +175,8 @@ export function CompanySettings() {
               </Label>
               <Input
                 id="phone"
-                value={companyInfo.phone}
-                onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })}
+                value={companySettings.phone}
+                onChange={(e) => setCompanySettings({ ...companySettings, phone: e.target.value })}
                 placeholder="400-123-4567"
               />
             </div>
@@ -192,8 +188,8 @@ export function CompanySettings() {
               <Input
                 id="email"
                 type="email"
-                value={companyInfo.email}
-                onChange={(e) => setCompanyInfo({ ...companyInfo, email: e.target.value })}
+                value={companySettings.email}
+                onChange={(e) => setCompanySettings({ ...companySettings, email: e.target.value })}
                 placeholder="contact@example.com"
               />
             </div>
@@ -204,30 +200,12 @@ export function CompanySettings() {
               </Label>
               <Input
                 id="address"
-                value={companyInfo.address}
-                onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })}
+                value={companySettings.address}
+                onChange={(e) => setCompanySettings({ ...companySettings, address: e.target.value })}
                 placeholder="请输入公司地址"
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* 公司简介 */}
-      <Card className="border-slate-200">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold text-slate-900">公司简介</CardTitle>
-          <CardDescription className="text-xs text-slate-500">
-            简要描述公司的业务范围和核心价值
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={companyInfo.description}
-            onChange={(e) => setCompanyInfo({ ...companyInfo, description: e.target.value })}
-            placeholder="请输入公司简介..."
-            className="min-h-[120px] resize-none"
-          />
         </CardContent>
       </Card>
 
