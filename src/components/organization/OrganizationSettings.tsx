@@ -1,19 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Layout, Users, RefreshCw, Save, Download } from 'lucide-react';
+import { Users, RefreshCw, Save, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useOrganization } from '@/hooks/useSettings';
 import { DepartmentList } from './DepartmentList';
 import { MemberList } from './MemberList';
 import { DepartmentDialog } from './DepartmentDialog';
 import { MemberDialog } from './MemberDialog';
-import { OrganizationChart } from '@/components/settings/OrganizationChart';
 import { toast } from 'sonner';
 
 export function OrganizationSettings() {
-  const [activeTab, setActiveTab] = useState('chart');
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [isMemberDialogOpen, setIsMemberDialogOpen] = useState(false);
   const [editingDepartment, setEditingDepartment] = useState<any>(null);
@@ -175,7 +172,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
   return (
     <div className="space-y-6">
       {/* 数据管理工具栏 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
           <p className="text-sm text-slate-500">
@@ -187,7 +184,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button 
             variant="ghost" 
             size="sm" 
@@ -196,7 +193,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
             disabled={isLoading}
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            刷新
+            <span className="hidden sm:inline">刷新</span>
           </Button>
           <Button 
             size="sm" 
@@ -205,7 +202,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
             disabled={isLoading || isSaving}
           >
             <Save className="w-4 h-4" />
-            {isSaving ? '保存中...' : '保存'}
+            <span className="hidden sm:inline">{isSaving ? '保存中...' : '保存'}</span>
           </Button>
           <Button 
             variant="outline" 
@@ -215,7 +212,7 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
             disabled={isLoading}
           >
             <Download className="w-4 h-4" />
-            导出 YAML
+            <span className="hidden sm:inline">导出 YAML</span>
           </Button>
         </div>
       </div>
@@ -230,62 +227,27 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
         </div>
       )}
 
-      {/* 主要内容 */}
+      {/* 主要内容 - 只显示详细列表 */}
       {!isLoading && (
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 w-[400px]">
-            <TabsTrigger value="chart" className="gap-2">
-              <Layout className="h-4 w-4" />
-              组织架构图
-            </TabsTrigger>
-            <TabsTrigger value="list" className="gap-2">
-              <Users className="h-4 w-4" />
-              详细列表
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="chart" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <div className="lg:col-span-3">
-                <OrganizationChart 
-                  members={teamMembers} 
-                  departments={departments} 
-                />
-              </div>
-              <div className="space-y-6">
-                <DepartmentList
-                  departments={departments}
-                  teamMembers={teamMembers}
-                  onAddDepartment={handleAddDepartment}
-                  onEditDepartment={handleEditDepartment}
-                  onDeleteDepartment={handleDeleteDepartment}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="list" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                <MemberList
-                  teamMembers={teamMembers}
-                  onAddMember={handleAddMember}
-                  onEditMember={handleEditMember}
-                  onDeleteMember={handleDeleteMember}
-                />
-              </div>
-              <div className="space-y-6">
-                <DepartmentList
-                  departments={departments}
-                  teamMembers={teamMembers}
-                  onAddDepartment={handleAddDepartment}
-                  onEditDepartment={handleEditDepartment}
-                  onDeleteDepartment={handleDeleteDepartment}
-                />
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <MemberList
+              teamMembers={teamMembers}
+              onAddMember={handleAddMember}
+              onEditMember={handleEditMember}
+              onDeleteMember={handleDeleteMember}
+            />
+          </div>
+          <div className="space-y-4 sm:space-y-6">
+            <DepartmentList
+              departments={departments}
+              teamMembers={teamMembers}
+              onAddDepartment={handleAddDepartment}
+              onEditDepartment={handleEditDepartment}
+              onDeleteDepartment={handleDeleteDepartment}
+            />
+          </div>
+        </div>
       )}
 
       {/* 对话框 */}
