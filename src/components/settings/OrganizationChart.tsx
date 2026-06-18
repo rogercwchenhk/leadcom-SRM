@@ -39,17 +39,11 @@ interface OrgNode {
 
 interface OrganizationChartProps {
   members: TeamMember[];
+  departments: Department[];
 }
 
-export function OrganizationChart({ members }: OrganizationChartProps) {
+export function OrganizationChart({ members, departments }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [departments] = useState<Department[]>(() => 
-    PRESET_DEPARTMENTS.map(dept => ({
-      ...dept,
-      createdAt: new Date(dept.createdAt),
-      updatedAt: new Date(dept.updatedAt)
-    }))
-  );
   
   // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
   const orgData = React.useMemo(() => {

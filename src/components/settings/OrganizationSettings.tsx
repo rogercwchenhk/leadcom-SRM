@@ -64,8 +64,8 @@ export function OrganizationSettings() {
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   
-  // 使用 useMemo 确保初始数据只被初始化一次
-  const initialMembers = React.useMemo(() => {
+  // 使用 useState 函数式初始化，确保只在第一次渲染时初始化一次
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
     // 深拷贝预设数据，避免修改原始数据
     return PRESET_TEAM_MEMBERS.map(member => ({
       ...member,
@@ -73,19 +73,16 @@ export function OrganizationSettings() {
       createdAt: new Date(member.createdAt),
       updatedAt: new Date(member.updatedAt)
     }));
-  }, []);
+  });
   
-  const initialDepartments = React.useMemo(() => {
+  const [departments, setDepartments] = useState<Department[]>(() => {
     // 深拷贝预设部门数据
     return PRESET_DEPARTMENTS.map(dept => ({
       ...dept,
       createdAt: new Date(dept.createdAt),
       updatedAt: new Date(dept.updatedAt)
     }));
-  }, []);
-  
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialMembers);
-  const [departments, setDepartments] = useState<Department[]>(initialDepartments);
+  });
   
   // 从现有成员中提取所有部门（包括预设部门和成员中使用的部门）
   const availableDepartments = React.useMemo(() => {
@@ -337,7 +334,7 @@ export function OrganizationSettings() {
         <TabsContent value="chart" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
-              <OrganizationChart members={teamMembers} />
+              <OrganizationChart members={teamMembers} departments={departments} />
             </div>
             <div className="space-y-6">
               {/* Departments Card */}
