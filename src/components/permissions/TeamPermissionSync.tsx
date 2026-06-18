@@ -424,7 +424,7 @@ export function TeamPermissionSync() {
                 <UsersRound className="w-3.5 h-3.5 text-slate-500" />
                 <span className="text-[11px] text-slate-600">团队成员</span>
               </div>
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-slate-900">
                 {PRESET_TEAM_MEMBERS.length}
               </p>
             </div>
@@ -433,7 +433,7 @@ export function TeamPermissionSync() {
                 <Shield className="w-3.5 h-3.5 text-slate-500" />
                 <span className="text-[11px] text-slate-600">角色类型</span>
               </div>
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-slate-900">
                 {new Set(PRESET_TEAM_MEMBERS.flatMap(m => m.roles)).size}
               </p>
             </div>
@@ -442,7 +442,7 @@ export function TeamPermissionSync() {
                 <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />
                 <span className="text-[11px] text-slate-600">权限总数</span>
               </div>
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-slate-900">
                 {PERMISSION_GROUPS.reduce((sum, g) => sum + g.permissions.length, 0)}
               </p>
             </div>

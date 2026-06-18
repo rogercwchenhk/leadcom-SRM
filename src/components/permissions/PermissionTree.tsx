@@ -265,7 +265,7 @@ export function PermissionTree() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="text-base">选择分配目标</CardTitle>
+              <CardTitle className="text-sm">选择分配目标</CardTitle>
               <CardDescription>为用户或用户组分配权限</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -368,7 +368,7 @@ export function PermissionTree() {
           {targetType === 'user' && userPermissions.length > 0 && (
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-base">权限来源说明</CardTitle>
+                <CardTitle className="text-sm">权限来源说明</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
@@ -390,7 +390,7 @@ export function PermissionTree() {
         <div className="lg:col-span-2">
           <Card className="h-full">
             <CardHeader className="pb-4">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Shield className="h-4 w-4 text-orange-600" />
                 权限列表
               </CardTitle>

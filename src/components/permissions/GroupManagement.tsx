@@ -189,7 +189,7 @@ export function GroupManagement() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">用户组列表</h3>
+        <h3 className="text-sm font-medium">用户组列表</h3>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2">

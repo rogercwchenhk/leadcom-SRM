@@ -121,7 +121,7 @@ export function HierarchyView() {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-slate-900 truncate">{group.name}</h4>
+              <h4 className="text-sm font-semibold text-slate-900 truncate">{group.name}</h4>
               {group.parentGroupId && (
                 <Badge variant="outline" className="text-xs shrink-0">
                   子组
@@ -209,7 +209,7 @@ export function HierarchyView() {
           <CardContent>
             <div className="flex items-center gap-2">
               <UsersRound className="h-5 w-5 text-orange-600" />
-              <span className="text-2xl font-bold text-slate-900">{totalGroups}</span>
+              <span className="text-sm font-bold text-slate-900">{totalGroups}</span>
             </div>
           </CardContent>
         </Card>
@@ -245,7 +245,7 @@ export function HierarchyView() {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <UsersRound className="h-5 w-5 text-orange-600" />
                 组织架构视图
               </CardTitle>
