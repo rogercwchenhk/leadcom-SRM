@@ -25,10 +25,12 @@ import { Button } from '@/components/ui/button';
 import { 
   PRESET_TEAM_MEMBERS, 
   PRESET_POSITIONS, 
+  PRESET_DEPARTMENTS,
   ROLE_LABELS, 
   ROLE_COLORS,
   type TeamMember,
-  type Position
+  type Position,
+  type Department
 } from '@/types';
 import { OrganizationChart } from './OrganizationChart';
 import {
@@ -70,7 +72,29 @@ export function OrganizationSettings() {
     }));
   }, []);
   
+  const initialDepartments = React.useMemo(() => {
+    // 深拷贝预设部门数据
+    return PRESET_DEPARTMENTS.map(dept => ({
+      ...dept,
+      createdAt: new Date(dept.createdAt),
+      updatedAt: new Date(dept.updatedAt)
+    }));
+  }, []);
+  
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialMembers);
+  const [departments, setDepartments] = useState<Department[]>(initialDepartments);
+  
+  // 从现有成员中提取所有部门（包括预设部门和成员中使用的部门）
+  const availableDepartments = React.useMemo(() => {
+    const deptSet = new Set<string>();
+    departments.forEach(dept => deptSet.add(dept.name));
+    teamMembers.forEach(member => {
+      if (member.department) {
+        deptSet.add(member.department);
+      }
+    });
+    return Array.from(deptSet).sort();
+  }, [departments, teamMembers]);
 
   const handleEditMember = (member: TeamMember) => {
     setEditingMember({ ...member });
@@ -184,6 +208,43 @@ export function OrganizationSettings() {
 
             {/* Right Column - Positions & Departments */}
             <div className="space-y-6">
+              {/* Departments Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-sm font-semibold text-slate-900">部门管理</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-1">
+                        组织架构中的可用部门
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-2">
+                    {availableDepartments.map((dept) => (
+                      <div 
+                        key={dept} 
+                        className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Building className="w-4 h-4 text-slate-500" />
+                          <span className="text-sm font-medium text-slate-900">{dept}</span>
+                        </div>
+                        <Badge variant="outline" className="text-[10px] h-5">
+                          {teamMembers.filter(m => m.department === dept).length} 人
+                        </Badge>
+                      </div>
+                    ))}
+                    {availableDepartments.length === 0 && (
+                      <p className="text-sm text-slate-500 text-center py-4">
+                        暂无部门，请先在组织架构图中添加
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Positions Card */}
               <Card className="border-slate-200 shadow-sm">
                 <CardHeader className="pb-1 pt-2 px-4">
@@ -285,11 +346,26 @@ export function OrganizationSettings() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="department">部门</Label>
-                  <Input
-                    id="department"
+                  <Select
                     value={editingMember.department || ''}
-                    onChange={(e) => setEditingMember(prev => prev ? { ...prev, department: e.target.value } : null)}
-                  />
+                    onValueChange={(value) => setEditingMember(prev => 
+                      prev ? { ...prev, department: value } : null
+                    )}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择部门" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableDepartments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-slate-500">
+                    部门需在组织架构中先创建，或从已有成员的部门中选择
+                  </p>
                 </div>
               </div>
               

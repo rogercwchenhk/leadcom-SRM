@@ -76,6 +76,15 @@ export interface Position {
   responsibilities: string[];
 }
 
+// 部门
+export interface Department {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // 团队成员
 export interface TeamMember {
   id: string;
@@ -478,6 +487,31 @@ export const PRESET_POSITIONS: Position[] = [
       '预算管理',
       '发票处理'
     ]
+  }
+];
+
+// 预设部门
+export const PRESET_DEPARTMENTS: Department[] = [
+  {
+    id: 'dept-purchase',
+    name: '采购部',
+    description: '负责采购相关工作',
+    createdAt: new Date('2022-01-01'),
+    updatedAt: new Date('2022-01-01')
+  },
+  {
+    id: 'dept-customer-service',
+    name: '客服部',
+    description: '负责客服相关工作',
+    createdAt: new Date('2022-01-01'),
+    updatedAt: new Date('2022-01-01')
+  },
+  {
+    id: 'dept-finance',
+    name: '财务部',
+    description: '负责财务相关工作',
+    createdAt: new Date('2022-01-01'),
+    updatedAt: new Date('2022-01-01')
   }
 ];
 
