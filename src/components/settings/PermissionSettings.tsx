@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { UserManagement } from '@/components/permissions/UserManagement';
 import { GroupManagement } from '@/components/permissions/GroupManagement';
 import { PermissionTree } from '@/components/permissions/PermissionTree';
-import { HierarchyView } from '@/components/permissions/HierarchyView';
+
 import { TeamPermissionSync } from '@/components/permissions/TeamPermissionSync';
 
 export function PermissionSettings() {
@@ -25,14 +25,14 @@ export function PermissionSettings() {
         <CardHeader className="pb-4">
           <CardTitle className="text-sm font-semibold text-slate-900">权限管理控制台</CardTitle>
           <CardDescription className="text-xs text-slate-500">
-            管理系统用户、用户组、权限分配和层级关系
+            管理系统用户、用户组和权限分配
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             {/* 移动端使用可滚动标签，桌面端使用网格 */}
             <div className="mb-6 overflow-x-auto -mx-2 sm:mx-0 pb-2">
-              <TabsList className="grid-cols-2 sm:grid-cols-4 w-full min-w-max sm:w-auto">
+              <TabsList className="grid-cols-2 sm:grid-cols-3 w-full min-w-max sm:w-auto">
                 <TabsTrigger value="users" className="gap-1 sm:gap-2 text-xs sm:text-sm">
                   <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">用户管理</span>
@@ -48,11 +48,6 @@ export function PermissionSettings() {
                   <span className="hidden sm:inline">权限分配</span>
                   <span className="sm:hidden">权限</span>
                 </TabsTrigger>
-                <TabsTrigger value="hierarchy" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <UsersRound className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">层级关系</span>
-                  <span className="sm:hidden">层级</span>
-                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -66,10 +61,6 @@ export function PermissionSettings() {
 
             <TabsContent value="permissions">
               <PermissionTree />
-            </TabsContent>
-
-            <TabsContent value="hierarchy">
-              <HierarchyView />
             </TabsContent>
           </Tabs>
         </CardContent>
