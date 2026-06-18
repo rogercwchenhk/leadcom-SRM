@@ -264,7 +264,7 @@ export function PermissionTree() {
     <div className="space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
         {/* 左侧：选择目标 */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Card>
             <CardHeader className="pb-2 pt-3 px-3">
               <CardTitle className="text-xs">选择分配目标</CardTitle>
