@@ -212,6 +212,7 @@ export function PermissionTree() {
             id={`perm-${perm.id}`}
             checked={selectedPermissionIds.includes(perm.id)}
             onCheckedChange={(checked) => togglePermission(perm.id, !!checked)}
+            disabled={!selectedTargetId}
           />
           
           <div className="flex-1">
@@ -331,35 +332,17 @@ export function PermissionTree() {
                 <>
                   <Separator />
                   
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
-                      <span className="text-slate-500">已选权限：</span>
-                      <span className="font-medium text-orange-600">
-                        {selectedCount}/{totalCount}
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" onClick={selectAll}>
-                        全选
-                      </Button>
-                      <Button variant="secondary" size="sm" onClick={clearAll}>
-                        清空
-                      </Button>
-                    </div>
+                  <div className="text-xs text-slate-500">
+                    <span className="font-medium text-slate-700">
+                      {targetType === 'group'
+                        ? groups.find(g => g.id.toString() === selectedTargetId)?.name
+                        : `${users.find(u => u.id.toString() === selectedTargetId)?.username}`
+                      }
+                    </span>
+                    <span className="ml-1">
+                      · 已分配 {selectedCount} 个权限
+                    </span>
                   </div>
-
-                  <Button 
-                    className="w-full gap-2" 
-                    onClick={handleSave}
-                    disabled={saving}
-                  >
-                    {saving ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4" />
-                    )}
-                    保存权限
-                  </Button>
                 </>
               )}
             </CardContent>
@@ -400,13 +383,76 @@ export function PermissionTree() {
             </CardHeader>
             <CardContent>
               {!selectedTargetId ? (
-                <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-                  <Shield className="h-12 w-12 mb-4 opacity-20" />
-                  <p>请先选择一个{targetType === 'group' ? '用户组' : '用户'}</p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                    <Shield className="h-4 w-4 text-slate-400 shrink-0" />
+                    <p className="text-xs text-slate-500">
+                      请在左侧选择用户或用户组后，勾选下方权限进行分配
+                    </p>
+                  </div>
+                  <div className="border rounded-lg p-4 max-h-[600px] overflow-y-auto">
+                    {permissionTree.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                        <Shield className="h-10 w-10 mb-3 opacity-20" />
+                        <p className="text-sm">暂无权限数据</p>
+                      </div>
+                    ) : (
+                      permissionTree.map((perm) => renderPermissionNode(perm))
+                    )}
+                  </div>
                 </div>
               ) : (
-                <div className="border rounded-lg p-4 max-h-[600px] overflow-y-auto">
-                  {permissionTree.map((perm) => renderPermissionNode(perm))}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {targetType === 'group' ? '用户组' : '用户'}
+                      </Badge>
+                      <span className="text-sm font-medium text-slate-700">
+                        {targetType === 'group'
+                          ? groups.find(g => g.id.toString() === selectedTargetId)?.name
+                          : users.find(u => u.id.toString() === selectedTargetId)?.username
+                        }
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-slate-500">
+                        已选 <span className="font-medium text-orange-600">{selectedCount}</span>/{totalCount}
+                      </span>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" className="text-xs h-7" onClick={selectAll}>
+                          全选
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-xs h-7" onClick={clearAll}>
+                          清空
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border rounded-lg p-4 max-h-[600px] overflow-y-auto">
+                    {permissionTree.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                        <Shield className="h-10 w-10 mb-3 opacity-20" />
+                        <p className="text-sm">暂无权限数据</p>
+                      </div>
+                    ) : (
+                      permissionTree.map((perm) => renderPermissionNode(perm))
+                    )}
+                  </div>
+                  <div className="flex justify-end">
+                    <Button 
+                      className="gap-2" 
+                      onClick={handleSave}
+                      disabled={saving}
+                    >
+                      {saving ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4" />
+                      )}
+                      保存权限
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
