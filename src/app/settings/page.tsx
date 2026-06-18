@@ -17,7 +17,7 @@ import { CompanySettings } from '@/components/settings/CompanySettings';
 import { ApprovalSettings } from '@/components/settings/ApprovalSettings';
 import { AISettings } from '@/components/settings/AISettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
-import { OrganizationSettings } from '@/components/settings/OrganizationSettings';
+import { OrganizationSettings } from '@/components/organization/OrganizationSettings';
 import { PermissionSettings } from '@/components/settings/PermissionSettings';
 
 export default function SettingsPage() {

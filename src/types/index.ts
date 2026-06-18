@@ -1,5 +1,96 @@
 // 核心类型定义
 
+// ========== 系统设置相关类型 ==========
+
+// 公司信息设置
+export interface CompanySettings {
+  name: string;
+  logo: string;
+  website: string;
+  phone: string;
+  email: string;
+  address: string;
+  description: string;
+  taxId: string;
+  businessLicense: string;
+}
+
+// AI 配置设置
+export interface AISettings {
+  enabled: boolean;
+  apiEndpoint: string;
+  apiKey: string;
+  model: string;
+  temperature: number;
+  maxTokens: number;
+  systemPrompt: string;
+  autoInquiry: boolean;
+  autoDecision: boolean;
+}
+
+// 通知设置 - 单通道配置
+export interface NotificationChannelConfig {
+  enabled: boolean;
+  address?: string;
+  contractUpload: boolean;
+  approvalRequired: boolean;
+  approvalCompleted: boolean;
+  poCreated: boolean;
+  supplierResponse: boolean;
+  systemAlert: boolean;
+}
+
+// 完整通知设置
+export interface NotificationSettings {
+  email: NotificationChannelConfig;
+  inApp: NotificationChannelConfig;
+  push: NotificationChannelConfig;
+}
+
+// 审批人
+export interface Approver {
+  id: string;
+  type: 'user' | 'group' | 'role';
+  name: string;
+  avatar?: string;
+  role?: string;
+}
+
+// 审批阶段
+export type ApprovalType = 'all' | 'any'; // 会签：all，或签：any
+
+export interface ApprovalStage {
+  id: string;
+  name: string;
+  type: ApprovalType;
+  approvers: Approver[];
+}
+
+// 审批规则
+export interface ApprovalRule {
+  id: number;
+  name: string;
+  minAmount: number;
+  maxAmount: number | null; // null 表示无上限
+  currency: string;
+  stages: ApprovalStage[];
+  enabled: boolean;
+  description: string;
+}
+
+// 审批设置
+export interface ApprovalSettings {
+  rules: ApprovalRule[];
+}
+
+// 完整系统设置
+export interface SystemSettings {
+  company: CompanySettings;
+  ai: AISettings;
+  notification: NotificationSettings;
+  approval: ApprovalSettings;
+}
+
 // ========== 权限管理相关类型 ==========
 
 export interface UserGroupRelation {
