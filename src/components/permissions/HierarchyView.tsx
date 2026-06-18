@@ -221,7 +221,7 @@ export function HierarchyView() {
           <CardContent>
             <div className="flex items-center gap-2">
               <User className="h-5 w-5 text-orange-600" />
-              <span className="text-2xl font-bold text-slate-900">{totalUsers}</span>
+              <span className="text-sm font-bold text-slate-900">{totalUsers}</span>
             </div>
           </CardContent>
         </Card>
@@ -233,7 +233,7 @@ export function HierarchyView() {
           <CardContent>
             <div className="flex items-center gap-2">
               <ChevronDown className="h-5 w-5 text-orange-600" />
-              <span className="text-2xl font-bold text-slate-900">
+              <span className="text-sm font-bold text-slate-900">
                 {calculateMaxDepth(groups)}
               </span>
             </div>

@@ -199,7 +199,7 @@ export function GroupManagement() {
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>新建用户组</DialogTitle>
+              <DialogTitle className="text-sm">新建用户组</DialogTitle>
               <DialogDescription>创建一个新的用户组</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">

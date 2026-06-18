@@ -17,7 +17,7 @@ export default function SettingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {/* Header */}
           <div className="mb-4 sm:mb-6">
-            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">系统设置</h1>
+            <h1 className="text-sm font-semibold text-slate-900 tracking-tight">系统设置</h1>
             <p className="text-sm text-slate-500 mt-1">管理组织架构和权限配置</p>
           </div>
 

@@ -178,7 +178,7 @@ export function UserManagement() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>新建用户</DialogTitle>
+              <DialogTitle className="text-sm">新建用户</DialogTitle>
               <DialogDescription>创建一个新的系统用户</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">

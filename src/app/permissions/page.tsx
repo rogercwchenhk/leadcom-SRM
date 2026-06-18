@@ -21,7 +21,7 @@ export default function PermissionsPage() {
         <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">权限管理</h1>
+            <h1 className="text-sm font-semibold text-slate-900 tracking-tight">权限管理</h1>
             <p className="text-sm text-slate-500 mt-1">管理用户、用户组和权限分配</p>
           </div>
 

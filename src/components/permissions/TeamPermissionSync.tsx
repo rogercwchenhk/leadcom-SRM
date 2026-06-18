@@ -184,7 +184,7 @@ export function TeamPermissionSync() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
+                  <DialogTitle className="text-sm flex items-center gap-2">
                     <ArrowRightLeft className="w-5 h-5 text-orange-600" />
                     团队-权限自动同步
                   </DialogTitle>

@@ -130,7 +130,7 @@ export function MemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base">
+          <DialogTitle className="text-sm">
             {isAdding ? '新增成员' : '编辑成员'}
           </DialogTitle>
           <DialogDescription className="text-xs">

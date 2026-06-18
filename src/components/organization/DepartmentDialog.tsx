@@ -96,7 +96,7 @@ export function DepartmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-base">
+          <DialogTitle className="text-sm">
             {isAdding ? '新增部门' : '编辑部门'}
           </DialogTitle>
           <DialogDescription className="text-xs">
