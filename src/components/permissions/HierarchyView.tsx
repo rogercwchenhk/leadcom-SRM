@@ -98,7 +98,7 @@ export function HierarchyView() {
     const permissionCount = group.permissions?.length || 0;
 
     return (
-      <>
+      <div key={`group-${group.id}`}>
         <div 
           className={`flex items-center gap-3 py-3 px-4 rounded-lg border border-slate-200 bg-white hover:border-orange-200 hover:bg-orange-50/30 transition-colors ${level > 0 ? 'ml-8' : ''}`}
         >
@@ -147,12 +147,12 @@ export function HierarchyView() {
 
         {/* 组成员 */}
         {isExpanded && memberCount > 0 && (
-          <div className={`mt-2 ml-8 pl-4 border-l-2 border-slate-100`}>
+          <div key={`members-${group.id}`} className={`mt-2 ml-8 pl-4 border-l-2 border-slate-100`}>
             <div className="text-xs font-medium text-slate-500 mb-2">成员列表</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
               {group.users?.map((ug: any) => (
                 <div 
-                  key={ug.user.id} 
+                  key={`user-${ug.user.id}`} 
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 bg-slate-50/50"
                 >
                   <Avatar className="h-8 w-8">
@@ -175,15 +175,15 @@ export function HierarchyView() {
 
         {/* 子组 */}
         {hasChildren && isExpanded && (
-          <div className="mt-3">
+          <div key={`children-${group.id}`} className="mt-3">
             {group.children.map((child: any) => (
-              <div key={child.id} className="select-none">
+              <div key={`child-wrapper-${child.id}`} className="select-none">
                 {renderGroupNodeContent(child, level + 1)}
               </div>
             ))}
           </div>
         )}
-      </>
+      </div>
     );
   };
 
@@ -264,7 +264,7 @@ export function HierarchyView() {
               </div>
             ) : (
               groupTree.map((group) => (
-                <div key={group.id} className="select-none">
+                <div key={`root-group-${group.id}`} className="select-none">
                   {renderGroupNodeContent(group)}
                 </div>
               ))
