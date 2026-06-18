@@ -3,25 +3,17 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UsersRound, Shield, UserPlus, UserMinus, Plus, Trash2, Edit, ArrowRightLeft, LockKeyhole } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, UsersRound, Shield, LockKeyhole } from 'lucide-react';
 import { UserManagement } from '@/components/permissions/UserManagement';
 import { GroupManagement } from '@/components/permissions/GroupManagement';
 import { PermissionTree } from '@/components/permissions/PermissionTree';
 import { RolePermissionConfig } from '@/components/permissions/RolePermissionConfig';
-
-import { TeamPermissionSync } from '@/components/permissions/TeamPermissionSync';
 
 export function PermissionSettings() {
   const [activeTab, setActiveTab] = useState('users');
   
   return (
     <div className="space-y-6">
-      {/* 团队-权限同步卡片 */}
-      <div>
-        <TeamPermissionSync />
-      </div>
-
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-sm font-semibold text-slate-900">权限管理控制台</CardTitle>

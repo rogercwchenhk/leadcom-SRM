@@ -39,9 +39,12 @@ teamMembers:
     joinDate: '2020-01-15T00:00:00.000Z'
     isActive: true
     createdAt: '2020-01-15T00:00:00.000Z'
-    updatedAt: '2026-06-18T07:24:56.985Z'
+    updatedAt: '2026-06-18T08:28:19.270Z'
     supervisorId: member-2
     avatar: ''
+    hasSystemAccess: true
+    systemUsername: liangjing@company.com
+    tempPassword: ''
   - id: member-2
     name: 钟丽莉
     email: linxiao@company.com
@@ -53,11 +56,12 @@ teamMembers:
     joinDate: '2019-06-01T00:00:00.000Z'
     isActive: true
     createdAt: '2019-06-01T00:00:00.000Z'
-    updatedAt: '2026-06-18T08:15:57.530Z'
+    updatedAt: '2026-06-18T08:21:54.668Z'
     avatar: ''
     hasSystemAccess: true
     systemUsername: zhonglili@leadcom.com.cn
-    tempPassword: uPQJAE%b7p@r
+    tempPassword: ''
+    supervisorId: member-1781770649598
   - id: member-3
     name: 高芳兰
     email: wangfang@company.com
@@ -83,12 +87,17 @@ teamMembers:
     joinDate: '2017-01-10T00:00:00.000Z'
     isActive: true
     createdAt: '2017-01-10T00:00:00.000Z'
-    updatedAt: '2026-06-18T07:15:11.383Z'
+    updatedAt: '2026-06-18T08:21:46.551Z'
     avatar: ''
+    supervisorId: member-1781770649598
+    hasSystemAccess: false
+    systemUsername: zhaoqiang@company.com
+    tempPassword: ''
   - name: 陈超伟
     email: chencw@leadcom.com.cn
-    phone: ''
-    roles: []
+    phone: '13822280041'
+    roles:
+      - admin
     department: 总部
     isActive: true
     avatar: ''
@@ -97,4 +106,4 @@ teamMembers:
     tempPassword: ''
     id: member-1781770649598
     createdAt: '2026-06-18T08:17:29.598Z'
-    updatedAt: '2026-06-18T08:18:05.998Z'
+    updatedAt: '2026-06-18T08:22:16.468Z'
