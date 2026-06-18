@@ -73,6 +73,7 @@ export function useOrganization() {
     teamMembers,
     isLoading,
     isSaving,
+    isDirty,
     error,
     loadOrganization,
     loadDepartments,
@@ -147,6 +148,7 @@ export function useOrganization() {
     teamMembers,
     isLoading,
     isSaving,
+    isDirty,
     error,
     
     // 计算属性

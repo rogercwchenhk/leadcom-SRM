@@ -23,6 +23,7 @@ export function OrganizationSettings() {
     teamMembers,
     isLoading,
     isSaving,
+    isDirty,
     error,
     initialize,
     loadOrganization,
@@ -174,12 +175,25 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
       {/* 数据管理工具栏 */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
-          <p className="text-sm text-slate-500">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
+            {isDirty && (
+              <span className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+                <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+                未保存
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-slate-500 mt-1">
             管理公司部门、人员和组织架构 
             {!isLoading && (
               <span className="ml-2 text-xs bg-slate-100 px-2 py-1 rounded">
                 部门: {departments.length} | 成员: {teamMembers.length}
+              </span>
+            )}
+            {isDirty && (
+              <span className="ml-2 text-xs text-orange-500">
+                · 3秒后自动保存
               </span>
             )}
           </p>
@@ -197,12 +211,17 @@ teamMembers: ${JSON.stringify(data.teamMembers, null, 2)}`;
           </Button>
           <Button 
             size="sm" 
-            className="h-9 gap-1" 
+            className={`h-9 gap-1 ${isDirty ? 'bg-orange-500 hover:bg-orange-600' : ''}`}
             onClick={handleSaveAll}
             disabled={isLoading || isSaving}
           >
             <Save className="w-4 h-4" />
-            <span className="hidden sm:inline">{isSaving ? '保存中...' : '保存'}</span>
+            <span className="hidden sm:inline">
+              {isSaving ? '保存中...' : isDirty ? '立即保存' : '保存'}
+            </span>
+            <span className="sm:hidden">
+              {isSaving ? '...' : isDirty ? '保存' : ''}
+            </span>
           </Button>
           <Button 
             variant="outline" 
