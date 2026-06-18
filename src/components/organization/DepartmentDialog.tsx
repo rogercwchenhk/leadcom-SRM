@@ -112,7 +112,7 @@ export function DepartmentDialog({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="请输入部门名称"
-              className="text-sm"
+              className="text-xs"
             />
           </div>
           
@@ -124,7 +124,7 @@ export function DepartmentDialog({
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="请输入部门描述（可选）"
               rows={3}
-              className="text-sm"
+              className="text-xs"
             />
           </div>
           
@@ -137,13 +137,13 @@ export function DepartmentDialog({
                 parentDepartmentId: value === 'none' ? undefined : value 
               })}
             >
-              <SelectTrigger className="text-sm">
+              <SelectTrigger className="text-xs">
                 <SelectValue placeholder="无（顶级部门）" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none" className="text-sm">无（顶级部门）</SelectItem>
+                <SelectItem value="none" className="text-xs">无（顶级部门）</SelectItem>
                 {availableParentDepartments.map((dept) => (
-                  <SelectItem key={dept.id} value={dept.id} className="text-sm">
+                  <SelectItem key={dept.id} value={dept.id} className="text-xs">
                     {dept.name}
                   </SelectItem>
                 ))}

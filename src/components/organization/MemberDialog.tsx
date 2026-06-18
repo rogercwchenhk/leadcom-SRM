@@ -151,7 +151,7 @@ export function MemberDialog({
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="请输入姓名"
-                className="text-sm"
+                className="text-xs"
               />
             </div>
             
@@ -163,7 +163,7 @@ export function MemberDialog({
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="请输入邮箱"
-                className="text-sm"
+                className="text-xs"
               />
             </div>
             
@@ -174,7 +174,7 @@ export function MemberDialog({
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="请输入电话"
-                className="text-sm"
+                className="text-xs"
               />
             </div>
             
@@ -185,7 +185,7 @@ export function MemberDialog({
                 value={formData.avatar}
                 onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
                 placeholder="请输入头像URL（可选）"
-                className="text-sm"
+                className="text-xs"
               />
             </div>
           </div>
@@ -198,12 +198,12 @@ export function MemberDialog({
                 value={formData.department}
                 onValueChange={(value) => setFormData({ ...formData, department: value })}
               >
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className="text-xs">
                   <SelectValue placeholder="请选择部门" />
                 </SelectTrigger>
                 <SelectContent>
                   {availableDepartments.map((dept) => (
-                    <SelectItem key={dept} value={dept} className="text-sm">
+                    <SelectItem key={dept} value={dept} className="text-xs">
                       {dept}
                     </SelectItem>
                   ))}
@@ -217,12 +217,12 @@ export function MemberDialog({
                 value={formData.position}
                 onValueChange={(value) => setFormData({ ...formData, position: value })}
               >
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className="text-xs">
                   <SelectValue placeholder="请选择岗位" />
                 </SelectTrigger>
                 <SelectContent>
                   {PRESET_POSITIONS.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.name} className="text-sm">
+                    <SelectItem key={pos.id} value={pos.name} className="text-xs">
                       {pos.name}
                     </SelectItem>
                   ))}
@@ -239,13 +239,13 @@ export function MemberDialog({
                   supervisorId: value === 'none' ? undefined : value 
                 })}
               >
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className="text-xs">
                   <SelectValue placeholder="无上级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none" className="text-sm">无上级</SelectItem>
+                  <SelectItem value="none" className="text-xs">无上级</SelectItem>
                   {availableSupervisors.map((member) => (
-                    <SelectItem key={member.id} value={member.id} className="text-sm">
+                    <SelectItem key={member.id} value={member.id} className="text-xs">
                       {member.name} ({member.position || member.department || '成员'})
                     </SelectItem>
                   ))}
