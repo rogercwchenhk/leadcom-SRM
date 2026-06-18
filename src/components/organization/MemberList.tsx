@@ -53,7 +53,7 @@ function TeamMemberCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-medium text-slate-900 text-sm">{member.name}</h4>
+              <h4 className="font-medium text-slate-900 text-xs">{member.name}</h4>
               {!member.isActive && (
                 <Badge variant="secondary" className="text-[10px]">已离职</Badge>
               )}
