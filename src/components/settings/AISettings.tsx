@@ -48,18 +48,14 @@ export function AISettings() {
   async function loadAISettings() {
     setLoading(true);
     try {
-      // 模拟加载数据
-      setSettings({
-        enabled: true,
-        apiEndpoint: 'https://api.hermes-agent.example.com/v1',
-        apiKey: 'sk-********************************',
-        model: 'gpt-4',
-        temperature: 0.7,
-        maxTokens: 2048,
-        systemPrompt: '你是一个专业的采购助手，帮助用户管理采购需求、分析供应商报价、提供决策建议。',
-        autoInquiry: true,
-        autoDecision: false,
-      });
+      // 从API加载数据
+      const response = await fetch('/api/settings?section=ai');
+      if (response.ok) {
+        const data = await response.json();
+        setSettings(data);
+      } else {
+        console.error('加载AI设置失败:', response.status);
+      }
     } catch (error) {
       console.error('加载AI设置失败:', error);
     } finally {
@@ -88,8 +84,20 @@ export function AISettings() {
   async function handleSave() {
     setSaving(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('保存成功！');
+      // 保存到API
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ section: 'ai', data: settings }),
+      });
+      
+      if (response.ok) {
+        alert('保存成功！');
+      } else {
+        alert('保存失败');
+      }
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败');

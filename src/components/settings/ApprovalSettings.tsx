@@ -115,120 +115,18 @@ export function ApprovalSettings() {
   async function loadApprovalRules() {
     setLoading(true);
     try {
-      // 模拟加载数据
-      setRules([
-        {
-          id: 1,
-          name: '小额采购',
-          minAmount: 0,
-          maxAmount: 10000,
-          currency: 'CNY',
-          enabled: true,
-          description: '1万元以下的采购订单',
-          stages: [
-            {
-              id: 's1',
-              name: '采购负责人审批',
-              type: 'any',
-              approvers: [
-                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: '中额采购',
-          minAmount: 10000,
-          maxAmount: 50000,
-          currency: 'CNY',
-          enabled: true,
-          description: '1万-5万元的采购订单',
-          stages: [
-            {
-              id: 's1',
-              name: '采购负责人审批',
-              type: 'any',
-              approvers: [
-                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
-              ]
-            },
-            {
-              id: 's2',
-              name: '财务审批',
-              type: 'any',
-              approvers: [
-                { id: 'u3', type: 'user', name: '张财务', role: '财务' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 3,
-          name: '大额采购',
-          minAmount: 50000,
-          maxAmount: 100000,
-          currency: 'CNY',
-          enabled: true,
-          description: '5万-10万元的采购订单',
-          stages: [
-            {
-              id: 's1',
-              name: '采购负责人审批',
-              type: 'any',
-              approvers: [
-                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
-              ]
-            },
-            {
-              id: 's2',
-              name: '财务和管理层审批',
-              type: 'all',
-              approvers: [
-                { id: 'u3', type: 'user', name: '张财务', role: '财务' },
-                { id: 'u4', type: 'user', name: '王总', role: '审批人员' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 4,
-          name: '特大额采购',
-          minAmount: 100000,
-          maxAmount: null,
-          currency: 'CNY',
-          enabled: true,
-          description: '10万元以上的采购订单',
-          stages: [
-            {
-              id: 's1',
-              name: '采购负责人审批',
-              type: 'any',
-              approvers: [
-                { id: 'u1', type: 'user', name: '钟丽莉', role: '采购负责人' }
-              ]
-            },
-            {
-              id: 's2',
-              name: '财务审批',
-              type: 'any',
-              approvers: [
-                { id: 'u3', type: 'user', name: '张财务', role: '财务' }
-              ]
-            },
-            {
-              id: 's3',
-              name: 'CEO最终审批',
-              type: 'any',
-              approvers: [
-                { id: 'u5', type: 'user', name: '李CEO', role: '审批人员' }
-              ]
-            }
-          ]
-        },
-      ]);
+      // 从API加载数据
+      const response = await fetch('/api/settings?section=approval');
+      if (response.ok) {
+        const data = await response.json();
+        setRules(data.rules || []);
+      } else {
+        console.error('加载审批规则失败:', response.status);
+        setRules([]);
+      }
     } catch (error) {
       console.error('加载审批规则失败:', error);
+      setRules([]);
     } finally {
       setLoading(false);
     }
@@ -334,8 +232,20 @@ export function ApprovalSettings() {
   async function handleSave() {
     setSaving(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('保存成功！');
+      // 保存到API
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ section: 'approval', data: { rules } }),
+      });
+      
+      if (response.ok) {
+        alert('保存成功！');
+      } else {
+        alert('保存失败');
+      }
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败');

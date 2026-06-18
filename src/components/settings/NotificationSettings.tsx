@@ -81,37 +81,14 @@ export function NotificationSettings() {
   async function loadNotificationSettings() {
     setLoading(true);
     try {
-      // 模拟加载数据
-      setSettings({
-        email: {
-          enabled: true,
-          address: 'admin@example.com',
-          contractUpload: true,
-          approvalRequired: true,
-          approvalCompleted: true,
-          poCreated: true,
-          supplierResponse: true,
-          systemAlert: true,
-        },
-        inApp: {
-          enabled: true,
-          contractUpload: true,
-          approvalRequired: true,
-          approvalCompleted: true,
-          poCreated: true,
-          supplierResponse: true,
-          systemAlert: true,
-        },
-        push: {
-          enabled: false,
-          contractUpload: false,
-          approvalRequired: true,
-          approvalCompleted: true,
-          poCreated: false,
-          supplierResponse: true,
-          systemAlert: true,
-        },
-      });
+      // 从API加载数据
+      const response = await fetch('/api/settings?section=notification');
+      if (response.ok) {
+        const data = await response.json();
+        setSettings(data);
+      } else {
+        console.error('加载通知设置失败:', response.status);
+      }
     } catch (error) {
       console.error('加载通知设置失败:', error);
     } finally {
@@ -122,8 +99,20 @@ export function NotificationSettings() {
   async function handleSave() {
     setSaving(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('保存成功！');
+      // 保存到API
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ section: 'notification', data: settings }),
+      });
+      
+      if (response.ok) {
+        alert('保存成功！');
+      } else {
+        alert('保存失败');
+      }
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败');

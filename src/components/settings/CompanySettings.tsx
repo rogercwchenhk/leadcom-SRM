@@ -45,18 +45,14 @@ export function CompanySettings() {
   async function loadCompanyInfo() {
     setLoading(true);
     try {
-      // 模拟加载数据
-      setCompanyInfo({
-        name: '示例科技有限公司',
-        logo: '',
-        website: 'https://example.com',
-        phone: '400-123-4567',
-        email: 'contact@example.com',
-        address: '北京市朝阳区xxx街道xxx号',
-        description: '一家专注于供应链管理的科技公司',
-        taxId: '91110000MA001XXXX',
-        businessLicense: '',
-      });
+      // 从API加载数据
+      const response = await fetch('/api/settings?section=company');
+      if (response.ok) {
+        const data = await response.json();
+        setCompanyInfo(data);
+      } else {
+        console.error('加载公司信息失败:', response.status);
+      }
     } catch (error) {
       console.error('加载公司信息失败:', error);
     } finally {
@@ -67,9 +63,20 @@ export function CompanySettings() {
   async function handleSave() {
     setSaving(true);
     try {
-      // 模拟保存
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('保存成功！');
+      // 保存到API
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ section: 'company', data: companyInfo }),
+      });
+      
+      if (response.ok) {
+        alert('保存成功！');
+      } else {
+        alert('保存失败');
+      }
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败');
