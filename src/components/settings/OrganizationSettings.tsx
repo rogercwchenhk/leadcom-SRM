@@ -330,24 +330,25 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
     setIsDepartmentDialogOpen(true);
   };
 
-  const handleEditDepartment = (deptName: string) => {
-    const dept = departments.find(d => d.name === deptName);
+  const handleEditDepartment = (deptId: string) => {
+    const dept = departments.find(d => d.id === deptId);
+    if (!dept) return;
     setEditingDepartment({
-      id: dept?.id,
-      name: deptName,
-      description: dept?.description,
-      parentDepartmentId: dept?.parentDepartmentId
+      id: dept.id,
+      name: dept.name,
+      description: dept.description,
+      parentDepartmentId: dept.parentDepartmentId
     });
     setIsAddingDepartment(false);
     setIsDepartmentDialogOpen(true);
   };
 
-  const handleDeleteDepartment = (deptName: string) => {
-    const dept = departments.find(d => d.name === deptName);
+  const handleDeleteDepartment = (deptId: string) => {
+    const dept = departments.find(d => d.id === deptId);
     if (!dept) return;
     
     // 检查该部门下是否有成员
-    const hasMembers = teamMembers.some(m => m.department === deptName);
+    const hasMembers = teamMembers.some(m => m.department === dept.name);
     if (hasMembers) {
       alert('该部门下还有成员，无法删除。请先将成员移动到其他部门。');
       return;
@@ -366,7 +367,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
       return [...filtered];
     });
     bumpDataVersion(); // 强制更新数据版本
-    console.log('删除部门:', deptName);
+    console.log('删除部门:', dept.name);
   };
 
   const handleSaveDepartment = () => {
@@ -417,6 +418,10 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         }
       }
       
+      // 获取旧部门名称（在更新前）
+      const oldDept = departments.find(d => d.id === editingDepartment.id);
+      const oldDeptName = oldDept?.name;
+      
       // 更新部门 - 使用函数式更新确保获取最新状态
       setDepartments(prev => {
         // 确保创建全新的数组引用
@@ -434,23 +439,16 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
         return [...updated];
       });
       
-      // 如果部门名称改了，同时更新成员的部门 - 也需要在状态更新后处理
-      setTimeout(() => {
-        // 延迟执行以确保我们能获取到最新的部门状态
-        setDepartments(currentDepts => {
-          const oldDept = currentDepts.find(d => d.id === editingDepartment.id);
-          if (oldDept && oldDept.name !== editingDepartment.name) {
-            setTeamMembers(prevMembers => 
-              prevMembers.map(member => 
-                member.department === oldDept.name 
-                  ? { ...member, department: editingDepartment.name }
-                  : member
-              )
-            );
-          }
-          return currentDepts; // 返回不变的部门列表
-        });
-      }, 0);
+      // 如果部门名称改了，同时更新成员的部门
+      if (oldDeptName && oldDeptName !== editingDepartment.name) {
+        setTeamMembers(prevMembers => 
+          prevMembers.map(member => 
+            member.department === oldDeptName 
+              ? { ...member, department: editingDepartment.name }
+              : member
+          )
+        );
+      }
       
       bumpDataVersion(); // 强制更新数据版本
       console.log('保存部门信息:', editingDepartment);
@@ -600,7 +598,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0"
-                            onClick={() => handleEditDepartment(dept.name)}
+                            onClick={() => handleEditDepartment(dept.id)}
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </Button>
@@ -608,7 +606,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteDepartment(dept.name)}
+                            onClick={() => handleDeleteDepartment(dept.id)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
@@ -704,7 +702,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0"
-                            onClick={() => handleEditDepartment(dept.name)}
+                            onClick={() => handleEditDepartment(dept.id)}
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </Button>
@@ -712,7 +710,7 @@ teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteDepartment(dept.name)}
+                            onClick={() => handleDeleteDepartment(dept.id)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
