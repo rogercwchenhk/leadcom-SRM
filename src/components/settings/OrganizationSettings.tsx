@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -71,20 +71,27 @@ export function OrganizationSettings() {
   // 状态管理 - 初始为空，从 API 加载
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  // 使用 ref 保存最新数据，确保保存时能获取最新值
+  const teamMembersRef = useRef<TeamMember[]>([]);
+  const departmentsRef = useRef<Department[]>([]);
   // 添加一个强制重新渲染的版本号
   const [dataVersion, setDataVersion] = useState(0);
 
-  // 从 API 加载数据
+  // 当状态更新时，同步更新 ref
   useEffect(() => {
-    loadFromAPI();
-  }, []);
+    teamMembersRef.current = teamMembers;
+  }, [teamMembers]);
+
+  useEffect(() => {
+    departmentsRef.current = departments;
+  }, [departments]);
 
   // 强制更新数据版本，触发重新渲染
   const bumpDataVersion = () => {
     setDataVersion(prev => prev + 1);
   };
 
-  // 从 API 加载数据 - API 会自动处理文件是否存在的问题
+  // 从 API 加载数据 - 直接定义，不需要 useCallback
   const loadFromAPI = async () => {
     try {
       console.log('=== 开始加载组织架构数据 ===');
@@ -117,13 +124,11 @@ export function OrganizationSettings() {
         console.log('=== 从 YAML 文件加载数据成功 ===');
       } else {
         console.error('API 响应失败:', response.status);
-        // 如果API失败，设置空数组避免报错
         setDepartments([]);
         setTeamMembers([]);
       }
     } catch (error) {
       console.error('加载数据失败:', error);
-      // 出错时也设置空数组
       setDepartments([]);
       setTeamMembers([]);
     } finally {
@@ -131,24 +136,31 @@ export function OrganizationSettings() {
     }
   };
 
+  // 初始化加载数据
+  useEffect(() => {
+    loadFromAPI();
+  }, []); // 只在组件挂载时执行一次
+
   // 保存数据到 API
   const saveToAPI = async () => {
     try {
       console.log('正在保存数据到 YAML 文件...');
-      console.log('待保存数据:', { departmentsCount: departments.length, teamMembersCount: teamMembers.length });
+      const currentDepts = departmentsRef.current;
+      const currentMembers = teamMembersRef.current;
+      console.log('待保存数据:', { departmentsCount: currentDepts.length, teamMembersCount: currentMembers.length });
       
       const response = await fetch('/api/organization', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ departments, teamMembers }),
+        body: JSON.stringify({ departments: currentDepts, teamMembers: currentMembers }),
       });
       
       if (response.ok) {
         console.log('数据保存到 YAML 文件成功');
-        // 保存成功后重新加载数据，确保数据同步
-        await loadFromAPI();
+        alert('保存成功！');
+        loadFromAPI();
       } else {
         let errorData;
         try {
@@ -157,9 +169,11 @@ export function OrganizationSettings() {
           errorData = { error: '未知错误' };
         }
         console.error('保存数据失败:', errorData);
+        alert('保存失败');
       }
     } catch (error) {
       console.error('保存数据失败:', error);
+      alert('保存失败');
     }
   };
 
