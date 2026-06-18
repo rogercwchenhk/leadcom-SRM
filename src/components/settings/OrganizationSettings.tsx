@@ -268,14 +268,14 @@ export function OrganizationSettings() {
               <div className="space-y-2">
                 <Label htmlFor="supervisor">上级</Label>
                 <Select
-                  value={editingMember.supervisorId || ''}
-                  onValueChange={(value) => setEditingMember({ ...editingMember, supervisorId: value || undefined })}
+                  value={editingMember.supervisorId || 'none'}
+                  onValueChange={(value) => setEditingMember({ ...editingMember, supervisorId: value === 'none' ? undefined : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="选择上级" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">无上级</SelectItem>
+                    <SelectItem value="none">无上级</SelectItem>
                     {PRESET_TEAM_MEMBERS
                       .filter(m => m.id !== editingMember.id)
                       .map((member) => (
