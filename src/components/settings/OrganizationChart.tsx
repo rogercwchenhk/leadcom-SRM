@@ -19,9 +19,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { 
   PRESET_TEAM_MEMBERS, 
+  PRESET_DEPARTMENTS,
   ROLE_LABELS, 
   ROLE_COLORS,
-  type TeamMember
+  type TeamMember,
+  type Department
 } from '@/types';
 
 interface OrgNode {
@@ -41,58 +43,100 @@ interface OrganizationChartProps {
 
 export function OrganizationChart({ members }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [departments] = useState<Department[]>(() => 
+    PRESET_DEPARTMENTS.map(dept => ({
+      ...dept,
+      createdAt: new Date(dept.createdAt),
+      updatedAt: new Date(dept.updatedAt)
+    }))
+  );
   
   // 直接使用 useMemo 来构建组织架构树，而不是 useState + useEffect
   const orgData = React.useMemo(() => {
-    return buildOrgTree(members);
-  }, [members]);
+    return buildOrgTree(members, departments);
+  }, [members, departments]);
 
-  function buildOrgTree(members: TeamMember[]): OrgNode {
-    // 按部门分组
-    const departments: Record<string, TeamMember[]> = {};
-    members.forEach(member => {
-      const dept = member.department || '未分配';
-      if (!departments[dept]) {
-        departments[dept] = [];
-      }
-      departments[dept].push(member);
-    });
-
+  function buildOrgTree(members: TeamMember[], depts: Department[]): OrgNode {
+    // 构建部门层级树
     const root: OrgNode = {
       id: 'root',
       name: '公司',
       title: '组织架构',
       department: '',
       children: [],
-      isExpanded: true, // 默认值，会被外部状态覆盖
+      isExpanded: true,
       type: 'root'
     };
 
-    // 为每个部门创建节点
-    Object.entries(departments).forEach(([deptName, deptMembers]) => {
-      const deptNode: OrgNode = {
-        id: `dept-${deptName}`,
-        name: deptName,
-        title: `${deptName}`,
-        department: deptName,
+    // 找出顶级部门（没有上级部门的）
+    const topLevelDepts = depts.filter(d => !d.parentDepartmentId);
+    
+    // 递归构建部门树
+    topLevelDepts.forEach(dept => {
+      const deptNode = buildDepartmentTree(dept, depts, members);
+      root.children.push(deptNode);
+    });
+
+    // 处理没有部门的成员
+    const membersWithoutDept = members.filter(m => !m.department);
+    if (membersWithoutDept.length > 0) {
+      const unassignedDeptNode: OrgNode = {
+        id: 'dept-unassigned',
+        name: '未分配',
+        title: '未分配部门',
+        department: '未分配',
         children: [],
-        isExpanded: true, // 默认值，会被外部状态覆盖
+        isExpanded: true,
         type: 'department'
       };
-
-      // 找出部门负责人（没有上级的成员）
-      const supervisors = deptMembers.filter(m => !m.supervisorId);
       
-      // 为每个负责人构建下属树
+      const supervisors = membersWithoutDept.filter(m => !m.supervisorId);
+      supervisors.forEach(supervisor => {
+        const supervisorNode = buildPersonTree(supervisor, membersWithoutDept);
+        unassignedDeptNode.children.push(supervisorNode);
+      });
+      
+      root.children.push(unassignedDeptNode);
+    }
+
+    return root;
+  }
+
+  function buildDepartmentTree(dept: Department, allDepts: Department[], allMembers: TeamMember[]): OrgNode {
+    const deptNode: OrgNode = {
+      id: dept.id,
+      name: dept.name,
+      title: dept.description || dept.name,
+      department: dept.name,
+      children: [],
+      isExpanded: true,
+      type: 'department'
+    };
+
+    // 添加子部门
+    const childDepts = allDepts.filter(d => d.parentDepartmentId === dept.id);
+    childDepts.forEach(childDept => {
+      const childDeptNode = buildDepartmentTree(childDept, allDepts, allMembers);
+      deptNode.children.push(childDeptNode);
+    });
+
+    // 添加该部门的成员
+    const deptMembers = allMembers.filter(m => m.department === dept.name);
+    if (deptMembers.length > 0) {
+      // 找出部门负责人（没有上级的成员，或上级不在本部门的）
+      const supervisors = deptMembers.filter(m => {
+        if (!m.supervisorId) return true;
+        const supervisor = allMembers.find(mm => mm.id === m.supervisorId);
+        return !supervisor || supervisor.department !== dept.name;
+      });
+      
       supervisors.forEach(supervisor => {
         const supervisorNode = buildPersonTree(supervisor, deptMembers);
         deptNode.children.push(supervisorNode);
       });
+    }
 
-      root.children.push(deptNode);
-    });
-
-    return root;
+    return deptNode;
   }
 
   function buildPersonTree(person: TeamMember, allMembers: TeamMember[]): OrgNode {

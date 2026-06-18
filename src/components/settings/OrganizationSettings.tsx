@@ -60,7 +60,7 @@ export function OrganizationSettings() {
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<{ id?: string; name: string; description?: string } | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<{ id?: string; name: string; description?: string; parentDepartmentId?: string } | null>(null);
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   
@@ -98,6 +98,37 @@ export function OrganizationSettings() {
     });
     return Array.from(deptSet).sort();
   }, [departments, teamMembers]);
+
+  // 构建部门树形结构用于显示
+  const departmentTree = React.useMemo(() => {
+    // 找出顶级部门
+    const topLevelDepts = departments.filter(d => !d.parentDepartmentId);
+    
+    // 递归构建树形结构
+    const buildTree = (depts: Department[]): Array<{ dept: Department; children: any[]; level: number }> => {
+      return depts.map(dept => {
+        const children = departments.filter(d => d.parentDepartmentId === dept.id);
+        return {
+          dept,
+          children: buildTree(children),
+          level: 0
+        };
+      });
+    };
+    
+    // 扁平化树形结构用于显示，并添加层级
+    const flattenTree = (nodes: any[], level: number = 0): Array<{ dept: Department; level: number }> => {
+      let result: Array<{ dept: Department; level: number }> = [];
+      nodes.forEach(node => {
+        result.push({ dept: node.dept, level });
+        result = result.concat(flattenTree(node.children, level + 1));
+      });
+      return result;
+    };
+    
+    const tree = buildTree(topLevelDepts);
+    return flattenTree(tree);
+  }, [departments]);
 
   const handleEditMember = (member: TeamMember) => {
     setEditingMember({ ...member });
@@ -157,7 +188,7 @@ export function OrganizationSettings() {
 
   // 部门管理功能
   const handleAddDepartment = () => {
-    setEditingDepartment({ name: '', description: '' });
+    setEditingDepartment({ name: '', description: '', parentDepartmentId: undefined });
     setIsAddingDepartment(true);
     setIsDepartmentDialogOpen(true);
   };
@@ -167,13 +198,17 @@ export function OrganizationSettings() {
     setEditingDepartment({
       id: dept?.id,
       name: deptName,
-      description: dept?.description
+      description: dept?.description,
+      parentDepartmentId: dept?.parentDepartmentId
     });
     setIsAddingDepartment(false);
     setIsDepartmentDialogOpen(true);
   };
 
   const handleDeleteDepartment = (deptName: string) => {
+    const dept = departments.find(d => d.name === deptName);
+    if (!dept) return;
+    
     // 检查该部门下是否有成员
     const hasMembers = teamMembers.some(m => m.department === deptName);
     if (hasMembers) {
@@ -181,8 +216,15 @@ export function OrganizationSettings() {
       return;
     }
     
+    // 检查该部门下是否有子部门
+    const hasChildDepts = departments.some(d => d.parentDepartmentId === dept.id);
+    if (hasChildDepts) {
+      alert('该部门下还有子部门，无法删除。请先删除或移动子部门。');
+      return;
+    }
+    
     // 从部门列表中删除
-    setDepartments(prev => prev.filter(d => d.name !== deptName));
+    setDepartments(prev => prev.filter(d => d.id !== dept.id));
     console.log('删除部门:', deptName);
   };
 
@@ -196,23 +238,48 @@ export function OrganizationSettings() {
         return;
       }
       
+      // 检查是否会造成循环引用
+      if (editingDepartment.parentDepartmentId) {
+        const wouldCycle = checkCycle(departments, editingDepartment.parentDepartmentId, editingDepartment.id || `dept-${Date.now()}`);
+        if (wouldCycle) {
+          alert('不能选择该部门作为上级，会造成循环引用');
+          return;
+        }
+      }
+      
       // 添加新部门
       const newDept: Department = {
         id: `dept-${Date.now()}`,
         name: editingDepartment.name,
         description: editingDepartment.description,
+        parentDepartmentId: editingDepartment.parentDepartmentId,
         createdAt: new Date(),
         updatedAt: new Date()
       };
       setDepartments(prev => [...prev, newDept]);
       console.log('添加新部门:', newDept);
     } else {
+      // 检查是否会造成循环引用
+      if (editingDepartment.parentDepartmentId && editingDepartment.id) {
+        const wouldCycle = checkCycle(departments, editingDepartment.parentDepartmentId, editingDepartment.id);
+        if (wouldCycle) {
+          alert('不能选择该部门作为上级，会造成循环引用');
+          return;
+        }
+      }
+      
       // 更新部门
       if (editingDepartment.id) {
         setDepartments(prev => 
           prev.map(dept => 
             dept.id === editingDepartment.id 
-              ? { ...dept, name: editingDepartment.name, description: editingDepartment.description, updatedAt: new Date() }
+              ? { 
+                  ...dept, 
+                  name: editingDepartment.name, 
+                  description: editingDepartment.description,
+                  parentDepartmentId: editingDepartment.parentDepartmentId,
+                  updatedAt: new Date() 
+                }
               : dept
           )
         );
@@ -235,6 +302,22 @@ export function OrganizationSettings() {
     setIsDepartmentDialogOpen(false);
     setEditingDepartment(null);
     setIsAddingDepartment(false);
+  };
+
+  // 检查循环引用
+  const checkCycle = (depts: Department[], parentId: string, currentId: string): boolean => {
+    const visited = new Set<string>();
+    let checkId: string | undefined = parentId;
+    
+    while (checkId) {
+      if (checkId === currentId) return true;
+      if (visited.has(checkId)) return true; // 检测到环
+      visited.add(checkId);
+      const dept = depts.find(d => d.id === checkId);
+      checkId = dept?.parentDepartmentId;
+    }
+    
+    return false;
   };
   
   return (
@@ -275,24 +358,28 @@ export function OrganizationSettings() {
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="space-y-2">
-                    {availableDepartments.map((dept) => (
+                    {departmentTree.map(({ dept, level }) => (
                       <div 
-                        key={dept} 
+                        key={dept.id} 
                         className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
+                        style={{ paddingLeft: `${level * 16 + 8}px` }}
                       >
                         <div className="flex items-center gap-2">
+                          {level > 0 && (
+                            <div className="w-3 h-px bg-slate-300" />
+                          )}
                           <Building className="w-4 h-4 text-slate-500" />
-                          <span className="text-sm font-medium text-slate-900">{dept}</span>
+                          <span className="text-sm font-medium text-slate-900">{dept.name}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Badge variant="outline" className="text-[10px] h-5">
-                            {teamMembers.filter(m => m.department === dept).length} 人
+                            {teamMembers.filter(m => m.department === dept.name).length} 人
                           </Badge>
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0"
-                            onClick={() => handleEditDepartment(dept)}
+                            onClick={() => handleEditDepartment(dept.name)}
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </Button>
@@ -300,14 +387,14 @@ export function OrganizationSettings() {
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteDepartment(dept)}
+                            onClick={() => handleDeleteDepartment(dept.name)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
                     ))}
-                    {availableDepartments.length === 0 && (
+                    {departmentTree.length === 0 && (
                       <p className="text-sm text-slate-500 text-center py-4">
                         暂无部门，点击"添加"按钮创建
                       </p>
@@ -375,24 +462,28 @@ export function OrganizationSettings() {
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="space-y-2">
-                    {availableDepartments.map((dept) => (
+                    {departmentTree.map(({ dept, level }) => (
                       <div 
-                        key={dept} 
+                        key={dept.id} 
                         className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
+                        style={{ paddingLeft: `${level * 16 + 8}px` }}
                       >
                         <div className="flex items-center gap-2">
+                          {level > 0 && (
+                            <div className="w-3 h-px bg-slate-300" />
+                          )}
                           <Building className="w-4 h-4 text-slate-500" />
-                          <span className="text-sm font-medium text-slate-900">{dept}</span>
+                          <span className="text-sm font-medium text-slate-900">{dept.name}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Badge variant="outline" className="text-[10px] h-5">
-                            {teamMembers.filter(m => m.department === dept).length} 人
+                            {teamMembers.filter(m => m.department === dept.name).length} 人
                           </Badge>
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0"
-                            onClick={() => handleEditDepartment(dept)}
+                            onClick={() => handleEditDepartment(dept.name)}
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </Button>
@@ -400,14 +491,14 @@ export function OrganizationSettings() {
                             variant="ghost" 
                             size="sm" 
                             className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteDepartment(dept)}
+                            onClick={() => handleDeleteDepartment(dept.name)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
                     ))}
-                    {availableDepartments.length === 0 && (
+                    {departmentTree.length === 0 && (
                       <p className="text-sm text-slate-500 text-center py-4">
                         暂无部门，点击"添加"按钮创建
                       </p>
@@ -655,6 +746,33 @@ export function OrganizationSettings() {
                   onChange={(e) => setEditingDepartment(prev => prev ? { ...prev, name: e.target.value } : null)}
                   placeholder="请输入部门名称"
                 />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="dept-parent">上级部门</Label>
+                <Select
+                  value={editingDepartment.parentDepartmentId || 'none'}
+                  onValueChange={(value) => setEditingDepartment(prev => 
+                    prev ? { ...prev, parentDepartmentId: value === 'none' ? undefined : value } : null
+                  )}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="选择上级部门（可选）" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">无上级部门（顶级部门）</SelectItem>
+                    {departments
+                      .filter(d => d.id !== editingDepartment.id) // 不能选择自己作为上级
+                      .map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-slate-500">
+                  选择上级部门来建立组织层级关系
+                </p>
               </div>
               
               <div className="space-y-2">

@@ -81,6 +81,7 @@ export interface Department {
   id: string;
   name: string;
   description?: string;
+  parentDepartmentId?: string;  // 上级部门ID
   createdAt: Date;
   updatedAt: Date;
 }
@@ -493,9 +494,18 @@ export const PRESET_POSITIONS: Position[] = [
 // 预设部门
 export const PRESET_DEPARTMENTS: Department[] = [
   {
+    id: 'dept-headquarters',
+    name: '总部',
+    description: '公司总部',
+    parentDepartmentId: undefined,
+    createdAt: new Date('2022-01-01'),
+    updatedAt: new Date('2022-01-01')
+  },
+  {
     id: 'dept-purchase',
     name: '采购部',
     description: '负责采购相关工作',
+    parentDepartmentId: 'dept-headquarters',
     createdAt: new Date('2022-01-01'),
     updatedAt: new Date('2022-01-01')
   },
@@ -503,6 +513,7 @@ export const PRESET_DEPARTMENTS: Department[] = [
     id: 'dept-customer-service',
     name: '客服部',
     description: '负责客服相关工作',
+    parentDepartmentId: 'dept-headquarters',
     createdAt: new Date('2022-01-01'),
     updatedAt: new Date('2022-01-01')
   },
@@ -510,6 +521,7 @@ export const PRESET_DEPARTMENTS: Department[] = [
     id: 'dept-finance',
     name: '财务部',
     description: '负责财务相关工作',
+    parentDepartmentId: 'dept-headquarters',
     createdAt: new Date('2022-01-01'),
     updatedAt: new Date('2022-01-01')
   }
