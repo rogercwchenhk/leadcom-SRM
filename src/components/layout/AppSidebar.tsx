@@ -16,8 +16,21 @@ import {
   Building2,
   Menu,
   X,
-  ExternalLink
+  ExternalLink,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { 
   Select,
   SelectContent,
@@ -41,6 +54,7 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
   const pathname = usePathname();
   const router = useRouter();
   const [currentRole, setCurrentRole] = useState<UserRole>(initialRole);
+  const { user, logout } = useAuth();
 
   const menuItems = [
     {
@@ -165,11 +179,11 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
       <div className="p-4 border-t border-slate-200 bg-white/50">
         <div className="space-y-2">
           <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 border border-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center">
-              <Package className="h-4 w-4 text-slate-600" />
+            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+              <Users className="h-4 w-4 text-orange-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 truncate">演示用户</p>
+              <p className="text-sm font-medium text-slate-900 truncate">{user?.username || '演示用户'}</p>
               <p className="text-xs text-slate-500 truncate">{roleNames[currentRole]}</p>
             </div>
           </div>
@@ -177,6 +191,34 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
             <Settings className="h-4 w-4" />
             系统设置
           </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="w-full justify-start gap-2 h-9 text-red-600 hover:text-red-700 hover:bg-red-50">
+                <LogOut className="h-4 w-4" />
+                退出登录
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>确认退出登录</AlertDialogTitle>
+                <AlertDialogDescription>
+                  确定要退出登录吗？您需要重新登录才能继续使用系统。
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>取消</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    logout();
+                    router.push('/login');
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  确认退出
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

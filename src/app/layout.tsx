@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inspector } from 'react-dev-inspector';
 import { AIChatWindow } from '@/components/chat/AIChatWindow';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -36,7 +38,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased`}>
         {isDev && <Inspector />}
-        {children}
+        <AuthProvider>
+          <ProtectedRoute>
+            {children}
+          </ProtectedRoute>
+        </AuthProvider>
         <AIChatWindow />
       </body>
     </html>
