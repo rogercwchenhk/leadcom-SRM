@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Download, Upload, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -63,70 +64,136 @@ export function OrganizationSettings() {
   const [editingDepartment, setEditingDepartment] = useState<{ id?: string; name: string; description?: string; parentDepartmentId?: string } | null>(null);
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // 使用 useState 函数式初始化，从 localStorage 读取数据或使用默认值
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('org-team-members');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return parsed.map((member: any) => ({
-            ...member,
-            joinDate: new Date(member.joinDate),
-            createdAt: new Date(member.createdAt),
-            updatedAt: new Date(member.updatedAt)
-          }));
-        }
-      } catch (e) {
-        console.error('Failed to load team members from localStorage:', e);
-      }
-    }
-    // 使用默认数据
-    return PRESET_TEAM_MEMBERS.map(member => ({
-      ...member,
-      joinDate: new Date(member.joinDate),
-      createdAt: new Date(member.createdAt),
-      updatedAt: new Date(member.updatedAt)
-    }));
-  });
-  
-  const [departments, setDepartments] = useState<Department[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('org-departments');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return parsed.map((dept: any) => ({
-            ...dept,
-            createdAt: new Date(dept.createdAt),
-            updatedAt: new Date(dept.updatedAt)
-          }));
-        }
-      } catch (e) {
-        console.error('Failed to load departments from localStorage:', e);
-      }
-    }
-    // 使用默认数据
-    return PRESET_DEPARTMENTS.map(dept => ({
-      ...dept,
-      createdAt: new Date(dept.createdAt),
-      updatedAt: new Date(dept.updatedAt)
-    }));
-  });
+  // 状态管理
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
 
-  // 保存数据到 localStorage
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('org-team-members', JSON.stringify(teamMembers));
-    }
-  }, [teamMembers]);
+  // 从 API 加载数据
+  useEffect(() => {
+    loadFromAPI();
+  }, []);
 
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('org-departments', JSON.stringify(departments));
+  // 从 API 加载数据
+  const loadFromAPI = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/organization');
+      if (response.ok) {
+        const data = await response.json();
+        setDepartments(data.departments);
+        setTeamMembers(data.teamMembers);
+        console.log('从 YAML 文件加载数据成功');
+      } else {
+        // 如果 API 失败，使用默认数据
+        console.log('使用默认数据');
+        setDepartments(PRESET_DEPARTMENTS.map(dept => ({
+          ...dept,
+          createdAt: new Date(dept.createdAt),
+          updatedAt: new Date(dept.updatedAt)
+        })));
+        setTeamMembers(PRESET_TEAM_MEMBERS.map(member => ({
+          ...member,
+          joinDate: new Date(member.joinDate),
+          createdAt: new Date(member.createdAt),
+          updatedAt: new Date(member.updatedAt)
+        })));
+      }
+    } catch (error) {
+      console.error('加载数据失败:', error);
+      // 使用默认数据
+      setDepartments(PRESET_DEPARTMENTS.map(dept => ({
+        ...dept,
+        createdAt: new Date(dept.createdAt),
+        updatedAt: new Date(dept.updatedAt)
+      })));
+      setTeamMembers(PRESET_TEAM_MEMBERS.map(member => ({
+        ...member,
+        joinDate: new Date(member.joinDate),
+        createdAt: new Date(member.createdAt),
+        updatedAt: new Date(member.updatedAt)
+      })));
+    } finally {
+      setIsLoading(false);
     }
-  }, [departments]);
+  };
+
+  // 保存数据到 API
+  const saveToAPI = async () => {
+    try {
+      const response = await fetch('/api/organization', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ departments, teamMembers }),
+      });
+      
+      if (response.ok) {
+        console.log('数据保存到 YAML 文件成功');
+      } else {
+        console.error('保存数据失败');
+      }
+    } catch (error) {
+      console.error('保存数据失败:', error);
+    }
+  };
+
+  // 当数据变化时保存到 API
+  useEffect(() => {
+    if (!isLoading && (departments.length > 0 || teamMembers.length > 0)) {
+      saveToAPI();
+    }
+  }, [departments, teamMembers, isLoading]);
+
+  // 导出 YAML 功能
+  const handleExportYAML = async () => {
+    try {
+      const response = await fetch('/api/organization');
+      if (response.ok) {
+        // 为了简单，我们直接从内存数据生成 YAML 用于导出
+        const departmentsForYaml = departments.map((dept: any) => ({
+          ...dept,
+          createdAt: dept.createdAt.toISOString(),
+          updatedAt: dept.updatedAt.toISOString()
+        }));
+
+        const teamMembersForYaml = teamMembers.map((member: any) => ({
+          ...member,
+          joinDate: member.joinDate.toISOString(),
+          createdAt: member.createdAt.toISOString(),
+          updatedAt: member.updatedAt.toISOString()
+        }));
+
+        const yamlContent = `# 组织架构配置文件
+# 用途：存储公司组织架构、部门和人员信息
+# 说明：此文件由系统自动管理，也可手动编辑
+# AI 友好格式：清晰的注释、结构化数据、有意义的字段名
+
+---
+# 部门配置
+departments: ${JSON.stringify(departmentsForYaml, null, 2)}
+---
+# 团队成员配置
+teamMembers: ${JSON.stringify(teamMembersForYaml, null, 2)}`;
+
+        // 创建下载
+        const blob = new Blob([yamlContent], { type: 'text/yaml' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'organization.yaml';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error('导出 YAML 失败:', error);
+      alert('导出失败');
+    }
+  };
   
   // 从现有成员中提取所有部门（包括预设部门和成员中使用的部门）
   const availableDepartments = React.useMemo(() => {
@@ -368,6 +435,35 @@ export function OrganizationSettings() {
   
   return (
     <div className="space-y-6">
+      {/* 数据管理工具栏 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">组织架构设置</h2>
+          <p className="text-sm text-slate-500">管理公司部门、人员和组织架构</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-9 gap-1" 
+            onClick={loadFromAPI}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            刷新
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="h-9 gap-1" 
+            onClick={handleExportYAML}
+          >
+            <Download className="w-4 h-4" />
+            导出 YAML
+          </Button>
+        </div>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-2 w-[400px]">
           <TabsTrigger value="chart" className="gap-2">
