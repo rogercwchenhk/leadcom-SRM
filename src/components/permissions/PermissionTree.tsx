@@ -261,17 +261,16 @@ export function PermissionTree() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* 左侧：选择目标 */}
         <div className="space-y-4">
           <Card>
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 pt-4 px-4">
               <CardTitle className="text-sm">选择分配目标</CardTitle>
-              <CardDescription>为用户或用户组分配权限</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium">目标类型</label>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-medium text-slate-500">目标类型</label>
                 <Select
                   value={targetType}
                   onValueChange={(value: 'user' | 'group') => {
@@ -280,19 +279,19 @@ export function PermissionTree() {
                     setSelectedPermissionIds([]);
                   }}
                 >
-                  <SelectTrigger className="text-xs">
+                  <SelectTrigger className="text-xs h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="group" className="text-xs">
-                      <div className="flex items-center gap-2">
-                        <UsersRound className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5">
+                        <UsersRound className="h-3 w-3" />
                         用户组
                       </div>
                     </SelectItem>
                     <SelectItem value="user" className="text-xs">
-                      <div className="flex items-center gap-2">
-                        <UsersRound className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5">
+                        <UsersRound className="h-3 w-3" />
                         用户
                       </div>
                     </SelectItem>
@@ -300,15 +299,15 @@ export function PermissionTree() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-medium">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-medium text-slate-500">
                   选择{targetType === 'group' ? '用户组' : '用户'}
                 </label>
                 <Select
                   value={selectedTargetId}
                   onValueChange={setSelectedTargetId}
                 >
-                  <SelectTrigger className="text-xs">
+                  <SelectTrigger className="text-xs h-8">
                     <SelectValue placeholder={`请选择${targetType === 'group' ? '用户组' : '用户'}`} />
                   </SelectTrigger>
                   <SelectContent>
@@ -330,9 +329,9 @@ export function PermissionTree() {
 
               {selectedTargetId && (
                 <>
-                  <Separator />
+                  <Separator className="my-2" />
                   
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-[10px] text-slate-500">
                     <span className="font-medium text-slate-700">
                       {targetType === 'group'
                         ? groups.find(g => g.id.toString() === selectedTargetId)?.name
@@ -340,7 +339,7 @@ export function PermissionTree() {
                       }
                     </span>
                     <span className="ml-1">
-                      · 已分配 {selectedCount} 个权限
+                      · {selectedCount} 个权限
                     </span>
                   </div>
                 </>
@@ -350,16 +349,16 @@ export function PermissionTree() {
 
           {targetType === 'user' && userPermissions.length > 0 && (
             <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-sm">权限来源说明</CardTitle>
+              <CardHeader className="pb-2 pt-3 px-4">
+                <CardTitle className="text-xs">权限来源说明</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex items-center gap-2 text-xs">
-                  <Check className="h-3.5 w-3.5 text-orange-600" />
+              <CardContent className="space-y-1.5 px-4 pb-3">
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <Check className="h-3 w-3 text-orange-600" />
                   <span>直接分配的权限</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <Badge variant="outline" className="text-[9px] h-4 px-1 bg-blue-50 text-blue-700 border-blue-200">
                     继承
                   </Badge>
                   <span>从用户组继承的权限</span>
@@ -370,7 +369,7 @@ export function PermissionTree() {
         </div>
 
         {/* 右侧：权限树 */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <Card className="h-full">
             <CardHeader className="pb-4">
               <CardTitle className="text-sm flex items-center gap-2">
