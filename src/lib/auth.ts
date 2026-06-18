@@ -1,12 +1,16 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// JWT Secret - 强制检查环境变量
-const JWT_SECRET = process.env.JWT_SECRET as string;
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET 环境变量未设置。请在 .env 文件中配置强随机密钥。');
-}
+// JWT Secret - 延迟检查，避免在客户端模块加载时抛出错误
 const JWT_EXPIRES_IN = '7d';
+
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET 环境变量未设置。请在 .env 文件中配置强随机密钥。');
+  }
+  return secret;
+}
 
 // 密码哈希
 export async function hashPassword(password: string): Promise<string> {
@@ -23,7 +27,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 export function generateToken(userId: number, username: string): string {
   return jwt.sign(
     { userId, username },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: JWT_EXPIRES_IN }
   );
 }
@@ -31,7 +35,7 @@ export function generateToken(userId: number, username: string): string {
 // 验证JWT Token
 export function verifyToken(token: string): { userId: number; username: string } | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
     if (typeof decoded === 'object' && decoded !== null && 'userId' in decoded && 'username' in decoded) {
       return decoded as { userId: number; username: string };
     }
