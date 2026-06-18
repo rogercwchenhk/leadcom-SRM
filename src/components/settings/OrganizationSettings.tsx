@@ -60,6 +60,9 @@ export function OrganizationSettings() {
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddingMember, setIsAddingMember] = useState(false);
+  const [editingDepartment, setEditingDepartment] = useState<{ id?: string; name: string; description?: string } | null>(null);
+  const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
+  const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   
   // 使用 useMemo 确保初始数据只被初始化一次
   const initialMembers = React.useMemo(() => {
@@ -151,6 +154,88 @@ export function OrganizationSettings() {
     setEditingMember(null);
     setIsAddingMember(false);
   };
+
+  // 部门管理功能
+  const handleAddDepartment = () => {
+    setEditingDepartment({ name: '', description: '' });
+    setIsAddingDepartment(true);
+    setIsDepartmentDialogOpen(true);
+  };
+
+  const handleEditDepartment = (deptName: string) => {
+    const dept = departments.find(d => d.name === deptName);
+    setEditingDepartment({
+      id: dept?.id,
+      name: deptName,
+      description: dept?.description
+    });
+    setIsAddingDepartment(false);
+    setIsDepartmentDialogOpen(true);
+  };
+
+  const handleDeleteDepartment = (deptName: string) => {
+    // 检查该部门下是否有成员
+    const hasMembers = teamMembers.some(m => m.department === deptName);
+    if (hasMembers) {
+      alert('该部门下还有成员，无法删除。请先将成员移动到其他部门。');
+      return;
+    }
+    
+    // 从部门列表中删除
+    setDepartments(prev => prev.filter(d => d.name !== deptName));
+    console.log('删除部门:', deptName);
+  };
+
+  const handleSaveDepartment = () => {
+    if (!editingDepartment || !editingDepartment.name.trim()) return;
+    
+    if (isAddingDepartment) {
+      // 检查部门名称是否已存在
+      if (availableDepartments.includes(editingDepartment.name)) {
+        alert('该部门名称已存在');
+        return;
+      }
+      
+      // 添加新部门
+      const newDept: Department = {
+        id: `dept-${Date.now()}`,
+        name: editingDepartment.name,
+        description: editingDepartment.description,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      setDepartments(prev => [...prev, newDept]);
+      console.log('添加新部门:', newDept);
+    } else {
+      // 更新部门
+      if (editingDepartment.id) {
+        setDepartments(prev => 
+          prev.map(dept => 
+            dept.id === editingDepartment.id 
+              ? { ...dept, name: editingDepartment.name, description: editingDepartment.description, updatedAt: new Date() }
+              : dept
+          )
+        );
+      }
+      
+      // 如果部门名称改了，同时更新成员的部门
+      const oldDept = departments.find(d => d.id === editingDepartment.id);
+      if (oldDept && oldDept.name !== editingDepartment.name) {
+        setTeamMembers(prev => 
+          prev.map(member => 
+            member.department === oldDept.name 
+              ? { ...member, department: editingDepartment.name }
+              : member
+          )
+        );
+      }
+      console.log('保存部门信息:', editingDepartment);
+    }
+    
+    setIsDepartmentDialogOpen(false);
+    setEditingDepartment(null);
+    setIsAddingDepartment(false);
+  };
   
   return (
     <div className="space-y-6">
@@ -218,6 +303,10 @@ export function OrganizationSettings() {
                         组织架构中的可用部门
                       </CardDescription>
                     </div>
+                    <Button size="sm" className="h-8 gap-1" onClick={handleAddDepartment}>
+                      <Plus className="w-3.5 h-3.5" />
+                      添加
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
@@ -225,20 +314,38 @@ export function OrganizationSettings() {
                     {availableDepartments.map((dept) => (
                       <div 
                         key={dept} 
-                        className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200"
+                        className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
                       >
                         <div className="flex items-center gap-2">
                           <Building className="w-4 h-4 text-slate-500" />
                           <span className="text-sm font-medium text-slate-900">{dept}</span>
                         </div>
-                        <Badge variant="outline" className="text-[10px] h-5">
-                          {teamMembers.filter(m => m.department === dept).length} 人
-                        </Badge>
+                        <div className="flex items-center gap-1">
+                          <Badge variant="outline" className="text-[10px] h-5">
+                            {teamMembers.filter(m => m.department === dept).length} 人
+                          </Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0"
+                            onClick={() => handleEditDepartment(dept)}
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteDepartment(dept)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                     {availableDepartments.length === 0 && (
                       <p className="text-sm text-slate-500 text-center py-4">
-                        暂无部门，请先在组织架构图中添加
+                        暂无部门，点击"添加"按钮创建
                       </p>
                     )}
                   </div>
@@ -459,6 +566,55 @@ export function OrganizationSettings() {
             </Button>
             <Button onClick={handleSaveMember}>
               {isAddingMember ? '添加' : '保存'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 部门管理对话框 */}
+      <Dialog open={isDepartmentDialogOpen} onOpenChange={setIsDepartmentDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{isAddingDepartment ? '添加新部门' : '编辑部门'}</DialogTitle>
+            <DialogDescription>
+              {isAddingDepartment ? '创建新的组织部门' : '修改部门信息'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingDepartment && (
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="dept-name">部门名称</Label>
+                <Input
+                  id="dept-name"
+                  value={editingDepartment.name}
+                  onChange={(e) => setEditingDepartment(prev => prev ? { ...prev, name: e.target.value } : null)}
+                  placeholder="请输入部门名称"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="dept-description">部门描述</Label>
+                <Input
+                  id="dept-description"
+                  value={editingDepartment.description || ''}
+                  onChange={(e) => setEditingDepartment(prev => prev ? { ...prev, description: e.target.value } : null)}
+                  placeholder="请输入部门描述（可选）"
+                />
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setIsDepartmentDialogOpen(false);
+              setEditingDepartment(null);
+              setIsAddingDepartment(false);
+            }}>
+              取消
+            </Button>
+            <Button onClick={handleSaveDepartment}>
+              {isAddingDepartment ? '添加' : '保存'}
             </Button>
           </DialogFooter>
         </DialogContent>
