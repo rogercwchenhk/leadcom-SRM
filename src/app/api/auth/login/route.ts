@@ -3,6 +3,7 @@ import { db, initDatabase } from '@/db';
 import { users } from '@/db/schema';
 import { eq, or } from 'drizzle-orm';
 import { verifyPassword, generateToken, hashPassword } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   await initDatabase();
@@ -53,34 +54,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 如果用户没有密码哈希，设置默认密码（为了向后兼容）
+    // 检查用户是否设置了密码
     if (!user.passwordHash) {
-      // 为现有用户设置默认密码
-      const defaultPassword = '123456';
-      const hashedPassword = await hashPassword(defaultPassword);
-      
-      await db
-        .update(users)
-        .set({ passwordHash: hashedPassword, updatedAt: new Date() })
-        .where(eq(users.id, user.id));
-      
-      // 使用默认密码验证
-      const isValid = await verifyPassword(defaultPassword, hashedPassword);
-      if (!isValid) {
-        return NextResponse.json(
-          { error: '用户名或密码错误' },
-          { status: 401 }
-        );
-      }
-    } else {
-      // 验证密码
-      const isValid = await verifyPassword(password, user.passwordHash);
-      if (!isValid) {
-        return NextResponse.json(
-          { error: '用户名或密码错误' },
-          { status: 401 }
-        );
-      }
+      return NextResponse.json(
+        { 
+          error: '账户未设置密码',
+          action: 'reset_password',
+          message: '请使用密码重置功能设置新密码'
+        },
+        { status: 403 }
+      );
+    }
+    
+    // 验证密码
+    const isValid = await verifyPassword(password, user.passwordHash);
+    if (!isValid) {
+      return NextResponse.json(
+        { error: '用户名或密码错误' },
+        { status: 401 }
+      );
     }
 
     // 生成JWT Token
@@ -95,7 +87,7 @@ export async function POST(request: NextRequest) {
       user: userWithoutPassword,
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     return NextResponse.json(
       { error: '登录失败，请稍后重试' },
       { status: 500 }

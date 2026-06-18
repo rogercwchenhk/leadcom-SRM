@@ -7,6 +7,7 @@ import { PRESET_DEPARTMENTS, PRESET_TEAM_MEMBERS } from '@/types';
 import { db, initDatabase } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { logger } from '@/lib/logger';
 
 // 配置文件路径
 const CONFIG_FILE_PATH = path.join(process.cwd(), 'data', 'organization.yaml');
@@ -14,7 +15,7 @@ const CONFIG_FILE_PATH = path.join(process.cwd(), 'data', 'organization.yaml');
 // 初始化默认配置文件（仅在文件不存在时）
 function initializeDefaultConfigIfNeeded() {
   if (!fs.existsSync(CONFIG_FILE_PATH)) {
-    console.log('配置文件不存在，创建默认配置文件...');
+    logger.info('配置文件不存在，创建默认配置文件...');
     
     // 转换预设数据为 YAML 格式
     const departmentsForYaml = PRESET_DEPARTMENTS.map((dept) => ({
@@ -50,7 +51,7 @@ ${yaml.dump(yamlData, { indent: 2 })}`;
 
     // 写入默认配置文件
     fs.writeFileSync(CONFIG_FILE_PATH, yamlContent, 'utf-8');
-    console.log('默认配置文件创建成功');
+    logger.info('默认配置文件创建成功');
   }
 }
 
@@ -67,7 +68,7 @@ export async function GET() {
     const departments: any[] = data?.departments || [];
     const teamMembers: any[] = data?.teamMembers || [];
 
-    console.log('读取到数据:', { 
+    logger.info('读取到数据:', { 
       departmentsCount: departments.length, 
       teamMembersCount: teamMembers.length,
       departments: departments.map((d: any) => d.name)
@@ -95,7 +96,7 @@ export async function GET() {
       teamMembers: parsedTeamMembers
     });
   } catch (error) {
-    console.error('读取配置文件失败:', error);
+    logger.error('读取配置文件失败:', error);
     return NextResponse.json(
       { error: '读取配置文件失败' },
       { status: 500 }
@@ -123,7 +124,7 @@ async function syncSystemUsers(teamMembers: TeamMember[]) {
             createdAt: now,
             updatedAt: now,
           });
-          console.log(`为成员 ${member.name} 创建了系统用户账号`);
+          logger.info(`为成员 ${member.name} 创建了系统用户账号`);
         } else {
           // 更新现有用户
           await db.update(users)
@@ -133,12 +134,12 @@ async function syncSystemUsers(teamMembers: TeamMember[]) {
               updatedAt: new Date(),
             })
             .where(eq(users.email, member.email));
-          console.log(`更新了成员 ${member.name} 的系统用户账号`);
+          logger.info(`更新了成员 ${member.name} 的系统用户账号`);
         }
       }
     }
   } catch (error) {
-    console.error('同步系统用户失败:', error);
+    logger.error('同步系统用户失败:', error);
     // 不抛出错误，让组织架构保存继续进行
   }
 }
@@ -146,22 +147,22 @@ async function syncSystemUsers(teamMembers: TeamMember[]) {
 // 保存组织架构配置
 export async function PUT(request: NextRequest) {
   try {
-    console.log('收到保存请求...');
+    logger.info('收到保存请求...');
     const body = await request.json();
-    console.log('请求体 - 部门数量:', body.departments?.length, '成员数量:', body.teamMembers?.length);
-    console.log('请求部门:', body.departments?.map((d: any) => d.name));
+    logger.info('请求体 - 部门数量:', body.departments?.length, '成员数量:', body.teamMembers?.length);
+    logger.info('请求部门:', body.departments?.map((d: any) => d.name));
     
     const { departments, teamMembers } = body;
     
     if (!departments || !teamMembers) {
-      console.error('缺少必要数据:', { departments: !!departments, teamMembers: !!teamMembers });
+      logger.error('缺少必要数据:', { departments: !!departments, teamMembers: !!teamMembers });
       return NextResponse.json(
         { error: '缺少必要数据' },
         { status: 400 }
       );
     }
 
-    console.log('准备转换数据...');
+    logger.info('准备转换数据...');
     // 转换 Date 对象为字符串
     const departmentsForYaml = departments.map((dept: Department) => ({
       ...dept,
@@ -175,7 +176,7 @@ export async function PUT(request: NextRequest) {
       updatedAt: member.updatedAt instanceof Date ? member.updatedAt.toISOString() : member.updatedAt
     }));
 
-    console.log('生成 YAML 内容...');
+    logger.info('生成 YAML 内容...');
     // 生成 YAML 内容 - 使用单文档格式
     const yamlData = {
       departments: departmentsForYaml,
@@ -190,25 +191,25 @@ export async function PUT(request: NextRequest) {
 
 ${yaml.dump(yamlData, { indent: 2 })}`;
 
-    console.log('准备写入文件:', CONFIG_FILE_PATH);
+    logger.info('准备写入文件:', CONFIG_FILE_PATH);
     // 确保目录存在
     const dir = path.dirname(CONFIG_FILE_PATH);
     if (!fs.existsSync(dir)) {
-      console.log('创建目录:', dir);
+      logger.info('创建目录:', dir);
       fs.mkdirSync(dir, { recursive: true });
     }
 
     // 写入文件
     fs.writeFileSync(CONFIG_FILE_PATH, yamlContent, 'utf-8');
-    console.log('文件写入成功');
+    logger.info('文件写入成功');
 
     // 同步系统用户
     await syncSystemUsers(teamMembers);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('保存配置文件失败:', error);
-    console.error('错误详情:', JSON.stringify(error, null, 2));
+    logger.error('保存配置文件失败:', error);
+    logger.error('错误详情:', JSON.stringify(error, null, 2));
     return NextResponse.json(
       { error: '保存配置文件失败', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }

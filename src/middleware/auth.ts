@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyToken } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 /**
  * 权限检查中间件
@@ -20,29 +22,43 @@ export async function checkPermission(
     const sessionHeader = request.headers.get('x-session');
     
     if (!sessionHeader) {
-      // 没有会话信息，返回401未授权
       return NextResponse.json(
         { success: false, error: '未登录或会话已过期' },
         { status: 401 }
       );
     }
 
-    // TODO: 解析会话并验证用户身份
-    // 这里应该调用 Supabase Auth 或其他认证服务
-    // const session = await verifySession(sessionHeader);
+    // 验证JWT令牌
+    const token = sessionHeader.replace('Bearer ', '');
+    const decoded = verifyToken(token);
     
-    // TODO: 检查用户权限
-    // if (requiredPermission && !hasPermission(session.user, requiredPermission)) {
-    //   return NextResponse.json(
-    //     { success: false, error: '权限不足' },
-    //     { status: 403 }
-    //   );
-    // }
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, error: '无效的认证令牌' },
+        { status: 401 }
+      );
+    }
 
-    // 临时：允许所有请求通过
-    return null;
+    // 如果需要特定权限，检查用户权限
+    if (requiredPermission) {
+      // TODO: 这里需要实现从数据库获取用户权限的逻辑
+      // const userPermissions = await getUserPermissions(decoded.userId);
+      // if (!userPermissions.includes(requiredPermission)) {
+      //   return NextResponse.json(
+      //     { success: false, error: '权限不足' },
+      //     { status: 403 }
+      //   );
+      // }
+    }
+
+    // 将用户信息添加到请求头，供后续处理使用
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-user-id', decoded.userId.toString());
+    requestHeaders.set('x-username', decoded.username);
+    
+    return null; // 允许继续
   } catch (error) {
-    console.error('Permission check failed:', error);
+    logger.error('Permission check failed:', error);
     return NextResponse.json(
       { success: false, error: '权限验证失败' },
       { status: 500 }

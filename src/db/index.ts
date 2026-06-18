@@ -3,6 +3,7 @@ import Database from 'better-sqlite3';
 import * as schema from './schema';
 import path from 'path';
 import fs from 'fs';
+import { logger } from '@/lib/logger';
 
 // 确定数据库文件路径
 const getDbPath = (): string => {
@@ -35,7 +36,7 @@ export async function initDatabase() {
 
   // 如果表不存在，通过 Drizzle 的迁移创建（这里简化处理）
   if (tableNames.length === 0) {
-    console.log('Creating database tables...');
+    logger.info('Creating database tables...');
     
     // 使用 raw SQL 创建表（简化版本）
     sqlite.exec(`
@@ -106,7 +107,7 @@ export async function initDatabase() {
 
     // 插入初始数据
     await seedInitialData();
-    console.log('Database initialized successfully!');
+    logger.info('Database initialized successfully!');
   }
 }
 
