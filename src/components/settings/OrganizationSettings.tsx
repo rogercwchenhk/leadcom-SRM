@@ -252,7 +252,71 @@ export function OrganizationSettings() {
         </TabsList>
 
         <TabsContent value="chart" className="mt-6">
-          <OrganizationChart members={teamMembers} />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <OrganizationChart members={teamMembers} />
+            </div>
+            <div className="space-y-6">
+              {/* Departments Card */}
+              <Card className="border-slate-200 shadow-sm">
+                <CardHeader className="pb-1 pt-2 px-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-sm font-semibold text-slate-900">部门管理</CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-1">
+                        组织架构中的可用部门
+                      </CardDescription>
+                    </div>
+                    <Button size="sm" className="h-8 gap-1" onClick={handleAddDepartment}>
+                      <Plus className="w-3.5 h-3.5" />
+                      添加
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0">
+                  <div className="space-y-2">
+                    {availableDepartments.map((dept) => (
+                      <div 
+                        key={dept} 
+                        className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Building className="w-4 h-4 text-slate-500" />
+                          <span className="text-sm font-medium text-slate-900">{dept}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Badge variant="outline" className="text-[10px] h-5">
+                            {teamMembers.filter(m => m.department === dept).length} 人
+                          </Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0"
+                            onClick={() => handleEditDepartment(dept)}
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteDepartment(dept)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {availableDepartments.length === 0 && (
+                      <p className="text-sm text-slate-500 text-center py-4">
+                        暂无部门，点击"添加"按钮创建
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="list" className="mt-6">
