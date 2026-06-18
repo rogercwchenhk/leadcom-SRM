@@ -105,6 +105,17 @@ export function RolePermissionConfig() {
 
   return (
     <div className="space-y-6">
+      {/* 参考视图说明 */}
+      <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200">
+        <Shield className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+        <div className="text-xs text-amber-800">
+          <p className="font-medium mb-1">参考视图（只读）</p>
+          <p className="text-amber-700">
+            以下为系统预设的角色权限配置参考。实际生效的权限以「权限分配」中的设置为准，如需调整用户或用户组的权限，请前往「权限分配」进行操作。
+          </p>
+        </div>
+      </div>
+
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
@@ -112,7 +123,7 @@ export function RolePermissionConfig() {
             角色权限配置
           </CardTitle>
           <CardDescription className="text-xs text-slate-500">
-            查看每个业务角色对应的权限，以及所有权限的完整列表
+            查看每个业务角色对应的预设权限，以及所有权限的完整列表
           </CardDescription>
         </CardHeader>
         <CardContent>
