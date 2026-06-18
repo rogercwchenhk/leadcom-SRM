@@ -108,8 +108,8 @@ export function OrganizationSettings() {
           updatedAt: new Date(member.updatedAt)
         }));
         
-        console.log('解析后的部门:', parsedDepartments.map(d => d.name));
-        console.log('解析后的成员:', parsedTeamMembers.map(m => m.name));
+        console.log('解析后的部门:', parsedDepartments.map((d: Department) => d.name));
+        console.log('解析后的成员:', parsedTeamMembers.map((m: TeamMember) => m.name));
         
         setDepartments(parsedDepartments);
         setTeamMembers(parsedTeamMembers);
