@@ -4,6 +4,9 @@ import path from 'path';
 import yaml from 'js-yaml';
 import type { Department, TeamMember } from '@/types';
 import { PRESET_DEPARTMENTS, PRESET_TEAM_MEMBERS } from '@/types';
+import { db, initDatabase } from '@/db';
+import { users } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 // 配置文件路径
 const CONFIG_FILE_PATH = path.join(process.cwd(), 'data', 'organization.yaml');
@@ -100,6 +103,46 @@ export async function GET() {
   }
 }
 
+// 自动为有系统访问权限的成员创建用户账号
+async function syncSystemUsers(teamMembers: TeamMember[]) {
+  try {
+    await initDatabase();
+    
+    for (const member of teamMembers) {
+      if (member.hasSystemAccess && member.systemUsername && member.email) {
+        // 检查用户是否已存在
+        const existingUsers = await db.select().from(users).where(eq(users.email, member.email)).all();
+        
+        if (existingUsers.length === 0) {
+          // 创建新用户
+          const now = new Date();
+          await db.insert(users).values({
+            username: member.systemUsername || member.email,
+            email: member.email,
+            status: member.isActive ? 'active' : 'inactive',
+            createdAt: now,
+            updatedAt: now,
+          });
+          console.log(`为成员 ${member.name} 创建了系统用户账号`);
+        } else {
+          // 更新现有用户
+          await db.update(users)
+            .set({
+              username: member.systemUsername || member.email,
+              status: member.isActive ? 'active' : 'inactive',
+              updatedAt: new Date(),
+            })
+            .where(eq(users.email, member.email));
+          console.log(`更新了成员 ${member.name} 的系统用户账号`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('同步系统用户失败:', error);
+    // 不抛出错误，让组织架构保存继续进行
+  }
+}
+
 // 保存组织架构配置
 export async function PUT(request: NextRequest) {
   try {
@@ -158,6 +201,9 @@ ${yaml.dump(yamlData, { indent: 2 })}`;
     // 写入文件
     fs.writeFileSync(CONFIG_FILE_PATH, yamlContent, 'utf-8');
     console.log('文件写入成功');
+
+    // 同步系统用户
+    await syncSystemUsers(teamMembers);
 
     return NextResponse.json({ success: true });
   } catch (error) {
