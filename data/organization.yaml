@@ -4,8 +4,67 @@
 # AI 友好格式：清晰的注释、结构化数据、有意义的字段名
 
 departments:
-  - id: dept-test
-    name: 测试部门
+  - id: dept-headquarters
+    name: 总部
+    description: 公司总部
+    createdAt: '2024-01-01T00:00:00.000Z'
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  - id: dept-purchase
+    name: 综合管理部
+    description: 负责财务、采购、行政、人事
+    parentDepartmentId: dept-headquarters
+    createdAt: '2024-01-01T00:00:00.000Z'
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  - id: dept-customer-service
+    name: 销售部
+    description: 负责销售
+    parentDepartmentId: dept-headquarters
+    createdAt: '2024-01-01T00:00:00.000Z'
+    updatedAt: '2024-01-01T00:00:00.000Z'
+  - id: dept-tech
+    name: 技术部
+    description: 负责技术研发
+    parentDepartmentId: dept-headquarters
+    createdAt: '2024-01-01T00:00:00.000Z'
+    updatedAt: '2024-01-01T00:00:00.000Z'
 teamMembers:
-  - id: test-1
-    name: 测试成员
+  - id: member-1
+    name: 梁静
+    email: liangjing@company.com
+    department: 综合管理部
+    position: 采购专员
+    role: purchaser
+    phone: 138-0000-0001
+    joinDate: '2020-01-15T00:00:00.000Z'
+    createdAt: '2020-01-15T00:00:00.000Z'
+    updatedAt: '2020-01-15T00:00:00.000Z'
+  - id: member-2
+    name: 林晓
+    email: linxiao@company.com
+    department: 综合管理部
+    position: 财务经理
+    role: finance
+    phone: 138-0000-0002
+    joinDate: '2019-06-01T00:00:00.000Z'
+    createdAt: '2019-06-01T00:00:00.000Z'
+    updatedAt: '2019-06-01T00:00:00.000Z'
+  - id: member-3
+    name: 王芳
+    email: wangfang@company.com
+    department: 销售部
+    position: 销售经理
+    role: sales
+    phone: 138-0000-0003
+    joinDate: '2018-03-20T00:00:00.000Z'
+    createdAt: '2018-03-20T00:00:00.000Z'
+    updatedAt: '2018-03-20T00:00:00.000Z'
+  - id: member-4
+    name: 赵强
+    email: zhaoqiang@company.com
+    department: 技术部
+    position: 技术总监
+    role: admin
+    phone: 138-0000-0004
+    joinDate: '2017-01-10T00:00:00.000Z'
+    createdAt: '2017-01-10T00:00:00.000Z'
+    updatedAt: '2017-01-10T00:00:00.000Z'
