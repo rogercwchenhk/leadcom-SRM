@@ -83,16 +83,6 @@ export function AppSidebar({ initialRole = 'purchaser', isMobile = false, onClos
       href: '/supplier',
     },
     {
-      title: '团队管理',
-      icon: UsersRound,
-      href: '/team',
-    },
-    {
-      title: '权限管理',
-      icon: Shield,
-      href: '/permissions',
-    },
-    {
       title: '供应商平台',
       icon: ExternalLink,
       href: '/supplier-portal',

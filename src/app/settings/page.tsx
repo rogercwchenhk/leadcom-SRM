@@ -8,7 +8,8 @@ import {
   CheckSquare, 
   Bot, 
   Bell, 
-  Database,
+  UsersRound,
+  Shield,
   Settings
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -16,9 +17,11 @@ import { CompanySettings } from '@/components/settings/CompanySettings';
 import { ApprovalSettings } from '@/components/settings/ApprovalSettings';
 import { AISettings } from '@/components/settings/AISettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { OrganizationSettings } from '@/components/settings/OrganizationSettings';
+import { PermissionSettings } from '@/components/settings/PermissionSettings';
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('company');
+  const [activeTab, setActiveTab] = useState('organization');
   
   return (
     <AppLayout initialRole="purchaser_manager">
@@ -27,19 +30,27 @@ export default function SettingsPage() {
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-lg font-semibold text-slate-900 tracking-tight">系统设置</h1>
-            <p className="text-sm text-slate-500 mt-1">配置系统参数、公司信息和业务规则</p>
+            <p className="text-sm text-slate-500 mt-1">配置系统参数、组织架构和业务规则</p>
           </div>
 
           <Card className="border-slate-200 shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-sm font-semibold text-slate-900">设置控制台</CardTitle>
               <CardDescription className="text-xs text-slate-500">
-                管理公司信息、审批流程、AI配置和通知规则
+                管理组织架构、权限、公司信息、审批流程和AI配置
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-4 mb-6">
+                <TabsList className="grid grid-cols-6 mb-6">
+                  <TabsTrigger value="organization" className="gap-2">
+                    <UsersRound className="h-4 w-4" />
+                    组织架构
+                  </TabsTrigger>
+                  <TabsTrigger value="permissions" className="gap-2">
+                    <Shield className="h-4 w-4" />
+                    权限管理
+                  </TabsTrigger>
                   <TabsTrigger value="company" className="gap-2">
                     <Building2 className="h-4 w-4" />
                     公司信息
@@ -57,6 +68,14 @@ export default function SettingsPage() {
                     通知设置
                   </TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="organization">
+                  <OrganizationSettings />
+                </TabsContent>
+
+                <TabsContent value="permissions">
+                  <PermissionSettings />
+                </TabsContent>
 
                 <TabsContent value="company">
                   <CompanySettings />
