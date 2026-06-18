@@ -35,9 +35,18 @@ interface OrgNode {
   type: 'root' | 'department' | 'person';
 }
 
-export function OrganizationChart() {
+interface OrganizationChartProps {
+  members: TeamMember[];
+}
+
+export function OrganizationChart({ members }: OrganizationChartProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [orgData, setOrgData] = useState<OrgNode>(() => buildOrgTree(PRESET_TEAM_MEMBERS));
+  const [orgData, setOrgData] = useState<OrgNode>(() => buildOrgTree(members));
+
+  // 当成员数据变化时重新构建组织架构树
+  React.useEffect(() => {
+    setOrgData(buildOrgTree(members));
+  }, [members]);
 
   function buildOrgTree(members: TeamMember[]): OrgNode {
     // 按部门分组
@@ -137,7 +146,7 @@ export function OrganizationChart() {
   };
 
   const handleRefresh = () => {
-    setOrgData(buildOrgTree(PRESET_TEAM_MEMBERS));
+    setOrgData(buildOrgTree(members));
     setZoomLevel(1);
   };
 

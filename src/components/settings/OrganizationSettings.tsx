@@ -131,7 +131,7 @@ export function OrganizationSettings() {
         </TabsList>
 
         <TabsContent value="chart" className="mt-6">
-          <OrganizationChart />
+          <OrganizationChart members={teamMembers} />
         </TabsContent>
 
         <TabsContent value="list" className="mt-6">
@@ -162,6 +162,7 @@ export function OrganizationSettings() {
                         member={member}
                         onEdit={handleEditMember}
                         onDelete={handleDeleteMember}
+                        allMembers={teamMembers}
                       />
                     ))}
                   </div>
@@ -398,11 +399,13 @@ export function OrganizationSettings() {
 function TeamMemberCard({ 
   member, 
   onEdit, 
-  onDelete 
+  onDelete,
+  allMembers
 }: { 
   member: TeamMember;
   onEdit: (member: TeamMember) => void;
   onDelete: (member: TeamMember) => void;
+  allMembers: TeamMember[];
 }) {
   const getInitials = (name: string) => {
     return name
@@ -413,8 +416,8 @@ function TeamMemberCard({
       .slice(0, 2);
   };
 
-  const supervisor = PRESET_TEAM_MEMBERS.find(m => m.id === member.supervisorId);
-  const subordinates = PRESET_TEAM_MEMBERS.filter(m => m.supervisorId === member.id);
+  const supervisor = allMembers.find(m => m.id === member.supervisorId);
+  const subordinates = allMembers.filter(m => m.supervisorId === member.id);
 
   return (
     <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all duration-200">
